@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/styles.css">
+  <script src="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    input[type=range]{accent-color:var(--gold-700);height:6px}
+  </style>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    img, svg { max-width: 100% }
+    @media (max-width: 880px) {
+      footer > div { grid-template-columns: 1fr 1fr !important; gap: 24px !important }
+    }
+    @media (max-width: 560px) {
+      footer > div { grid-template-columns: 1fr !important; gap: 22px !important }
+    }
+  </style>
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="200" fill="#1F2A24"/>
+      <rect x="60" y="78" width="80" height="52" rx="8" fill="#E9C46A"/>
+      <rect x="60" y="92" width="80" height="8" fill="#1F2A24"/>
+      <text x="100" y="122" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-weight="700" fill="#1F2A24">הדרן</text>
+    </svg>
+  </template>
+</helmet>
+
+<div style="background:var(--color-canvas);min-height:100vh">
+
+  <dc-import name="SiteNav" logo-src="assets/logo-lockup.svg" links="{{ links }}" active="דף הבית" cta="קבלת כרטיס" on-cta-click="{{ goActivate }}" hint-size="100%,86px"></dc-import>
+
+  <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+  <div>
+    <div style="background:var(--color-canvas-soft);padding:clamp(42px,8.0vw,72px) clamp(16px,4vw,24px) 80px">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:56px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:24px;align-items:flex-start">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="gold" icon="badge-percent" hint-size="auto,28px">5% הנחה מיידית בקופה</x-import>
+          <h1 style="font-family:var(--font-display);font-weight:800;font-size:clamp(38px,9vw,68px);line-height:1.04;letter-spacing:-.015em;margin:0">חיסכון מהודר<br>לבית שלכם</h1>
+          <p style="font-size:clamp(17px,2.5vw,20px);line-height:1.6;color:var(--color-body);max-width:470px;margin:0">הדרן קארד הוא כרטיס פיזי אחד שמוריד 5% מכל קנייה, במקום. בלי נקודות, בלי קופונים ובלי טעינה מראש — מציגים בקופה וההנחה כבר בחשבון.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" on-click="{{ goActivate }}" hint-size="auto,52px">קבלת הדרן קארד</x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" variant="tertiary" on-click="{{ goBenefits }}" hint-size="auto,52px">לרשימת בתי העסק</x-import>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;color:var(--color-mute);font-size:14px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="shield-check" color="var(--color-primary-deep)" hint-size="18px,18px"></x-import>
+            הכרטיס מגיע עד הבית · ההנחה תקפה מהרגע הראשון · ללא התחייבות
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;align-items:flex-start;gap:10px">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:148px;line-height:.8;letter-spacing:-.04em;color:var(--gold-700);direction:ltr">5%</span>
+            <span style="font-size:14px;line-height:1.45;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep);font-weight:700">הנחה מיידית<br>בקופה, בכל קנייה</span>
+          </div>
+          <div style="transform:rotate(-3deg)">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.MemberCard" logo-src="assets/logo-mark.svg" holder="משפחת כהן" tier="חבר מועדון · הדרן קארד" width="min(400px, calc(100vw - 48px))" hint-size="380px,240px"></x-import>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(28px,5.3vw,48px) clamp(16px,4vw,24px);border-bottom:1px solid var(--color-border)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:24px">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.StatBlock" value="5%" label="הנחה מיידית" sublabel="בקופה, בכל קנייה" icon="badge-percent" hint-size="100%,120px"></x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.StatBlock" value="312" label="בתי עסק שותפים" sublabel="ומצטרפים חדשים כל חודש" icon="store" hint-size="100%,120px"></x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.StatBlock" value="₪1,240" label="חיסכון חודשי ממוצע" sublabel="למשפחה בת שש נפשות" icon="wallet" hint-size="100%,120px"></x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.StatBlock" value="24,800" label="משפחות במועדון" sublabel="בבני ברק, ירושלים ובית שמש" icon="users" hint-size="100%,120px"></x-import>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">איך זה עובד</span>
+          <h2 style="font-size:clamp(27px,6vw,44px);margin:0">שלושה צעדים, פעם אחת</h2>
+          <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0;max-width:620px">ההצטרפות לוקחת שתי דקות. אחר כך הכרטיס פשוט עובד — בלי לזכור מבצעים ובלי לאסוף קופונים.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:24px">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" hint-size="100%,210px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,5.5vw,40px);color:var(--color-primary-deep);line-height:1">1</span>
+              <b style="font-size:clamp(17px,2.6vw,21px)">מזמינים את הכרטיס</b>
+              <span style="color:var(--color-body);line-height:1.6">ממלאים פרטים בסיסיים באתר. הכרטיס הפיזי נשלח עד הבית תוך חמישה ימי עסקים.</span>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" hint-size="100%,210px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,5.5vw,40px);color:var(--color-primary-deep);line-height:1">2</span>
+              <b style="font-size:clamp(17px,2.6vw,21px)">מפעילים בדקה</b>
+              <span style="color:var(--color-body);line-height:1.6">הזנת מספר הכרטיס והפרטים האישיים באתר, והכרטיס פעיל ומשויך אליכם.</span>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" hint-size="100%,210px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,5.5vw,40px);color:var(--color-primary-deep);line-height:1">3</span>
+              <b style="font-size:clamp(17px,2.6vw,21px)">מציגים בקופה</b>
+              <span style="color:var(--color-body);line-height:1.6">לפני התשלום מציגים את הכרטיס. 5% יורדים מהחשבון מיד — בלי טפסים ובלי בקשות.</span>
+            </div>
+          </x-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:48px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">מחשבון חיסכון</span>
+          <h2 style="font-size:clamp(27px,6vw,44px);margin:0">כמה תחסכו בשנה?</h2>
+          <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0">גררו לפי ההוצאה החודשית של הבית על מזון, ביגוד וצרכי בית אצל בתי העסק השותפים.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font-size:15px;color:var(--color-body);font-weight:600">הוצאה חודשית</span>
+              <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(22px,4.2vw,30px)">{{ spendFmt }}</span>
+            </div>
+            <input type="range" min="1000" max="15000" step="100" value="{{ spend }}" onChange="{{ onSpend }}" style="width:100%">
+            <div class="tnum" style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-mute)"><span>₪15,000</span><span>₪1,000</span></div>
+          </div>
+        </div>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,32px)" hint-size="100%,300px">
+          <div style="display:flex;flex-direction:column;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:14px;color:var(--color-mute);font-weight:600">חיסכון חודשי</span>
+              <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,5.5vw,40px);color:var(--color-positive);line-height:1">{{ monthlyFmt }}</span>
+            </div>
+            <div style="height:1px;background:var(--color-border)"></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:14px;color:var(--color-mute);font-weight:600">חיסכון בשנה</span>
+              <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(36px,8.5vw,64px);color:var(--color-ink);line-height:1">{{ yearlyFmt }}</span>
+            </div>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.SavingsMeter" value="{{ monthly }}" max="{{ meterMax }}" label="מהיעד החודשי במועדון" caption="החישוב לפי 5% הנחה על כלל הקניות בבתי העסק השותפים. הנתון להמחשה בלבד." hint-size="100%,72px"></x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" full-width="{{ true }}" on-click="{{ goActivate }}" hint-size="100%,48px">רוצים להתחיל לחסוך</x-import>
+          </div>
+        </x-import>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:48px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">דוגמה מהחיים</span>
+          <h2 style="font-size:clamp(27px,6vw,44px);margin:0">סל קניות אחד, לפני ואחרי</h2>
+          <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0">קנייה שגרתית לשבוע במשפחה בת שש נפשות. אותם מוצרים, אותן חנויות — סכום אחר בקופה.</p>
+          <div style="display:flex;align-items:center;gap:8px;color:var(--color-mute);font-size:14px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="receipt" color="var(--color-primary-deep)" hint-size="18px,18px"></x-import>
+            ההנחה מחושבת על הסל כולו, לא על מוצרים נבחרים
+          </div>
+        </div>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,32px)" hint-size="100%,340px">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>מזון ומכולת</span><span class="tnum" style="font-weight:600">₪620</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>בשר, עוף ודגים</span><span class="tnum" style="font-weight:600">₪310</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>ביגוד והנעלה לילדים</span><span class="tnum" style="font-weight:600">₪240</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>ספרי קודש וצרכי בית</span><span class="tnum" style="font-weight:600">₪150</span></div>
+            <div style="height:1px;background:var(--color-border);margin:4px 0"></div>
+            <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px);color:var(--color-body)"><span>סך הסל</span><span class="tnum">₪1,320</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px);color:var(--color-positive);font-weight:700"><span>הנחת הדרן קארד · 5%</span><span class="tnum">‎−₪66</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:10px;border-top:2px solid var(--color-ink)">
+              <span style="font-size:clamp(16px,2.4vw,19px);font-weight:700">לתשלום בקופה</span>
+              <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(25px,5vw,36px)">₪1,254</span>
+            </div>
+            <span style="font-size:12px;color:var(--color-mute)">₪66 בשבוע · ₪286 בחודש · ₪3,432 בשנה. בכפוף לתקנון המועדון. ט.ל.ח.</span>
+          </div>
+        </x-import>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">בתי עסק שותפים</span>
+            <h2 style="font-size:clamp(27px,6vw,44px);margin:0">איפה הכרטיס עובד</h2>
+            <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0;max-width:620px">רשתות מזון, ביגוד, ספרי קודש וכלי בית — בשכונות שבהן הקהילה קונה ממילא.</p>
+          </div>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="tertiary" icon-after="arrow-left" on-click="{{ goBenefits }}" hint-size="auto,44px">לכל בתי העסק</x-import>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="home-partner-1" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו רשת מזון"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">רשת מזון</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="home-partner-2" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו רשת ביגוד"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">ביגוד והנעלה</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="home-partner-3" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו חנות ספרים"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">ספרי קודש ויודאיקה</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="home-partner-4" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו כלי בית"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">כלי בית וריהוט</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">למי זה מיועד</span>
+          <h2 style="font-size:clamp(27px,6vw,44px);margin:0">בחרו את המסלול שלכם</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:24px">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="clamp(18px,5vw,28px)" interactive="{{ true }}" on-click="{{ goActivate }}" hint-size="100%,250px">
+            <div style="display:flex;flex-direction:column;gap:14px;height:100%">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="users" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+              <b style="font-size:clamp(18px,2.8vw,22px)">משפחה שרוצה לחסוך</b>
+              <span style="color:var(--color-body);line-height:1.6;flex:1">כל אחד יכול להצטרף למועדון ולקבל הדרן קארד — גם ללא קשר קודם להדרן.</span>
+              <span style="color:var(--color-primary-deep);font-weight:700">קבלת כרטיס ←</span>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="clamp(18px,5vw,28px)" interactive="{{ true }}" on-click="{{ goMember }}" hint-size="100%,250px">
+            <div style="display:flex;flex-direction:column;gap:14px;height:100%">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="wallet" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+              <b style="font-size:clamp(18px,2.8vw,22px)">לקוח הדרן קיים</b>
+              <span style="color:var(--color-body);line-height:1.6;flex:1">הכרטיס הוא הטבה נוספת ללקוחות הדרן. נכנסים לאזור האישי ורואים את החיסכון שנצבר.</span>
+              <span style="color:var(--color-primary-deep);font-weight:700">לאזור האישי ←</span>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="clamp(18px,5vw,28px)" interactive="{{ true }}" on-click="{{ goMerchants }}" hint-size="100%,250px">
+            <div style="display:flex;flex-direction:column;gap:14px;height:100%">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="store" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+              <b style="font-size:clamp(18px,2.8vw,22px)">בעל עסק</b>
+              <span style="color:var(--color-body);line-height:1.6;flex:1">חשיפה לקהל ממוקד ואיכותי, תנועת לקוחות קבועה ושותפות עם מותג בעל מוניטין במגזר.</span>
+              <span style="color:var(--color-primary-deep);font-weight:700">הצטרפות עסקים ←</span>
+            </div>
+          </x-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-narrow);margin:0 auto;display:flex;flex-direction:column;gap:20px;align-items:center;text-align:center">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="quote" size="{{ 32 }}" color="var(--gold-500)" hint-size="32px,32px"></x-import>
+        <span style="font-family:var(--font-serif);font-size:clamp(23px,4.5vw,32px);line-height:1.4;font-weight:700">״קונים בדיוק אותו דבר ומשלמים פחות. אחרי חודשיים הכרטיס כבר החזיר את עצמו, ובעיקר — אין צורך לרוץ אחרי מבצעים.״</span>
+        <span style="font-size:15px;color:var(--color-body)">משפחת פרידמן · בני ברק · חברי מועדון מאז תשפ״ד</span>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="ink" padding="clamp(18px,5vw,48px)" hint-size="100%,180px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <h3 style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,5.5vw,40px);margin:0;color:var(--color-primary)">מגיע לכם שקט נפשי גם בקניות</h3>
+              <p style="margin:0;font-size:clamp(16px,2.3vw,18px);color:var(--sand-300)">מזמינים את הדרן קארד עוד היום, ומתחילים לחסוך בקנייה הראשונה.</p>
+            </div>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" on-click="{{ goActivate }}" hint-size="auto,52px">קבלת הדרן קארד</x-import>
+          </div>
+        </x-import>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
+  <div>
+    <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px) 72px">
+      <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:40px">
+        <div style="display:flex;flex-direction:column;gap:20px;max-width:760px;align-items:flex-start">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="gold" icon="shield-check" hint-size="auto,28px">מועדון ההטבות של הדרן</x-import>
+          <h1 style="font-family:var(--font-display);font-weight:800;font-size:clamp(34px,8vw,60px);line-height:1.06;letter-spacing:-.015em;margin:0">כי כל שקל נחשב,<br>וכל קנייה משתלמת</h1>
+          <p style="font-size:clamp(17px,2.5vw,20px);line-height:1.6;color:var(--color-body);margin:0">5% יורדים מהחשבון בקופה, בכל בית עסק שותף. זה כל המודל — ואין בו נקודות, קופונים או תוקף שפג.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:32px;align-items:stretch">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,32px)" hint-size="100%,360px">
+            <div style="display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <b style="font-size:clamp(16px,2.4vw,19px)">קנייה שגרתית לשבוע</b>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="neutral" hint-size="auto,26px">משפחה בת שש נפשות</x-import>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>מזון ומכולת</span><span class="tnum" style="font-weight:600">₪620</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>בשר, עוף ודגים</span><span class="tnum" style="font-weight:600">₪310</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>ביגוד והנעלה לילדים</span><span class="tnum" style="font-weight:600">₪240</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px)"><span>ספרי קודש וצרכי בית</span><span class="tnum" style="font-weight:600">₪150</span></div>
+              </div>
+              <div style="height:1px;background:var(--color-border)"></div>
+              <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px);color:var(--color-body)"><span>סך הסל</span><span class="tnum">₪1,320</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:clamp(15px,2.2vw,17px);color:var(--color-positive);font-weight:700"><span>הנחת הדרן קארד</span><span class="tnum">‎−₪66</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:2px solid var(--color-ink)">
+                <span style="font-size:clamp(16px,2.4vw,19px);font-weight:700">לתשלום בקופה</span>
+                <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(26px,5.5vw,40px)">₪1,254</span>
+              </div>
+            </div>
+          </x-import>
+          <div style="display:flex;flex-direction:column;gap:20px;justify-content:space-between">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.MemberCard" logo-src="assets/logo-mark.svg" holder="משפחת כהן" tier="חבר מועדון · הדרן קארד" width="min(400px, calc(100vw - 48px))" hint-size="380px,240px"></x-import>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" full-width="{{ true }}" on-click="{{ goActivate }}" hint-size="100%,52px">קבלת הדרן קארד</x-import>
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" variant="tertiary" full-width="{{ true }}" on-click="{{ goBenefits }}" hint-size="100%,52px">איפה הכרטיס עובד</x-import>
+              <span style="font-size:13px;color:var(--color-mute);text-align:center">הכרטיס מגיע עד הבית · ללא התחייבות</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:56px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">למה במועדון</span>
+            <h2 style="font-size:clamp(27px,6vw,44px);margin:0">חיסכון שרואים בחשבון</h2>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="badge-percent" size="{{ 24 }}" color="var(--color-primary-deep)" hint-size="24px,24px"></x-import>
+              <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:clamp(16px,2.4vw,19px)">ההנחה יורדת בקופה</b><span style="color:var(--color-body);line-height:1.6">לא נקודות ולא זיכוי עתידי — הסכום שאתם משלמים קטן כאן ועכשיו.</span></div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="store" size="{{ 24 }}" color="var(--color-primary-deep)" hint-size="24px,24px"></x-import>
+              <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:clamp(16px,2.4vw,19px)">ברשתות שאתם קונים בהן ממילא</b><span style="color:var(--color-body);line-height:1.6">מזון, ביגוד, ספרי קודש וכלי בית — בשכונות ובריכוזים של הקהילה.</span></div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="users" size="{{ 24 }}" color="var(--color-primary-deep)" hint-size="24px,24px"></x-import>
+              <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:clamp(16px,2.4vw,19px)">כרטיס אחד לכל הבית</b><span style="color:var(--color-body);line-height:1.6">אפשר להוסיף כרטיס נוסף לבן או בת הזוג תחת אותה חברות.</span></div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="wallet" size="{{ 24 }}" color="var(--color-primary-deep)" hint-size="24px,24px"></x-import>
+              <div style="display:flex;flex-direction:column;gap:4px"><b style="font-size:clamp(16px,2.4vw,19px)">רואים בדיוק כמה נחסך</b><span style="color:var(--color-body);line-height:1.6">באזור האישי מופיעה כל קנייה, היתרה בכרטיס והחיסכון שנצבר החודש.</span></div>
+            </div>
+          </div>
+        </div>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,32px)" hint-size="100%,320px">
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <b style="font-size:clamp(16px,2.4vw,19px)">בדקו את החיסכון שלכם</b>
+              <span style="color:var(--color-body);font-size:15px">ההוצאה החודשית של הבית אצל בתי העסק השותפים</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <span style="font-size:15px;color:var(--color-body);font-weight:600">הוצאה חודשית</span>
+                <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(21px,4vw,28px)">{{ spendFmt }}</span>
+              </div>
+              <input type="range" min="1000" max="15000" step="100" value="{{ spend }}" onChange="{{ onSpend }}" style="width:100%">
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:16px">
+              <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:var(--color-mute);font-weight:600">בחודש</span><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-positive)">{{ monthlyFmt }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:var(--color-mute);font-weight:600">בשנה</span><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px)">{{ yearlyFmt }}</span></div>
+            </div>
+            <span style="font-size:12px;color:var(--color-mute)">החישוב לפי 5% הנחה על כלל הקניות בבתי העסק השותפים. להמחשה בלבד.</span>
+          </div>
+        </x-import>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas-ink);padding:clamp(32px,6.2vw,56px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:32px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(29px,6.5vw,48px);color:var(--color-primary);line-height:1">5%</span><b style="color:var(--sand-200);font-size:16px">הנחה מיידית</b><span style="color:var(--sand-400);font-size:14px">בקופה, בכל קנייה</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(29px,6.5vw,48px);color:var(--color-primary);line-height:1">312</span><b style="color:var(--sand-200);font-size:16px">בתי עסק שותפים</b><span style="color:var(--sand-400);font-size:14px">ומצטרפים חדשים כל חודש</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(29px,6.5vw,48px);color:var(--color-primary);line-height:1">₪1,240</span><b style="color:var(--sand-200);font-size:16px">חיסכון חודשי ממוצע</b><span style="color:var(--sand-400);font-size:14px">למשפחה בת שש נפשות</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(29px,6.5vw,48px);color:var(--color-primary);line-height:1">24,800</span><b style="color:var(--sand-200);font-size:16px">משפחות במועדון</b><span style="color:var(--sand-400);font-size:14px">בבני ברק, ירושלים ובית שמש</span></div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">שלושה צעדים</span>
+          <h2 style="font-size:clamp(27px,6vw,44px);margin:0">מהזמנה ועד ההנחה הראשונה</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:0;border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden">
+          <div style="padding:28px;display:flex;flex-direction:column;gap:10px;border-inline-end:1px solid var(--color-border)">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-primary-deep);line-height:1">1</span>
+            <b style="font-size:clamp(17px,2.5vw,20px)">מזמינים</b><span style="color:var(--color-body);line-height:1.6">טופס קצר באתר. הכרטיס נשלח עד הבית תוך חמישה ימי עסקים.</span>
+          </div>
+          <div style="padding:28px;display:flex;flex-direction:column;gap:10px;border-inline-end:1px solid var(--color-border)">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-primary-deep);line-height:1">2</span>
+            <b style="font-size:clamp(17px,2.5vw,20px)">מפעילים</b><span style="color:var(--color-body);line-height:1.6">הזנת מספר הכרטיס באתר, והכרטיס משויך אליכם ופעיל.</span>
+          </div>
+          <div style="padding:28px;display:flex;flex-direction:column;gap:10px">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-primary-deep);line-height:1">3</span>
+            <b style="font-size:clamp(17px,2.5vw,20px)">חוסכים</b><span style="color:var(--color-body);line-height:1.6">מציגים בקופה לפני התשלום — 5% יורדים מהחשבון מיד.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap">
+          <h2 style="font-size:clamp(27px,6vw,44px);margin:0">בתי העסק השותפים</h2>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="tertiary" icon-after="arrow-left" on-click="{{ goBenefits }}" hint-size="auto,44px">לכל בתי העסק</x-import>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="homeb-partner-1" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו רשת מזון"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">רשת מזון</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="homeb-partner-2" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו רשת ביגוד"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">ביגוד והנעלה</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="homeb-partner-3" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו חנות ספרים"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">ספרי קודש ויודאיקה</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="20px" hint-size="100%,150px">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <image-slot id="homeb-partner-4" style="width:100%;height:74px" shape="rounded" radius="12" placeholder="לוגו כלי בית"></image-slot>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px;color:var(--color-mute)">כלי בית וריהוט</span><b style="color:var(--color-primary-deep)">5%</b></div>
+            </div>
+          </x-import>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:24px">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="clamp(18px,5vw,28px)" interactive="{{ true }}" on-click="{{ goActivate }}" hint-size="100%,230px">
+          <div style="display:flex;flex-direction:column;gap:14px;height:100%">
+            <b style="font-size:clamp(18px,2.8vw,22px)">משפחה שרוצה לחסוך</b>
+            <span style="color:var(--color-body);line-height:1.6;flex:1">ההצטרפות פתוחה לכל אחד, גם ללא קשר קודם להדרן.</span>
+            <span style="color:var(--color-primary-deep);font-weight:700">קבלת כרטיס ←</span>
+          </div>
+        </x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="clamp(18px,5vw,28px)" interactive="{{ true }}" on-click="{{ goMember }}" hint-size="100%,230px">
+          <div style="display:flex;flex-direction:column;gap:14px;height:100%">
+            <b style="font-size:clamp(18px,2.8vw,22px)">לקוח הדרן קיים</b>
+            <span style="color:var(--color-body);line-height:1.6;flex:1">הכרטיס הוא הטבה נוספת. באזור האישי רואים את היתרה והחיסכון שנצבר.</span>
+            <span style="color:var(--color-primary-deep);font-weight:700">לאזור האישי ←</span>
+          </div>
+        </x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="clamp(18px,5vw,28px)" interactive="{{ true }}" on-click="{{ goMerchants }}" hint-size="100%,230px">
+          <div style="display:flex;flex-direction:column;gap:14px;height:100%">
+            <b style="font-size:clamp(18px,2.8vw,22px)">בעל עסק</b>
+            <span style="color:var(--color-body);line-height:1.6;flex:1">חשיפה לקהל ממוקד, תנועת לקוחות קבועה ומינוף כוח הקנייה הקהילתי.</span>
+            <span style="color:var(--color-primary-deep);font-weight:700">הצטרפות עסקים ←</span>
+          </div>
+        </x-import>
+      </div>
+    </div>
+
+    <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+      <div style="max-width:var(--container-narrow);margin:0 auto;display:flex;flex-direction:column;gap:24px;align-items:center;text-align:center">
+        <span style="font-family:var(--font-serif);font-size:clamp(22px,4.2vw,30px);line-height:1.45;font-weight:700">״קונים בביטחון, חוסכים בהידור.״</span>
+        <p style="font-size:clamp(16px,2.3vw,18px);color:var(--color-body);margin:0">הדרן קארד נבנה כדי שהחיסכון לא יבוא על חשבון ההידור: אותן חנויות, אותה כשרות, אותה איכות — רק בפחות כסף.</p>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" on-click="{{ goActivate }}" hint-size="auto,52px">קבלת הדרן קארד</x-import>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Footer" logo-src="assets/logo-lockup-on-dark.svg" columns="{{ footerCols }}" note="מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש." hint-size="100%,280px"></x-import>
+  <div style="background:var(--color-canvas-ink);border-top:1px solid rgba(241,236,227,.12);padding:18px clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sand-400)">
+      <span>© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.</span>
+      <span>מופעל על ידי קהילות קארד</span>
+    </div>
+  </div>
+
+  <div style="position:fixed;inset-block-end:20px;inset-inline-start:20px;z-index:60;display:flex;align-items:center;gap:8px;background:var(--color-canvas);border:1px solid var(--color-border);border-radius:9999px;padding:6px;box-shadow:var(--shadow-overlay)">
+    <button onClick="{{ setA }}" style="{{ tabAStyle }}">כיוון א׳ · הכרטיס והמספר</button>
+    <button onClick="{{ setB }}" style="{{ tabBStyle }}">כיוון ב׳ · ההוכחה בסל</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;direction&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a&quot;,&quot;b&quot;],&quot;default&quot;:&quot;a&quot;,&quot;tsType&quot;:&quot;'a'|'b'&quot;,&quot;section&quot;:&quot;דף הבית&quot;}}">
+class Component extends DCLogic {
+  state = { dir: null, spend: 4200 };
+
+  get dir() { return this.state.dir || this.props.direction || 'a'; }
+
+  pill(on) {
+    return {
+      border: 'none', cursor: 'pointer', borderRadius: 9999, padding: '9px 16px',
+      fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-ui)',
+      background: on ? 'var(--color-primary)' : 'transparent',
+      color: on ? 'var(--color-ink)' : 'var(--color-body)',
+      transition: 'background 120ms cubic-bezier(.2,.8,.2,1)',
+    };
+  }
+
+  renderVals() {
+    const spend = this.state.spend;
+    const monthly = Math.round(spend * 0.05);
+    const fmt = (n) => '₪' + n.toLocaleString('en-US');
+    const nav = (href) => () => { window.location.href = href; };
+    return {
+      links: [
+        { label: 'דף הבית', href: 'Home.dc.html' },
+        { label: 'בתי העסק', href: 'Benefits.dc.html' },
+        { label: 'הפעלת כרטיס', href: 'Activate.dc.html' },
+        { label: 'בדיקת יתרה', href: 'Balance.dc.html' },
+        { label: 'לבתי עסק', href: 'Merchants.dc.html' },
+        { label: 'שאלות ותשובות', href: 'Faq.dc.html' },
+        { label: 'אזור אישי', href: 'Member.dc.html' },
+      ],
+      footerCols: [
+        { title: 'המועדון', links: ['אודות הדרן קלאב', 'איך זה עובד', 'שאלות ותשובות', 'תקנון המועדון'] },
+        { title: 'הכרטיס', links: ['הפעלת כרטיס', 'בדיקת יתרה', 'אזור אישי', 'אובדן או גניבה'] },
+        { title: 'בתי עסק', links: ['רשימת בתי העסק', 'הצטרפות עסקים', 'אזור בעלי עסקים', 'יצירת קשר'] },
+      ],
+      isA: this.dir === 'a',
+      isB: this.dir === 'b',
+      setA: () => this.setState({ dir: 'a' }),
+      setB: () => this.setState({ dir: 'b' }),
+      tabAStyle: this.pill(this.dir === 'a'),
+      tabBStyle: this.pill(this.dir === 'b'),
+      cardW: 360,
+      cardWSm: 380,
+      spend,
+      spendFmt: fmt(spend),
+      monthly,
+      monthlyFmt: fmt(monthly),
+      yearlyFmt: fmt(monthly * 12),
+      meterMax: 750,
+      onSpend: (e) => this.setState({ spend: Number(e.target.value) }),
+      goActivate: nav('Activate.dc.html'),
+      goBenefits: nav('Benefits.dc.html'),
+      goMember: nav('Member.dc.html'),
+      goMerchants: nav('Merchants.dc.html'),
+    };
+  }
+}
+</script>
+</body>
+</html>

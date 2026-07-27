@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/styles.css">
+  <script src="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    img, svg { max-width: 100% }
+    @media (max-width: 880px) {
+      footer > div { grid-template-columns: 1fr 1fr !important; gap: 24px !important }
+    }
+    @media (max-width: 560px) {
+      footer > div { grid-template-columns: 1fr !important; gap: 22px !important }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--color-canvas);min-height:100vh">
+  <dc-import name="SiteNav" logo-src="assets/logo-lockup.svg" links="{{ links }}" active="בתי העסק" cta="קבלת כרטיס" on-cta-click="{{ goActivate }}" hint-size="100%,86px"></dc-import>
+
+  <div style="background:var(--color-canvas-soft);padding:clamp(32px,6.2vw,56px) clamp(16px,4vw,24px) 40px">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">רשימת ההטבות</span>
+        <h1 style="font-size:clamp(30px,7vw,52px);margin:0;line-height:1.06">בתי העסק השותפים</h1>
+        <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0">בכל בית עסק ברשימה הדרן קארד מוריד 5% מהחשבון בקופה — הנחה קבועה, בכל קנייה, בלי מינימום ובלי תוקף.</p>
+      </div>
+      <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;align-items:baseline;gap:8px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px)">312</span><span style="color:var(--color-body)">בתי עסק</span></div>
+        <div style="width:1px;height:28px;background:var(--color-border)"></div>
+        <div style="display:flex;align-items:baseline;gap:8px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px)">7</span><span style="color:var(--color-body)">קטגוריות</span></div>
+        <div style="width:1px;height:28px;background:var(--color-border)"></div>
+        <div style="display:flex;align-items:baseline;gap:8px"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px)">5%</span><span style="color:var(--color-body)">בכל אחד מהם</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--color-canvas);border-bottom:1px solid var(--color-border);padding:24px;position:sticky;top:86px;z-index:20">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:16px;align-items:end">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" icon="search" placeholder="חיפוש לפי קטגוריה או עיר" value="{{ query }}" on-change="{{ onQuery }}" hint-size="100%,48px"></x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Select" options="{{ cityOptions }}" value="{{ city }}" on-change="{{ onCity }}" hint-size="100%,48px"></x-import>
+        <div style="display:flex;align-items:center;gap:10px;color:var(--color-mute);font-size:14px;justify-content:flex-end">
+          <span class="tnum" style="font-weight:700;color:var(--color-ink)">{{ resultCount }}</span>
+          <span>בתי עסק מוצגים</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ cats }}" as="cat" hint-placeholder-count="7">
+          <button onClick="{{ cat.onClick }}" style="{{ cat.style }}">{{ cat.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--color-canvas);padding:clamp(24px,4.4vw,40px) clamp(16px,4vw,24px) 64px">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:24px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:16px">
+        <sc-for list="{{ shown }}" as="p" hint-placeholder-count="12">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="hairline" padding="18px" interactive="{{ true }}" hint-size="100%,196px">
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="background:var(--color-canvas-warm);border-radius:12px;padding:10px">
+                <image-slot id="{{ p.slot }}" style="width:100%;height:72px" shape="rounded" radius="8" placeholder="לוגו בית העסק"></image-slot>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <b style="font-size:clamp(15px,2.2vw,17px)">{{ p.category }}</b>
+                <span style="font-size:14px;color:var(--color-mute)">{{ p.city }}</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--color-border)">
+                <span style="font-size:13px;color:var(--color-mute)">{{ p.branches }}</span>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="gold" hint-size="auto,26px">5% הנחה</x-import>
+              </div>
+            </div>
+          </x-import>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.EmptyState" icon="store" title="לא נמצאו בתי עסק" description="נסו לנקות את הסינון או לחפש קטגוריה אחרת. הרשימה מתעדכנת מדי חודש עם בתי עסק חדשים." hint-size="100%,240px"></x-import>
+      </sc-if>
+
+      <span style="font-size:12px;color:var(--color-mute)">הרשימה להמחשה. ההנחה בכפוף לתקנון המועדון ולתנאי בית העסק. ט.ל.ח.</span>
+    </div>
+  </div>
+
+  <div style="background:var(--color-canvas-soft);padding:clamp(32px,6.2vw,56px) clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto">
+      <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,40px)" hint-size="100%,170px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <h3 style="font-size:clamp(23px,4.5vw,32px);margin:0">חסר לכם בית עסק ברשימה?</h3>
+            <p style="margin:0;font-size:clamp(15px,2.2vw,17px);color:var(--color-body)">ספרו לנו איפה אתם קונים, או הפנו את בעל העסק להצטרפות למועדון.</p>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" on-click="{{ goMerchants }}" hint-size="auto,48px">הצטרפות בתי עסק</x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="tertiary" on-click="{{ goFaq }}" hint-size="auto,48px">שאלות ותשובות</x-import>
+          </div>
+        </div>
+      </x-import>
+    </div>
+  </div>
+
+  <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Footer" logo-src="assets/logo-lockup-on-dark.svg" columns="{{ footerCols }}" note="מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש." hint-size="100%,280px"></x-import>
+  <div style="background:var(--color-canvas-ink);border-top:1px solid rgba(241,236,227,.12);padding:18px clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sand-400)">
+      <span>© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.</span>
+      <span>מופעל על ידי קהילות קארד</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PARTNERS = [
+  { category: 'רשת מזון ומכולת', city: 'בני ברק', branches: '4 סניפים' },
+  { category: 'רשת מזון ומכולת', city: 'ירושלים', branches: '7 סניפים' },
+  { category: 'רשת מזון ומכולת', city: 'בית שמש', branches: '2 סניפים' },
+  { category: 'מכולת שכונתית', city: 'מודיעין עילית', branches: 'סניף אחד' },
+  { category: 'בשר, עוף ודגים', city: 'בני ברק', branches: '3 סניפים' },
+  { category: 'בשר, עוף ודגים', city: 'ירושלים', branches: 'סניף אחד' },
+  { category: 'ביגוד והנעלה', city: 'בני ברק', branches: '2 סניפים' },
+  { category: 'ביגוד והנעלה', city: 'אלעד', branches: 'סניף אחד' },
+  { category: 'ספרי קודש ויודאיקה', city: 'ירושלים', branches: '3 סניפים' },
+  { category: 'ספרי קודש ויודאיקה', city: 'בני ברק', branches: 'סניף אחד' },
+  { category: 'כלי בית וריהוט', city: 'בית שמש', branches: '2 סניפים' },
+  { category: 'כלי בית וריהוט', city: 'ביתר עילית', branches: 'סניף אחד' },
+  { category: 'צעצועים ומתנות', city: 'בני ברק', branches: 'סניף אחד' },
+  { category: 'פארמה וטיפוח', city: 'ירושלים', branches: '4 סניפים' },
+  { category: 'אופטיקה', city: 'מודיעין עילית', branches: 'סניף אחד' },
+  { category: 'צרכי כתיבה ומשרד', city: 'אלעד', branches: '2 סניפים' },
+];
+
+const CATS = ['הכל', 'רשת מזון ומכולת', 'בשר, עוף ודגים', 'ביגוד והנעלה', 'ספרי קודש ויודאיקה', 'כלי בית וריהוט', 'פארמה וטיפוח'];
+
+class Component extends DCLogic {
+  state = { query: '', city: 'all', cat: 'הכל' };
+
+  chip(on) {
+    return {
+      cursor: 'pointer', borderRadius: 9999, padding: '9px 16px', fontSize: 14, fontWeight: 600,
+      fontFamily: 'var(--font-ui)', transition: 'all 120ms cubic-bezier(.2,.8,.2,1)',
+      border: on ? '1px solid var(--color-ink)' : '1px solid var(--color-border)',
+      background: on ? 'var(--color-ink)' : 'var(--color-canvas)',
+      color: on ? 'var(--color-primary)' : 'var(--color-body)',
+    };
+  }
+
+  renderVals() {
+    const { query, city, cat } = this.state;
+    const q = query.trim();
+    const shown = PARTNERS
+      .map((p, i) => Object.assign({}, p, { slot: 'partner-' + (i + 1) }))
+      .filter((p) => (cat === 'הכל' || p.category === cat)
+        && (city === 'all' || p.city === city)
+        && (!q || p.category.includes(q) || p.city.includes(q)));
+    const nav = (href) => () => { window.location.href = href; };
+    return {
+      links: [
+        { label: 'דף הבית', href: 'Home.dc.html' },
+        { label: 'בתי העסק', href: 'Benefits.dc.html' },
+        { label: 'הפעלת כרטיס', href: 'Activate.dc.html' },
+        { label: 'בדיקת יתרה', href: 'Balance.dc.html' },
+        { label: 'לבתי עסק', href: 'Merchants.dc.html' },
+        { label: 'שאלות ותשובות', href: 'Faq.dc.html' },
+        { label: 'אזור אישי', href: 'Member.dc.html' },
+      ],
+      footerCols: [
+        { title: 'המועדון', links: ['אודות הדרן קלאב', 'איך זה עובד', 'שאלות ותשובות', 'תקנון המועדון'] },
+        { title: 'הכרטיס', links: ['הפעלת כרטיס', 'בדיקת יתרה', 'אזור אישי', 'אובדן או גניבה'] },
+        { title: 'בתי עסק', links: ['רשימת בתי העסק', 'הצטרפות עסקים', 'אזור בעלי עסקים', 'יצירת קשר'] },
+      ],
+      query,
+      city,
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onCity: (e) => this.setState({ city: e.target.value }),
+      cityOptions: [
+        { value: 'all', label: 'כל הערים' },
+        { value: 'בני ברק', label: 'בני ברק' },
+        { value: 'ירושלים', label: 'ירושלים' },
+        { value: 'בית שמש', label: 'בית שמש' },
+        { value: 'מודיעין עילית', label: 'מודיעין עילית' },
+        { value: 'אלעד', label: 'אלעד' },
+        { value: 'ביתר עילית', label: 'ביתר עילית' },
+      ],
+      cats: CATS.map((c) => ({ label: c, style: this.chip(cat === c), onClick: () => this.setState({ cat: c }) })),
+      shown,
+      resultCount: shown.length,
+      isEmpty: shown.length === 0,
+      goActivate: nav('Activate.dc.html'),
+      goMerchants: nav('Merchants.dc.html'),
+      goFaq: nav('Faq.dc.html'),
+    };
+  }
+}
+</script>
+</body>
+</html>

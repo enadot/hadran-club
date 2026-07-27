@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/styles.css">
+  <script src="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/_ds_bundle.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    img, svg { max-width: 100% }
+    @media (max-width: 880px) {
+      footer > div { grid-template-columns: 1fr 1fr !important; gap: 24px !important }
+    }
+    @media (max-width: 560px) {
+      footer > div { grid-template-columns: 1fr !important; gap: 22px !important }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--color-canvas);min-height:100vh">
+  <dc-import name="SiteNav" logo-src="assets/logo-lockup.svg" links="{{ links }}" active="לבתי עסק" cta="לטופס ההצטרפות" on-cta-click="{{ scrollForm }}" hint-size="100%,86px"></dc-import>
+
+  <div style="background:var(--color-canvas-ink);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:48px;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:22px;align-items:flex-start">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="gold" icon="store" hint-size="auto,28px">הצטרפות בתי עסק</x-import>
+        <h1 style="font-size:clamp(32px,7.5vw,56px);margin:0;line-height:1.06;color:var(--color-primary)">הקהילה כבר קונה.<br>שווה שתקנה אצלכם</h1>
+        <p style="font-size:clamp(16px,2.4vw,19px);line-height:1.6;color:var(--sand-300);margin:0;max-width:520px">חברי הדרן קלאב מחפשים איפה הכרטיס עובד לפני שהם יוצאים לקנות. הצטרפות למועדון מכניסה את העסק שלכם לרשימה הזו — בלי עלות הקמה ובלי מערכת חדשה בקופה.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" on-click="{{ scrollForm }}" hint-size="auto,52px">רוצים לשמוע עוד</x-import>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" variant="ghost" on-click="{{ goBenefits }}" hint-size="auto,52px">לרשימת בתי העסק</x-import>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:20px">
+        <div style="display:flex;flex-direction:column;gap:6px;padding:24px;background:rgba(241,236,227,.06);border-radius:var(--radius-xl)"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(27px,6vw,44px);color:var(--color-primary);line-height:1">24,800</span><b style="color:var(--sand-200);font-size:15px">משפחות במועדון</b></div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:24px;background:rgba(241,236,227,.06);border-radius:var(--radius-xl)"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(27px,6vw,44px);color:var(--color-primary);line-height:1">312</span><b style="color:var(--sand-200);font-size:15px">בתי עסק שותפים</b></div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:24px;background:rgba(241,236,227,.06);border-radius:var(--radius-xl)"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(27px,6vw,44px);color:var(--color-primary);line-height:1">₪1,240</span><b style="color:var(--sand-200);font-size:15px">קנייה חודשית ממוצעת למשפחה</b></div>
+        <div style="display:flex;flex-direction:column;gap:6px;padding:24px;background:rgba(241,236,227,.06);border-radius:var(--radius-xl)"><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(27px,6vw,44px);color:var(--color-primary);line-height:1">0</span><b style="color:var(--sand-200);font-size:15px">עלות הקמה והצטרפות</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:700px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">מה העסק מקבל</span>
+        <h2 style="font-size:clamp(27px,6vw,44px);margin:0">שותפות, לא פרסום</h2>
+        <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0">ההנחה שאתם נותנים חוזרת אליכם כתנועת לקוחות קבועה — וכשהמועדון ממליץ, הקהילה מקשיבה.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr));gap:24px">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,28px)" hint-size="100%,220px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="users" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+            <b style="font-size:clamp(17px,2.5vw,20px)">קהל ממוקד ואיכותי</b>
+            <span style="color:var(--color-body);line-height:1.6">קהילת הדרן והמגזר החרדי — לקוחות נאמנים, סל קנייה גדול וקנייה חוזרת בתדירות גבוהה.</span>
+          </div>
+        </x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,28px)" hint-size="100%,220px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="receipt" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+            <b style="font-size:clamp(17px,2.5vw,20px)">בלי מערכת חדשה בקופה</b>
+            <span style="color:var(--color-body);line-height:1.6">ההנחה מוגדרת פעם אחת מול קהילות קארד. הקופאי רק מזהה את הכרטיס — וזה הכל.</span>
+          </div>
+        </x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,28px)" hint-size="100%,220px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="badge-percent" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+            <b style="font-size:clamp(17px,2.5vw,20px)">חשיפה בכל נקודות המועדון</b>
+            <span style="color:var(--color-body);line-height:1.6">העסק מופיע ברשימת בתי העסק באתר, באזור האישי של החברים ובעדכונים החודשיים.</span>
+          </div>
+        </x-import>
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,28px)" hint-size="100%,220px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="shield-check" size="{{ 28 }}" color="var(--color-primary-deep)" hint-size="28px,28px"></x-import>
+            <b style="font-size:clamp(17px,2.5vw,20px)">דוחות מימוש שקופים</b>
+            <span style="color:var(--color-body);line-height:1.6">באזור בעלי העסקים רואים כמה עסקאות מומשו, באילו סניפים ובאיזה היקף.</span>
+          </div>
+        </x-import>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--color-canvas-soft);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;flex-direction:column;gap:32px">
+      <h2 style="font-size:clamp(27px,6vw,44px);margin:0">מהפנייה ועד ההנחה הראשונה</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:0;border:1px solid var(--color-border);border-radius:var(--radius-xl);overflow:hidden;background:var(--color-canvas)">
+        <div style="padding:28px;display:flex;flex-direction:column;gap:10px;border-inline-end:1px solid var(--color-border)">
+          <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-primary-deep);line-height:1">1</span>
+          <b style="font-size:clamp(17px,2.5vw,20px)">שיחה קצרה</b><span style="color:var(--color-body);line-height:1.6">ממלאים את הטופס, ונציג המועדון חוזר בתוך יום עסקים אחד.</span>
+        </div>
+        <div style="padding:28px;display:flex;flex-direction:column;gap:10px;border-inline-end:1px solid var(--color-border)">
+          <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-primary-deep);line-height:1">2</span>
+          <b style="font-size:clamp(17px,2.5vw,20px)">הסכם והגדרה</b><span style="color:var(--color-body);line-height:1.6">חותמים על הסכם פשוט, וההנחה מוגדרת במערכת קהילות קארד לכל הסניפים.</span>
+        </div>
+        <div style="padding:28px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:var(--font-display);font-weight:800;font-size:clamp(23px,4.5vw,32px);color:var(--color-primary-deep);line-height:1">3</span>
+          <b style="font-size:clamp(17px,2.5vw,20px)">עולים לאוויר</b><span style="color:var(--color-body);line-height:1.6">העסק מתפרסם ברשימה, והחברים מתחילים להציג את הכרטיס בקופה.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="form" style="background:var(--color-canvas);padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:48px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">טופס הצטרפות</span>
+        <h2 style="font-size:clamp(27px,6vw,44px);margin:0">נשמח לשמוע על העסק</h2>
+        <p style="font-size:clamp(16px,2.3vw,18px);color:var(--color-body);margin:0">משאירים פרטים ונציג המועדון חוזר אליכם בתוך יום עסקים אחד. אין עלות הצטרפות ואין התחייבות לתקופה.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+          <div style="display:flex;gap:10px;align-items:center;color:var(--color-body);font-size:15px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="phone" color="var(--color-primary-deep)" hint-size="20px,20px"></x-import>
+            <span class="tnum" style="direction:ltr">03-000-0000</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;color:var(--color-body);font-size:15px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="mail" color="var(--color-primary-deep)" hint-size="20px,20px"></x-import>
+            <span style="direction:ltr">business@hadranclub.co.il</span>
+          </div>
+        </div>
+      </div>
+
+      <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,32px)" hint-size="100%,520px">
+        <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" label="שם בית העסק" value="{{ f.business }}" on-change="{{ setBusiness }}" error="{{ e.business }}" hint-size="100%,76px"></x-import>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:16px">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Select" label="תחום" options="{{ catOptions }}" value="{{ f.category }}" on-change="{{ setCategory }}" hint-size="100%,76px"></x-import>
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Select" label="מספר סניפים" options="{{ branchOptions }}" value="{{ f.branches }}" on-change="{{ setBranches }}" hint-size="100%,76px"></x-import>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:16px">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" label="איש קשר" value="{{ f.contact }}" on-change="{{ setContact }}" error="{{ e.contact }}" hint-size="100%,76px"></x-import>
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" label="טלפון" placeholder="050-0000000" value="{{ f.phone }}" on-change="{{ setPhone }}" error="{{ e.phone }}" hint-size="100%,76px"></x-import>
+            </div>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" label="דואר אלקטרוני" value="{{ f.email }}" on-change="{{ setEmail }}" error="{{ e.email }}" hint-size="100%,76px"></x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Checkbox" label="אני מאשר/ת שנציג המועדון יחזור אליי בטלפון או בדואר אלקטרוני" checked="{{ f.terms }}" on-change="{{ setTerms }}" hint-size="100%,44px"></x-import>
+            <sc-if value="{{ termsError }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:14px;color:var(--color-negative);font-weight:600">יש לאשר את יצירת הקשר כדי לשלוח את הטופס</span>
+            </sc-if>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" full-width="{{ true }}" on-click="{{ submit }}" hint-size="100%,52px">שליחת הפרטים</x-import>
+            <span style="font-size:12px;color:var(--color-mute)">הפרטים משמשים ליצירת קשר בנוגע להצטרפות בלבד. בכפוף לתקנון המועדון. ט.ל.ח.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:18px;align-items:flex-start">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="positive" icon="check" hint-size="auto,28px">הפרטים נשלחו</x-import>
+            <b style="font-family:var(--font-display);font-size:clamp(23px,4.5vw,32px);line-height:1.15">תודה, נחזור אליכם מהר</b>
+            <p style="margin:0;font-size:clamp(15px,2.2vw,17px);color:var(--color-body);line-height:1.6">נציג המועדון יחזור אל {{ contactName }} בתוך יום עסקים אחד לשיחה קצרה על תנאי ההצטרפות ועל הגדרת ההנחה בקופה.</p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="tertiary" on-click="{{ reset }}" hint-size="auto,48px">שליחת פנייה נוספת</x-import>
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="ghost" on-click="{{ goBenefits }}" hint-size="auto,48px">לרשימת בתי העסק</x-import>
+            </div>
+          </div>
+        </sc-if>
+      </x-import>
+    </div>
+  </div>
+
+  <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Footer" logo-src="assets/logo-lockup-on-dark.svg" columns="{{ footerCols }}" note="מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש." hint-size="100%,280px"></x-import>
+  <div style="background:var(--color-canvas-ink);border-top:1px solid rgba(241,236,227,.12);padding:18px clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sand-400)">
+      <span>© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.</span>
+      <span>מופעל על ידי קהילות קארד</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    view: 'form', errors: {}, termsError: false,
+    f: { business: '', category: 'רשת מזון ומכולת', branches: '1', contact: '', phone: '', email: '', terms: false },
+  };
+
+  set(k) { return (e) => { const v = e.target.type === 'checkbox' ? e.target.checked : e.target.value; this.setState((s) => ({ f: Object.assign({}, s.f, { [k]: v }), errors: Object.assign({}, s.errors, { [k]: null }) })); }; }
+
+  submit() {
+    const f = this.state.f; const e = {};
+    if (f.business.trim().length < 2) e.business = 'שדה חובה';
+    if (f.contact.trim().length < 2) e.contact = 'שדה חובה';
+    if (f.phone.replace(/\D/g, '').length < 9) e.phone = 'מספר טלפון';
+    if (!/.+@.+\..+/.test(f.email)) e.email = 'כתובת דואר אלקטרוני תקינה';
+    if (Object.keys(e).length) { this.setState({ errors: e }); return; }
+    if (!f.terms) { this.setState({ termsError: true }); return; }
+    this.setState({ view: 'done', errors: {}, termsError: false });
+  }
+
+  renderVals() {
+    const nav = (href) => () => { window.location.href = href; };
+    return {
+      links: [
+        { label: 'דף הבית', href: 'Home.dc.html' },
+        { label: 'בתי העסק', href: 'Benefits.dc.html' },
+        { label: 'הפעלת כרטיס', href: 'Activate.dc.html' },
+        { label: 'בדיקת יתרה', href: 'Balance.dc.html' },
+        { label: 'לבתי עסק', href: 'Merchants.dc.html' },
+        { label: 'שאלות ותשובות', href: 'Faq.dc.html' },
+        { label: 'אזור אישי', href: 'Member.dc.html' },
+      ],
+      footerCols: [
+        { title: 'המועדון', links: ['אודות הדרן קלאב', 'איך זה עובד', 'שאלות ותשובות', 'תקנון המועדון'] },
+        { title: 'הכרטיס', links: ['הפעלת כרטיס', 'בדיקת יתרה', 'אזור אישי', 'אובדן או גניבה'] },
+        { title: 'בתי עסק', links: ['רשימת בתי העסק', 'הצטרפות עסקים', 'אזור בעלי עסקים', 'יצירת קשר'] },
+      ],
+      f: this.state.f, e: this.state.errors, termsError: this.state.termsError,
+      isForm: this.state.view === 'form', isDone: this.state.view === 'done',
+      contactName: this.state.f.contact.trim() || 'איש הקשר',
+      catOptions: ['רשת מזון ומכולת', 'בשר, עוף ודגים', 'ביגוד והנעלה', 'ספרי קודש ויודאיקה', 'כלי בית וריהוט', 'פארמה וטיפוח', 'אחר'],
+      branchOptions: [{ value: '1', label: 'סניף אחד' }, { value: '2-4', label: '2–4 סניפים' }, { value: '5-10', label: '5–10 סניפים' }, { value: '10+', label: 'יותר מ-10 סניפים' }],
+      setBusiness: this.set('business'), setCategory: this.set('category'), setBranches: this.set('branches'),
+      setContact: this.set('contact'), setPhone: this.set('phone'), setEmail: this.set('email'), setTerms: this.set('terms'),
+      submit: () => this.submit(),
+      reset: () => this.setState({ view: 'form', f: { business: '', category: 'רשת מזון ומכולת', branches: '1', contact: '', phone: '', email: '', terms: false } }),
+      scrollForm: () => { const el = document.getElementById('form'); if (el) window.scrollTo({ top: el.offsetTop - 90, behavior: 'smooth' }); },
+      goBenefits: nav('Benefits.dc.html'),
+    };
+  }
+}
+</script>
+</body>
+</html>

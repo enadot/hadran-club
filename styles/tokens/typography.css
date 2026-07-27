@@ -1,0 +1,26 @@
+/* Type scale. Hebrew has no descenders/ascenders to speak of — leading runs
+   tighter than a latin scale at display sizes and slightly looser at body sizes. */
+:root{
+  --text-display-mega:104px;  --lh-display-mega:1.02; /* @kind other */
+  --text-display-xxl:80px;    --lh-display-xxl:1.04; /* @kind other */
+  --text-display-xl:64px;     --lh-display-xl:1.06; /* @kind other */
+  --text-display-lg:48px;     --lh-display-lg:1.1; /* @kind other */
+  --text-display-md:40px;     --lh-display-md:1.12; /* @kind other */
+  --text-display-sm:32px;     --lh-display-sm:1.2; /* @kind other */
+  --text-display-xs:24px;     --lh-display-xs:1.3; /* @kind other */
+  --text-body-lg:20px;        --lh-body-lg:1.6; /* @kind other */
+  --text-body-md:16px;        --lh-body-md:1.6; /* @kind other */
+  --text-body-sm:14px;        --lh-body-sm:1.5; /* @kind other */
+  --text-caption:12px;        --lh-caption:1.4; /* @kind other */
+  --text-button:16px;         --lh-button:1.5; /* @kind other */
+
+  --weight-regular:400; /* @kind other */
+  --weight-medium:500; /* @kind other */
+  --weight-semibold:600; /* @kind other */
+  --weight-bold:700; /* @kind other */
+  --weight-black:800; /* @kind other */
+
+  --tracking-display:-0.01em; /* @kind other */
+  --tracking-normal:0; /* @kind other */
+  --tracking-wide:0.08em; /* @kind other */   /* eyebrows / mono-caps labels */
+}

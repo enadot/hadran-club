@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/styles.css">
+  <script src="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/_ds_bundle.js"></script>
+  <style>
+    @keyframes hcRise { from { opacity: 0; transform: translateY(-10px) } to { opacity: 1; transform: none } }
+    @keyframes hcFade { from { opacity: 0 } to { opacity: 1 } }
+    .hc-scroll::-webkit-scrollbar { width: 10px }
+    .hc-scroll::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; border: 3px solid var(--color-canvas) }
+    @media (prefers-reduced-motion: reduce) { .hc-modal, .hc-scrim { animation: none !important } }
+  </style>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    img, svg { max-width: 100% }
+    @media (max-width: 880px) {
+      footer > div { grid-template-columns: 1fr 1fr !important; gap: 24px !important }
+    }
+    @media (max-width: 560px) {
+      footer > div { grid-template-columns: 1fr !important; gap: 22px !important }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--color-canvas-soft);min-height:100vh;position:relative">
+  <dc-import name="SiteNav" logo-src="assets/logo-lockup.svg" links="{{ links }}" active="בתי העסק" cta="חיפוש באתר" on-cta-click="{{ open }}" hint-size="100%,86px"></dc-import>
+
+  <div style="max-width:var(--container-max);margin:0 auto;padding:clamp(37px,7.1vw,64px) clamp(16px,4vw,24px);display:flex;flex-direction:column;gap:24px">
+    <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">חיפוש באתר</span>
+    <h1 style="font-size:clamp(30px,7vw,52px);margin:0;line-height:1.06;max-width:620px">מוצאים בית עסק<br>בשלוש אותיות</h1>
+    <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0;max-width:620px">החיפוש מאתר בתי עסק שותפים, עמודים באתר ותשובות נפוצות — מכל עמוד במועדון, בלי לעזוב את המקום.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" icon="search" on-click="{{ open }}" hint-size="auto,52px">פתיחת החיפוש</x-import>
+      <span style="font-size:14px;color:var(--color-mute)">או הקישו <b style="font-family:var(--font-ui);color:var(--color-ink)">/</b> מכל מקום בעמוד</span>
+    </div>
+  </div>
+
+  <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ true }}">
+    <div class="hc-scrim" onClick="{{ close }}" style="position:fixed;inset:0;background:rgba(18,16,11,.45);z-index:60;display:flex;justify-content:center;align-items:flex-start;padding:clamp(51px,9.8vw,88px) clamp(16px,4vw,24px) 24px;animation:hcFade 200ms cubic-bezier(.2,.8,.2,1)">
+      <div class="hc-modal" role="dialog" aria-modal="true" aria-label="חיפוש באתר" onClick="{{ stop }}" style="width:100%;max-width:660px;background:var(--color-canvas);border-radius:var(--radius-xl);box-shadow:var(--shadow-overlay);display:flex;flex-direction:column;overflow:hidden;animation:hcRise 200ms cubic-bezier(.2,.8,.2,1)">
+
+        <div style="display:flex;align-items:center;gap:14px;padding:20px clamp(16px,4vw,24px);border-bottom:1px solid var(--color-border)">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="search" size="{{ 22 }}" color="var(--color-primary-deep)" hint-size="22px,22px"></x-import>
+          <input ref="{{ inputRef }}" value="{{ q }}" onChange="{{ onQuery }}" placeholder="שם בית עסק, קטגוריה, עיר או שאלה" aria-label="חיפוש" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-family:var(--font-ui);font-size:clamp(17px,2.5vw,20px);font-weight:500;color:var(--color-ink)">
+          <sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.IconButton" icon="x" label="ניקוי החיפוש" variant="ghost" size="sm" on-click="{{ clear }}" hint-size="36px,36px"></x-import>
+          </sc-if>
+          <span style="font-size:12px;font-weight:600;color:var(--color-mute);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:4px 8px;white-space:nowrap">Esc</span>
+        </div>
+
+        <div style="display:flex;gap:8px;padding:14px clamp(16px,4vw,24px);overflow-x:auto;border-bottom:1px solid var(--color-border)">
+          <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="5">
+            <button onClick="{{ chip.onClick }}" style="flex:none;font-family:var(--font-ui);font-size:14px;font-weight:600;padding:8px 14px;border-radius:9999px;cursor:pointer;transition:var(--transition-base);border:1px solid {{ chip.border }};background:{{ chip.bg }};color:{{ chip.fg }}">{{ chip.label }}</button>
+          </sc-for>
+        </div>
+
+        <div class="hc-scroll" style="max-height:46vh;min-height:200px;overflow-y:auto;padding:8px 0">
+          <sc-if value="{{ showRecent }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:10px clamp(16px,4vw,24px) 4px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+              <span style="font-size:12px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-mute)">חיפושים אחרונים</span>
+            </div>
+            <sc-for list="{{ recent }}" as="r" hint-placeholder-count="3">
+              <button onClick="{{ r.onClick }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px clamp(16px,4vw,24px);border:none;background:transparent;cursor:pointer;font-family:var(--font-ui);font-size:16px;color:var(--color-ink);text-align:start" style-hover="background:var(--color-canvas-soft)">
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="history" size="{{ 18 }}" color="var(--color-mute)" hint-size="18px,18px"></x-import>
+                <span>{{ r.label }}</span>
+              </button>
+            </sc-for>
+          </sc-if>
+
+          <sc-for list="{{ groups }}" as="g" hint-placeholder-count="2">
+            <div style="padding:14px clamp(16px,4vw,24px) 6px;display:flex;align-items:center;gap:10px">
+              <span style="font-size:12px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-mute)">{{ g.title }}</span>
+              <span class="tnum" style="font-size:12px;font-weight:600;color:var(--color-mute)">{{ g.count }}</span>
+            </div>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <a href="{{ it.href }}" onMouseEnter="{{ it.onHover }}" style="display:flex;align-items:center;gap:14px;padding:12px clamp(16px,4vw,24px);text-decoration:none;color:var(--color-ink);border-inline-start:3px solid {{ it.bar }};background:{{ it.bg }}">
+                <span style="flex:none;width:44px;height:44px;border-radius:var(--radius-md);background:var(--color-canvas-soft);border:1px solid var(--color-border);display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--color-primary-deep)">{{ it.initials }}</span>
+                <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+                  <b style="font-size:clamp(15px,2.2vw,17px);font-weight:700;line-height:1.25">{{ it.name }}</b>
+                  <span style="font-size:14px;color:var(--color-body)">{{ it.meta }}</span>
+                </span>
+                <sc-if value="{{ it.showDiscount }}" hint-placeholder-val="{{ true }}">
+                  <span class="tnum" style="flex:none;font-size:14px;font-weight:700;color:var(--color-positive)">5% בקופה</span>
+                </sc-if>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="chevron-left" size="{{ 18 }}" color="var(--color-mute)" hint-size="18px,18px"></x-import>
+              </a>
+            </sc-for>
+          </sc-for>
+
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:clamp(24px,3.6vw,32px) clamp(16px,4vw,24px);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+              <span style="width:56px;height:56px;border-radius:9999px;background:var(--gold-50);display:grid;place-items:center">
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="store" size="{{ 26 }}" color="var(--color-primary-deep)" hint-size="26px,26px"></x-import>
+              </span>
+              <b style="font-family:var(--font-display);font-size:clamp(18px,2.8vw,22px)">לא מצאנו התאמה ל״{{ q }}״</b>
+              <p style="margin:0;font-size:16px;color:var(--color-body);max-width:380px;line-height:1.6">אפשר לחפש לפי קטגוריה או עיר, או לעבור לרשימת בתי העסק המלאה ולסנן משם.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="tertiary" as="a" href="Benefits.dc.html" hint-size="auto,44px">לרשימת בתי העסק</x-import>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="ghost" as="a" href="Merchants.dc.html" hint-size="auto,44px">הצטרפות בית עסק</x-import>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(16px,4vw,24px);background:var(--color-canvas-soft);border-top:1px solid var(--color-border)">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--color-mute)">
+            <span style="display:flex;gap:6px;align-items:center"><b style="font-weight:700;color:var(--color-ink)">↑ ↓</b> ניווט</span>
+            <span style="display:flex;gap:6px;align-items:center"><b style="font-weight:700;color:var(--color-ink)">Enter</b> פתיחה</span>
+          </div>
+          <a href="Benefits.dc.html" style="font-size:13px;font-weight:700;color:var(--color-primary-deep);text-decoration:none">כל 312 בתי העסק</a>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showRecent&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;חיפוש&quot;}}">
+const PARTNERS = [
+  { name: 'שפע ברכת השם', category: 'רשת מזון ומכולת', city: 'ירושלים' },
+  { name: 'מכולת הבית', category: 'רשת מזון ומכולת', city: 'בני ברק' },
+  { name: 'קצביית הכשרות', category: 'בשר, עוף ודגים', city: 'בני ברק' },
+  { name: 'דגי הצפון', category: 'בשר, עוף ודגים', city: 'חיפה' },
+  { name: 'הלבשה למשפחה', category: 'ביגוד והנעלה', city: 'ירושלים' },
+  { name: 'נעלי הדר', category: 'ביגוד והנעלה', city: 'אלעד' },
+  { name: 'אוצר הספרים', category: 'ספרי קודש ויודאיקה', city: 'ירושלים' },
+  { name: 'יודאיקה מהדרין', category: 'ספרי קודש ויודאיקה', city: 'בית שמש' },
+  { name: 'כלי בית שלמה', category: 'כלי בית וריהוט', city: 'מודיעין עילית' },
+  { name: 'פארם משפחה', category: 'פארמה וטיפוח', city: 'בני ברק' },
+];
+const PAGES = [
+  { name: 'הפעלת הכרטיס', meta: 'הפעלה של כרטיס שהתקבל או הזמנת כרטיס חדש', href: 'Activate.dc.html', kw: 'הפעלה כרטיס חדש הזמנה' },
+  { name: 'בדיקת יתרה', meta: 'יתרה לשימוש, חיסכון מצטבר והיסטוריית קניות', href: 'Balance.dc.html', kw: 'יתרה חיסכון היסטוריה כמה נשאר' },
+  { name: 'אזור אישי', meta: 'ניהול החברות, פרטי המשפחה והכרטיסים', href: 'Member.dc.html', kw: 'אישי חברות משפחה' },
+  { name: 'הצטרפות בית עסק', meta: 'טופס לבעלי עסקים שרוצים להיכנס לרשימה', href: 'Merchants.dc.html', kw: 'עסק הצטרפות בעל עסק שותף' },
+];
+const FAQS = [
+  { name: 'איך מקבלים את ההנחה בקופה?', meta: 'מציגים את הכרטיס לפני התשלום — ההנחה יורדת מהחשבון', href: 'Faq.dc.html', kw: 'הנחה קופה 5% איך' },
+  { name: 'מה קורה אם הכרטיס אבד?', meta: 'חוסמים באזור האישי ומזמינים כרטיס חלופי', href: 'Faq.dc.html', kw: 'אבד גניבה חסימה כרטיס חלופי' },
+  { name: 'האם צריך לטעון כסף מראש?', meta: 'לא. הכרטיס נותן הנחה מיידית, בלי טעינה ובלי נקודות', href: 'Faq.dc.html', kw: 'טעינה נקודות קופון מראש' },
+];
+const CHIPS = ['הכל', 'מזון ומכולת', 'בשר ודגים', 'ביגוד', 'ספרי קודש', 'ירושלים', 'בני ברק'];
+const CHIP_Q = { 'הכל': '', 'מזון ומכולת': 'מזון', 'בשר ודגים': 'בשר', 'ביגוד': 'ביגוד', 'ספרי קודש': 'ספרי', 'ירושלים': 'ירושלים', 'בני ברק': 'בני ברק' };
+
+class Component extends DCLogic {
+  state = { open: true, q: '', chip: 'הכל', active: 0 };
+  inputRef = React.createRef();
+
+  componentDidMount() {
+    this.onKey = (e) => {
+      if (e.key === '/' && !this.state.open) { e.preventDefault(); this.setState({ open: true }); return; }
+      if (!this.state.open) return;
+      if (e.key === 'Escape') this.setState({ open: false });
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const n = this.flat().length;
+        if (!n) return;
+        const d = e.key === 'ArrowDown' ? 1 : -1;
+        this.setState((s) => ({ active: (s.active + d + n) % n }));
+      }
+      if (e.key === 'Enter') {
+        const it = this.flat()[this.state.active];
+        if (it) window.location.href = it.href;
+      }
+    };
+    window.addEventListener('keydown', this.onKey);
+    this.focus();
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); }
+  focus() { setTimeout(() => { const el = this.inputRef.current; if (el) el.focus(); }, 60); }
+
+  query() {
+    const q = (this.state.q || '').trim();
+    return q || (CHIP_Q[this.state.chip] || '');
+  }
+
+  results() {
+    const q = this.query();
+    if (!q) return [];
+    const hit = (s) => (s || '').includes(q);
+    const partners = PARTNERS.filter((p) => hit(p.name) || hit(p.category) || hit(p.city))
+      .map((p) => ({ kind: 'partner', name: p.name, meta: p.category + ' · ' + p.city, href: 'Benefits.dc.html', initials: p.name.trim().slice(0, 2), showDiscount: true }));
+    const pages = PAGES.filter((p) => hit(p.name) || hit(p.meta) || hit(p.kw))
+      .map((p) => ({ kind: 'page', name: p.name, meta: p.meta, href: p.href, initials: 'דף', showDiscount: false }));
+    const faqs = FAQS.filter((p) => hit(p.name) || hit(p.meta) || hit(p.kw))
+      .map((p) => ({ kind: 'faq', name: p.name, meta: p.meta, href: p.href, initials: '?', showDiscount: false }));
+    return [
+      { key: 'partner', title: 'בתי עסק שותפים', items: partners },
+      { key: 'page', title: 'עמודים באתר', items: pages },
+      { key: 'faq', title: 'שאלות ותשובות', items: faqs },
+    ].filter((g) => g.items.length);
+  }
+
+  flat() { return this.results().reduce((a, g) => a.concat(g.items), []); }
+
+  renderVals() {
+    const q = this.state.q;
+    const groups = this.results();
+    let i = -1;
+    const dressed = groups.map((g) => ({
+      title: g.title,
+      count: g.items.length,
+      items: g.items.map((it) => {
+        i += 1;
+        const idx = i;
+        const on = idx === this.state.active;
+        return Object.assign({}, it, {
+          bg: on ? 'var(--color-canvas-soft)' : 'transparent',
+          bar: on ? 'var(--color-primary)' : 'transparent',
+          onHover: () => this.setState({ active: idx }),
+        });
+      }),
+    }));
+    return {
+      links: [
+        { label: 'דף הבית', href: 'Home.dc.html' },
+        { label: 'בתי העסק', href: 'Benefits.dc.html' },
+        { label: 'הפעלת כרטיס', href: 'Activate.dc.html' },
+        { label: 'בדיקת יתרה', href: 'Balance.dc.html' },
+        { label: 'שאלות ותשובות', href: 'Faq.dc.html' },
+        { label: 'אזור אישי', href: 'Member.dc.html' },
+      ],
+      isOpen: this.state.open,
+      q,
+      hasQuery: !!q,
+      inputRef: this.inputRef,
+      groups: dressed,
+      isEmpty: !!this.query() && !this.flat().length,
+      showRecent: !this.query() && (this.props.showRecent ?? true),
+      recent: ['מכולת בני ברק', 'ספרי קודש', 'בדיקת יתרה'].map((label) => ({
+        label, onClick: () => { this.setState({ q: label, chip: 'הכל', active: 0 }); this.focus(); },
+      })),
+      chips: CHIPS.map((label) => {
+        const on = this.state.chip === label && !q;
+        return {
+          label,
+          bg: on ? 'var(--color-primary)' : 'var(--color-canvas)',
+          fg: on ? 'var(--color-ink)' : 'var(--color-body)',
+          border: on ? 'var(--color-primary)' : 'var(--color-border)',
+          onClick: () => this.setState({ chip: label, q: '', active: 0 }),
+        };
+      }),
+      open: () => { this.setState({ open: true }); this.focus(); },
+      close: () => this.setState({ open: false }),
+      stop: (e) => e.stopPropagation(),
+      clear: () => { this.setState({ q: '', chip: 'הכל', active: 0 }); this.focus(); },
+      onQuery: (e) => this.setState({ q: e.target.value, active: 0 }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

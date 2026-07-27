@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/styles.css">
+  <script src="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/_ds_bundle.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    img, svg { max-width: 100% }
+    @media (max-width: 880px) {
+      footer > div { grid-template-columns: 1fr 1fr !important; gap: 24px !important }
+    }
+    @media (max-width: 560px) {
+      footer > div { grid-template-columns: 1fr !important; gap: 22px !important }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--color-canvas);min-height:100vh">
+  <dc-import name="SiteNav" logo-src="assets/logo-lockup.svg" links="{{ links }}" active="שאלות ותשובות" cta="קבלת כרטיס" on-cta-click="{{ goActivate }}" hint-size="100%,86px"></dc-import>
+
+  <div style="background:var(--color-canvas-soft);padding:clamp(32px,6.2vw,56px) clamp(16px,4vw,24px) 44px">
+    <div style="max-width:var(--container-narrow);margin:0 auto;display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">מוקד המידע</span>
+      <h1 style="font-size:clamp(30px,7vw,52px);margin:0;line-height:1.06">שאלות ותשובות</h1>
+      <p style="font-size:clamp(16px,2.4vw,19px);color:var(--color-body);margin:0">כל מה שחברי המועדון שואלים על הדרן קארד — ההנחה, המימוש בקופה, הכרטיס עצמו ובתי העסק השותפים.</p>
+    </div>
+  </div>
+
+  <div style="background:var(--color-canvas);padding:clamp(24px,3.6vw,32px) clamp(16px,4vw,24px) 64px">
+    <div style="max-width:var(--container-narrow);margin:0 auto;display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+          <button onClick="{{ g.onClick }}" style="{{ g.style }}">{{ g.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ items }}" as="q" hint-placeholder-count="8">
+          <div style="{{ q.boxStyle }}">
+            <button onClick="{{ q.onClick }}" style="width:100%;background:none;border:none;cursor:pointer;padding:0;display:flex;justify-content:space-between;align-items:center;gap:16px;text-align:start">
+              <span style="{{ q.titleStyle }}">{{ q.q }}</span>
+              <span style="{{ q.signStyle }}">{{ q.sign }}</span>
+            </button>
+            <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:14px 0 0;color:var(--color-body);font-size:16px;line-height:1.65">{{ q.a }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="clamp(18px,5vw,32px)" hint-size="100%,200px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <b style="font-family:var(--font-display);font-size:clamp(20px,3.6vw,26px)">לא מצאתם תשובה?</b>
+            <span style="color:var(--color-body);line-height:1.6">מוקד המועדון זמין בימים א׳–ה׳ בין 9:00 ל-17:00, בטלפון <span class="tnum" style="direction:ltr;display:inline-block">03-000-0000</span>.</span>
+          </div>
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" on-click="{{ goActivate }}" hint-size="auto,48px">קבלת הדרן קארד</x-import>
+        </div>
+      </x-import>
+    </div>
+  </div>
+
+  <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Footer" logo-src="assets/logo-lockup-on-dark.svg" columns="{{ footerCols }}" note="מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש." hint-size="100%,280px"></x-import>
+  <div style="background:var(--color-canvas-ink);border-top:1px solid rgba(241,236,227,.12);padding:18px clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sand-400)">
+      <span>© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.</span>
+      <span>מופעל על ידי קהילות קארד</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FAQ = [
+  { g: 'ההנחה', q: 'איך ההנחה עובדת בפועל?', a: 'מציגים את הדרן קארד בקופה לפני התשלום. הקופאי מזהה את הכרטיס, ו-5% יורדים מסך החשבון במקום. אין צבירת נקודות, אין קופון ואין זיכוי עתידי.' },
+  { g: 'ההנחה', q: 'האם ההנחה חלה על כל המוצרים בסל?', a: 'ההנחה מחושבת על הסל כולו בבתי העסק השותפים. חריגים אפשריים הם מוצרים בפיקוח מחירים או מבצעים ייחודיים של בית העסק, ובמקרים אלה בית העסק מציין זאת בקופה.' },
+  { g: 'ההנחה', q: 'האם אפשר לשלב את ההנחה עם מבצעים אחרים?', a: 'ברוב בתי העסק ההנחה חלה גם על מחירי מבצע. במקרים שבהם בית העסק מגדיר אחרת, הכלל מופיע בכרטיס בית העסק ברשימת בתי העסק.' },
+  { g: 'ההנחה', q: 'יש מינימום קנייה או תקרת הנחה?', a: 'אין מינימום קנייה ואין תוקף להנחה. בתי עסק בודדים מגדירים תקרה לעסקה חריגה בהיקפה, וגם זה מצוין בכרטיס בית העסק.' },
+  { g: 'הכרטיס', q: 'איך מקבלים את הכרטיס?', a: 'ממלאים טופס קצר בעמוד קבלת הכרטיס. הכרטיס הפיזי נשלח לכתובת שהזנתם תוך חמישה ימי עסקים, ללא עלות משלוח.' },
+  { g: 'הכרטיס', q: 'מה עושים אחרי שהכרטיס מגיע?', a: 'נכנסים לעמוד הפעלת כרטיס, מזינים את מספר הכרטיס ואת הפרטים האישיים, והכרטיס משויך אליכם ופעיל מיד.' },
+  { g: 'הכרטיס', q: 'אבד הכרטיס — מה עושים?', a: 'מתקשרים למוקד המועדון. הכרטיס נחסם מיד וכרטיס חדש מונפק ונשלח, כשהחיסכון והנתונים נשמרים תחת אותה חברות.' },
+  { g: 'הכרטיס', q: 'אפשר כרטיס נוסף לבן או בת הזוג?', a: 'כן. במסלול השנתי כלול כרטיס נוסף לאותה משפחה, ושני הכרטיסים מנוהלים תחת חברות אחת באזור האישי.' },
+  { g: 'בתי עסק', q: 'איפה הכרטיס עובד?', a: 'ברשימת בתי העסק באתר מופיעה רשימה מעודכנת של כל בתי העסק השותפים, לפי קטגוריה ולפי עיר. הרשימה מתעדכנת עם כל הצטרפות חדשה.' },
+  { g: 'בתי עסק', q: 'החנות שאני קונה בה לא ברשימה', a: 'אפשר להפנות את בעל העסק לעמוד הצטרפות בתי עסק, או לספר לנו במוקד המועדון. פניות של חברים הן הדרך העיקרית שבה בתי עסק חדשים מצטרפים.' },
+  { g: 'החברות', q: 'מה עולה החברות במועדון?', a: 'מסלול שנתי בעלות ₪249 או מסלול חודשי בעלות ₪29, ללא התחייבות. שני המסלולים כוללים את אותה הנחה של 5% בכל בתי העסק השותפים.' },
+  { g: 'החברות', q: 'איפה רואים כמה חסכתי?', a: 'באזור האישי ובעמוד בדיקת יתרה מופיעים החיסכון החודשי, החיסכון מתחילת השנה וכל הקניות שבהן מומשה ההנחה.' },
+  { g: 'החברות', q: 'אפשר לבטל את החברות?', a: 'כן, בכל עת ובלי דמי ביטול. במסלול החודשי הביטול חל מהחודש העוקב, ובמסלול השנתי מוחזר החלק היחסי בהתאם לתקנון המועדון.' },
+];
+
+class Component extends DCLogic {
+  state = { group: 'הכל', open: 0 };
+
+  chip(on) {
+    return {
+      cursor: 'pointer', borderRadius: 9999, padding: '9px 16px', fontSize: 14, fontWeight: 600,
+      fontFamily: 'var(--font-ui)', transition: 'all 120ms cubic-bezier(.2,.8,.2,1)',
+      border: on ? '1px solid var(--color-ink)' : '1px solid var(--color-border)',
+      background: on ? 'var(--color-ink)' : 'var(--color-canvas)',
+      color: on ? 'var(--color-primary)' : 'var(--color-body)',
+    };
+  }
+
+  renderVals() {
+    const groups = ['הכל', 'ההנחה', 'הכרטיס', 'בתי עסק', 'החברות'];
+    const list = FAQ.filter((x) => this.state.group === 'הכל' || x.g === this.state.group);
+    const nav = (href) => () => { window.location.href = href; };
+    return {
+      links: [
+        { label: 'דף הבית', href: 'Home.dc.html' },
+        { label: 'בתי העסק', href: 'Benefits.dc.html' },
+        { label: 'הפעלת כרטיס', href: 'Activate.dc.html' },
+        { label: 'בדיקת יתרה', href: 'Balance.dc.html' },
+        { label: 'לבתי עסק', href: 'Merchants.dc.html' },
+        { label: 'שאלות ותשובות', href: 'Faq.dc.html' },
+        { label: 'אזור אישי', href: 'Member.dc.html' },
+      ],
+      footerCols: [
+        { title: 'המועדון', links: ['אודות הדרן קלאב', 'איך זה עובד', 'שאלות ותשובות', 'תקנון המועדון'] },
+        { title: 'הכרטיס', links: ['הפעלת כרטיס', 'בדיקת יתרה', 'אזור אישי', 'אובדן או גניבה'] },
+        { title: 'בתי עסק', links: ['רשימת בתי העסק', 'הצטרפות עסקים', 'אזור בעלי עסקים', 'יצירת קשר'] },
+      ],
+      groups: groups.map((g) => ({ label: g, style: this.chip(this.state.group === g), onClick: () => this.setState({ group: g, open: 0 }) })),
+      items: list.map((x, i) => {
+        const open = this.state.open === i;
+        return {
+          q: x.q, a: x.a, open, sign: open ? '−' : '+',
+          onClick: () => this.setState({ open: open ? -1 : i }),
+          boxStyle: {
+            border: '1px solid ' + (open ? 'var(--color-ink)' : 'var(--color-border)'),
+            borderRadius: 20, padding: '20px 24px', background: open ? 'var(--gold-50)' : 'var(--color-canvas)',
+            transition: 'all 120ms cubic-bezier(.2,.8,.2,1)',
+          },
+          titleStyle: { fontSize: 18, fontWeight: 700, color: 'var(--color-ink)', lineHeight: 1.4 },
+          signStyle: { fontSize: 24, fontWeight: 700, color: 'var(--color-primary-deep)', lineHeight: 1, flexShrink: 0 },
+        };
+      }),
+      goActivate: nav('Activate.dc.html'),
+    };
+  }
+}
+</script>
+</body>
+</html>

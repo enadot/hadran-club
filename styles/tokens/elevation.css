@@ -1,0 +1,11 @@
+/* Surface contrast carries elevation. Shadows are a last resort:
+   overlays only (dialog, toast, dropdown). */
+:root{
+  --shadow-0:none;
+  --shadow-hairline:0 0 0 1px var(--color-border);
+  --shadow-card:0 2px 8px rgba(18,16,11,.04);
+  --shadow-raised:0 8px 24px rgba(18,16,11,.08);
+  --shadow-overlay:0 16px 48px rgba(18,16,11,.16);
+  --shadow-gold:0 8px 24px rgba(150,110,51,.22);
+  --focus-ring:0 0 0 3px rgba(150,110,51,.35);
+}

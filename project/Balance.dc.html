@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/motion.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/styles.css">
+  <script src="_ds/hadran-club-design-system-16539e69-76f9-4f08-9982-e9f8edf44e80/_ds_bundle.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box }
+    img, svg { max-width: 100% }
+    @media (max-width: 880px) {
+      footer > div { grid-template-columns: 1fr 1fr !important; gap: 24px !important }
+    }
+    @media (max-width: 560px) {
+      footer > div { grid-template-columns: 1fr !important; gap: 22px !important }
+    }
+  </style>
+</helmet>
+
+<div style="background:var(--color-canvas-soft);min-height:100vh">
+  <dc-import name="SiteNav" logo-src="assets/logo-lockup.svg" links="{{ links }}" active="בדיקת יתרה" cta="קבלת כרטיס" on-cta-click="{{ goActivate }}" hint-size="100%,86px"></dc-import>
+
+  <div style="padding:clamp(28px,5.3vw,48px) clamp(16px,4vw,24px) 64px">
+    <div style="max-width:var(--container-narrow);margin:0 auto;display:flex;flex-direction:column;gap:28px">
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:13px;font-weight:700;letter-spacing:var(--tracking-wide);color:var(--color-primary-deep)">הדרן קארד</span>
+        <h1 style="font-size:clamp(27px,6vw,44px);margin:0;line-height:1.08">בדיקת יתרה</h1>
+        <p style="font-size:clamp(16px,2.3vw,18px);color:var(--color-body);margin:0">הזנת מספר הכרטיס וארבע ספרות אחרונות של מספר הזהות מציגה את היתרה בכרטיס, את החיסכון שנצבר ואת הקניות האחרונות.</p>
+      </div>
+
+      <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+        <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,32px)" hint-size="100%,300px">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" label="מספר הדרן קארד" placeholder="0000 0000 0000 0000" icon="credit-card" value="{{ card }}" on-change="{{ onCard }}" error="{{ cardError }}" hint="16 הספרות המופיעות על הכרטיס" hint-size="100%,84px"></x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Input" label="4 ספרות אחרונות של מספר הזהות" placeholder="0000" value="{{ idTail }}" on-change="{{ onIdTail }}" error="{{ idError }}" hint-size="100%,84px"></x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" size="lg" full-width="{{ true }}" on-click="{{ check }}" hint-size="100%,52px">בדיקת יתרה</x-import>
+            <div style="display:flex;align-items:center;gap:8px;color:var(--color-mute);font-size:14px;justify-content:center">
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Icon" name="shield-check" color="var(--color-primary-deep)" hint-size="18px,18px"></x-import>
+              הבדיקה מאובטחת ואינה שומרת את הפרטים שהוזנו
+            </div>
+          </div>
+        </x-import>
+      </sc-if>
+
+      <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,32px)" hint-size="100%,260px">
+            <div style="display:flex;flex-direction:column;gap:24px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-size:15px;color:var(--color-mute);font-weight:600">יתרה זמינה בכרטיס</span>
+                  <span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(38px,9vw,68px);line-height:1">₪1,240</span>
+                  <span class="tnum" style="font-size:14px;color:var(--color-mute);direction:ltr">{{ maskedCard }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+                  <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Badge" tone="positive" icon="check" hint-size="auto,28px">כרטיס פעיל</x-import>
+                  <span style="font-size:13px;color:var(--color-mute)">עודכן היום · כ״ג בתמוז, 9:40</span>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:16px;padding-top:20px;border-top:1px solid var(--color-border)">
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:var(--color-mute)">נחסך החודש</span><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(21px,4vw,28px);color:var(--color-positive)">₪286</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:var(--color-mute)">נחסך מתחילת השנה</span><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(21px,4vw,28px)">₪2,914</span></div>
+                <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:14px;color:var(--color-mute)">קניות החודש</span><span class="tnum" style="font-family:var(--font-display);font-weight:800;font-size:clamp(21px,4vw,28px)">14</span></div>
+              </div>
+              <x-import component-from-global-scope="HadranClubDesignSystem_16539e.SavingsMeter" value="{{ 286 }}" max="{{ 400 }}" label="החיסכון החודשי שלכם" caption="הסכומים להמחשה. היתרה מתעדכנת בתום כל יום עסקים." hint-size="100%,72px"></x-import>
+            </div>
+          </x-import>
+
+          <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="plain" padding="clamp(18px,5vw,28px)" hint-size="100%,340px">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <b style="font-size:clamp(17px,2.5vw,20px)">הקניות האחרונות</b>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="ghost" size="sm" icon-after="arrow-left" on-click="{{ goMember }}" hint-size="auto,36px">לכל ההיסטוריה</x-import>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.BenefitRow" title="רשת מזון ומכולת" meta="בני ברק · כ״א בתמוז" amount="₪1,320" saved="חסכתם ₪66" icon="shopping-bag" divider="{{ true }}" hint-size="100%,72px"></x-import>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.BenefitRow" title="בשר, עוף ודגים" meta="בני ברק · י״ט בתמוז" amount="₪310" saved="חסכתם ₪15.50" icon="shopping-bag" divider="{{ true }}" hint-size="100%,72px"></x-import>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.BenefitRow" title="ספרי קודש ויודאיקה" meta="ירושלים · י״ז בתמוז" amount="₪240" saved="חסכתם ₪12" icon="shopping-bag" divider="{{ true }}" hint-size="100%,72px"></x-import>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.BenefitRow" title="ביגוד והנעלה לילדים" meta="אלעד · ט״ו בתמוז" amount="₪480" saved="חסכתם ₪24" icon="shopping-bag" divider="{{ true }}" hint-size="100%,72px"></x-import>
+                <x-import component-from-global-scope="HadranClubDesignSystem_16539e.BenefitRow" title="כלי בית וריהוט" meta="בית שמש · י״ב בתמוז" amount="₪690" saved="חסכתם ₪34.50" icon="shopping-bag" hint-size="100%,72px"></x-import>
+              </div>
+            </div>
+          </x-import>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" on-click="{{ goMember }}" hint-size="auto,48px">לאזור האישי</x-import>
+            <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Button" variant="tertiary" on-click="{{ reset }}" hint-size="auto,48px">בדיקת כרטיס אחר</x-import>
+          </div>
+        </div>
+      </sc-if>
+
+      <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Card" tone="sand" padding="24px" hint-size="100%,150px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <b style="font-size:clamp(15px,2.2vw,17px)">אבד הכרטיס או שהוא לא עובד בקופה?</b>
+          <span style="color:var(--color-body);line-height:1.6;font-size:15px">מוקד המועדון חוסם את הכרטיס ומנפיק חדש. זמינים בימים א׳–ה׳, 9:00–17:00, בטלפון <span class="tnum" style="direction:ltr;display:inline-block">03-000-0000</span>.</span>
+        </div>
+      </x-import>
+
+    </div>
+  </div>
+
+  <x-import component-from-global-scope="HadranClubDesignSystem_16539e.Footer" logo-src="assets/logo-lockup-on-dark.svg" columns="{{ footerCols }}" note="מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש." hint-size="100%,280px"></x-import>
+  <div style="background:var(--color-canvas-ink);border-top:1px solid rgba(241,236,227,.12);padding:18px clamp(16px,4vw,24px)">
+    <div style="max-width:var(--container-max);margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--sand-400)">
+      <span>© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.</span>
+      <span>מופעל על ידי קהילות קארד</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'form', card: '', idTail: '', cardError: null, idError: null };
+
+  digits(v) { return (v || '').replace(/\D/g, ''); }
+
+  check() {
+    const c = this.digits(this.state.card); const t = this.digits(this.state.idTail);
+    const cardError = c.length === 16 ? null : 'יש להזין 16 ספרות המופיעות על הכרטיס';
+    const idError = t.length === 4 ? null : 'יש להזין ארבע ספרות';
+    if (cardError || idError) { this.setState({ cardError, idError }); return; }
+    this.setState({ view: 'result', cardError: null, idError: null });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  renderVals() {
+    const c = this.digits(this.state.card);
+    const nav = (href) => () => { window.location.href = href; };
+    return {
+      links: [
+        { label: 'דף הבית', href: 'Home.dc.html' },
+        { label: 'בתי העסק', href: 'Benefits.dc.html' },
+        { label: 'הפעלת כרטיס', href: 'Activate.dc.html' },
+        { label: 'בדיקת יתרה', href: 'Balance.dc.html' },
+        { label: 'לבתי עסק', href: 'Merchants.dc.html' },
+        { label: 'שאלות ותשובות', href: 'Faq.dc.html' },
+        { label: 'אזור אישי', href: 'Member.dc.html' },
+      ],
+      footerCols: [
+        { title: 'המועדון', links: ['אודות הדרן קלאב', 'איך זה עובד', 'שאלות ותשובות', 'תקנון המועדון'] },
+        { title: 'הכרטיס', links: ['הפעלת כרטיס', 'בדיקת יתרה', 'אזור אישי', 'אובדן או גניבה'] },
+        { title: 'בתי עסק', links: ['רשימת בתי העסק', 'הצטרפות עסקים', 'אזור בעלי עסקים', 'יצירת קשר'] },
+      ],
+      isForm: this.state.view === 'form',
+      isResult: this.state.view === 'result',
+      card: this.state.card,
+      idTail: this.state.idTail,
+      cardError: this.state.cardError,
+      idError: this.state.idError,
+      maskedCard: c.length === 16 ? c.slice(0, 4) + ' •••• •••• ' + c.slice(12) : '4271 •••• •••• 8032',
+      onCard: (e) => this.setState({ card: e.target.value, cardError: null }),
+      onIdTail: (e) => this.setState({ idTail: e.target.value, idError: null }),
+      check: () => this.check(),
+      reset: () => this.setState({ view: 'form', card: '', idTail: '' }),
+      goActivate: nav('Activate.dc.html'),
+      goMember: nav('Member.dc.html'),
+    };
+  }
+}
+</script>
+</body>
+</html>

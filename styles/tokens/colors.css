@@ -1,0 +1,69 @@
+/* Colour — the identity is the gold gradient off the logo, on warm neutrals. */
+:root{
+  /* Base gold ramp — sampled from the logo gradient (#966e33 → #f0d996) */
+  --gold-900:#5c4318;
+  --gold-800:#7a5824;
+  --gold-700:#966e33;   /* gradient dark stop */
+  --gold-600:#b08a45;
+  --gold-500:#c9a35c;
+  --gold-400:#dfc27d;
+  --gold-300:#f0d996;   /* gradient light stop — the primary fill */
+  --gold-200:#f5e6bd;
+  --gold-100:#faf1da;
+  --gold-50:#fdf9f0;
+
+  /* Warm neutral ramp */
+  --sand-100:#f7f4ee;
+  --sand-200:#f1ece3;
+  --sand-300:#e4ddd0;
+  --sand-400:#cfc7b8;
+  --grey-500:#8a857b;
+  --grey-600:#6b665e;
+  --grey-700:#4a463f;
+  --ink-900:#12100b;
+
+  /* Brand */
+  --color-primary:var(--gold-300);
+  --color-primary-active:#f7e8c4;
+  --color-primary-neutral:var(--gold-400);
+  --color-primary-pale:var(--gold-100);
+  --color-primary-deep:var(--gold-700);
+  --color-on-primary:var(--ink-900);
+  --gradient-brand:linear-gradient(135deg,var(--gold-700) 0%,var(--gold-300) 100%);
+  --gradient-brand-soft:linear-gradient(135deg,var(--gold-200) 0%,var(--gold-50) 100%);
+
+  /* Surface */
+  --color-canvas:#ffffff;
+  --color-canvas-soft:var(--sand-200);
+  --color-canvas-warm:var(--sand-100);
+  --color-canvas-ink:var(--ink-900);
+  --color-border:var(--sand-300);
+  --color-border-strong:var(--ink-900);
+
+  /* Text */
+  --color-ink:var(--ink-900);
+  --color-ink-deep:#4a3410;      /* text on gold surfaces */
+  --color-body:var(--grey-700);
+  --color-mute:var(--grey-500);
+  --color-on-ink:var(--sand-200);
+
+  /* Semantic */
+  --color-positive:#2e8f4e;
+  --color-positive-deep:#0d4d28;
+  --color-positive-pale:#e6f3ea;
+  --color-warning:#e3a712;
+  --color-warning-deep:#8a5a00;
+  --color-warning-pale:#fdf1d6;
+  --color-negative:#c93a35;
+  --color-negative-deep:#96231f;
+  --color-negative-pale:#fbeae9;
+  --color-negative-bg:#2e0b0a;
+
+  /* Tertiary accents — illustration + data only, never a CTA */
+  --color-accent-navy:#1f3a5f;
+  --color-accent-burgundy:#7a2438;
+  --color-accent-olive:#5d6b3a;
+
+  /* Focus */
+  --color-focus:var(--gold-700);
+}

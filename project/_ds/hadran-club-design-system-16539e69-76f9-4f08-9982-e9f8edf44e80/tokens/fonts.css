@@ -1,0 +1,19 @@
+/* Webfonts.
+   Afek (א.א.א) is the brand face — supplied by the client as woff2, weights 400–800.
+   Afek Ultrabold (800) is the display voice and the closest match to the logo wordmark.
+   Heebo / Assistant stay in the stack as metric-compatible fallbacks while Afek loads.
+   Frank Ruhl Libre = ceremonial / editorial serif, used sparingly. */
+@font-face{font-family:"Afek";src:url("../assets/fonts/afek-regular-aaa.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Afek";src:url("../assets/fonts/afek-medium-aaa.woff2") format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Afek";src:url("../assets/fonts/afek-demibold-aaa.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Afek";src:url("../assets/fonts/afek-bold-aaa.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Afek";src:url("../assets/fonts/afek-ultrabold-aaa.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
+
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Assistant:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap");
+
+:root{
+  --font-display:"Afek","Heebo","Arial Hebrew",system-ui,sans-serif;
+  --font-ui:"Afek","Assistant","Arial Hebrew",system-ui,sans-serif;
+  --font-serif:"Frank Ruhl Libre","Times New Roman",serif;
+  --font-numeric:"Afek","Heebo",system-ui,sans-serif;
+}
