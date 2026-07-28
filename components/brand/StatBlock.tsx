@@ -51,7 +51,9 @@ export function StatBlock({
           style={{ marginBottom: "var(--space-sm)" }}
         />
       ) : null}
-      <span className="tnum font-[family-name:var(--font-display)] text-[length:var(--text-display-md)] font-extrabold leading-[var(--lh-display-md)] tracking-[var(--tracking-display)]">
+      {/* Scales down to --text-display-sm on a phone: at the token 40px a five-figure
+          number no longer fits a half-width column at 320px. */}
+      <span className="tnum font-[family-name:var(--font-display)] text-[clamp(var(--text-display-sm),7vw,var(--text-display-md))] font-extrabold leading-[var(--lh-display-md)] tracking-[var(--tracking-display)]">
         {value}
       </span>
       <span className="text-[length:var(--text-body-md)] font-semibold">{label}</span>

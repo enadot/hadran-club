@@ -34,9 +34,16 @@ export function FaqBrowser() {
   return (
     <section className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(24px,3.6vw,32px)] pb-16">
       <div className="mx-auto flex max-w-[var(--container-narrow)] flex-col gap-6">
-        <div className="flex flex-wrap gap-2">
+        {/* One scrolling line on a phone rather than three wrapped rows above the
+            answers; wraps as before from 1060px, where there is room for it. */}
+        <div className="hc-rail hc-rail-bleed flex snap-x gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible">
           {FAQ_GROUPS.map((g) => (
-            <FilterChip key={g} selected={group === g} onClick={() => setGroup(g)}>
+            <FilterChip
+              key={g}
+              selected={group === g}
+              onClick={() => setGroup(g)}
+              className="flex-none snap-start"
+            >
               {g}
             </FilterChip>
           ))}
@@ -69,7 +76,11 @@ export function FaqBrowser() {
                   <span className="tnum ltr inline-block">{SUPPORT_PHONE}</span>.
                 </span>
               </div>
-              <Button as="a" href="/activate">
+              <Button
+                as="a"
+                href="/activate"
+                className="w-full justify-center min-[480px]:w-auto"
+              >
                 קבלת הדרן קארד
               </Button>
             </div>

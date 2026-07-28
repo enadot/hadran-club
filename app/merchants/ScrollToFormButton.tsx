@@ -11,9 +11,11 @@ import { prefersReducedMotion } from "@/lib/motion";
 export function ScrollToFormButton({
   children,
   size = "lg",
+  className,
 }: {
   children: React.ReactNode;
   size?: "sm" | "md" | "lg";
+  className?: string;
 }) {
   const scroll = () => {
     const el = document.getElementById("form");
@@ -25,7 +27,7 @@ export function ScrollToFormButton({
   };
 
   return (
-    <Button size={size} onClick={scroll}>
+    <Button size={size} className={className} onClick={scroll}>
       {children}
     </Button>
   );

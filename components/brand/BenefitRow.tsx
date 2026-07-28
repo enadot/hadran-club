@@ -28,14 +28,16 @@ export function BenefitRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-[var(--space-lg)] py-[var(--space-lg)]",
+        // The gap tightens and the icon disc shrinks below 480px: title, amount and
+        // saving all have to share a card that is only ~250px wide inside at 320px.
+        "flex items-center gap-3 py-[var(--space-lg)] min-[480px]:gap-[var(--space-lg)]",
         "font-[family-name:var(--font-ui)]",
         divider ? "border-b border-[var(--color-border)]" : "border-b-0",
         className,
       )}
       {...rest}
     >
-      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-[var(--color-canvas-soft)]">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--color-canvas-soft)] min-[480px]:size-11">
         <Icon name={icon} size={20} color="var(--color-primary-deep)" />
       </span>
 
@@ -46,7 +48,7 @@ export function BenefitRow({
         ) : null}
       </span>
 
-      <span className="flex flex-col items-end gap-0.5">
+      <span className="flex shrink-0 flex-col items-end gap-0.5">
         {amount ? (
           <span className="tnum text-[length:var(--text-body-md)] font-bold">{amount}</span>
         ) : null}

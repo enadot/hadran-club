@@ -15,7 +15,13 @@ export type MemberCardProps = Omit<React.ComponentPropsWithoutRef<"div">, "style
   discount?: string;
   variant?: "gold" | "ink";
   logoSrc?: string;
-  /** Any CSS length — the prototype passes e.g. "min(400px, calc(100vw - 48px))". */
+  /**
+   * Any CSS length. Defaults to `min(400px, 100%)` — the artwork is never wider
+   * than its column. The prototype wrote this as `min(400px, calc(100vw - 48px))`,
+   * which only holds while the card is the full width of the page: dropped into a
+   * two-column grid it stays 400px wide inside a narrower track and pushes the
+   * document sideways.
+   */
   width?: string | number;
   style?: React.CSSProperties;
 };
@@ -27,7 +33,7 @@ export function MemberCard({
   discount = "5%",
   variant = "gold",
   logoSrc = "/logo-mark.svg",
-  width = 400,
+  width = "min(400px, 100%)",
   className,
   style,
   ...rest

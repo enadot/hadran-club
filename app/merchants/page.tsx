@@ -83,9 +83,19 @@ export default function MerchantsPage() {
               חברי הדרן קלאב מחפשים איפה הכרטיס עובד לפני שהם יוצאים לקנות. הצטרפות למועדון מכניסה את
               העסק שלכם לרשימה הזו — בלי עלות הקמה ובלי מערכת חדשה בקופה.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <ScrollToFormButton size="lg">רוצים לשמוע עוד</ScrollToFormButton>
-              <Button as="a" href="/benefits" size="lg" variant="ghost" className="text-[var(--color-primary)] hover:bg-[rgba(241,236,227,.08)]">
+            <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
+              <ScrollToFormButton size="lg" className="w-full justify-center min-[480px]:w-auto">
+                רוצים לשמוע עוד
+              </ScrollToFormButton>
+              {/* A borderless ghost on the ink band reads as loose text once it is
+                  stacked under the primary, so it carries a hairline here. */}
+              <Button
+                as="a"
+                href="/benefits"
+                size="lg"
+                variant="ghost"
+                className="w-full justify-center border-[rgba(241,236,227,.28)] text-[var(--color-primary)] hover:bg-[rgba(241,236,227,.08)] min-[480px]:w-auto"
+              >
                 לרשימת בתי העסק
               </Button>
             </div>
@@ -141,12 +151,18 @@ export default function MerchantsPage() {
           <Reveal>
             <SectionTitle>מהפנייה ועד ההנחה הראשונה</SectionTitle>
           </Reveal>
-          <Reveal className="grid grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))] overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-canvas)]">
+          {/* Explicit 1→3 columns rather than auto-fit, because the rule between the
+              steps has to follow the axis they are laid out on: an inline-end border
+              on a stacked column draws a stray vertical hairline down the phone
+              layout, which is what the auto-fit version did. */}
+          <Reveal className="grid grid-cols-1 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-canvas)] min-[820px]:grid-cols-3">
             {STEPS.map((s, i) => (
               <div
                 key={s.n}
-                className={`flex flex-col gap-2.5 p-7 ${
-                  i < STEPS.length - 1 ? "border-e border-[var(--color-border)]" : ""
+                className={`flex flex-col gap-2.5 p-[clamp(20px,5vw,28px)] ${
+                  i < STEPS.length - 1
+                    ? "border-b border-[var(--color-border)] min-[820px]:border-b-0 min-[820px]:border-e"
+                    : ""
                 }`}
               >
                 <span className="font-[family-name:var(--font-display)] text-[clamp(23px,4.5vw,32px)] leading-none font-extrabold text-[var(--color-primary-deep)]">

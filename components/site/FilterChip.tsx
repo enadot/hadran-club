@@ -20,7 +20,9 @@ export function FilterChip({ selected, className, children, ...rest }: FilterChi
       type="button"
       aria-pressed={selected}
       className={cn(
-        "cursor-pointer rounded-full border px-4 py-[9px]",
+        // min-h-11 keeps the chip on the 44px touch target the design system asks
+        // for; the visual height is unchanged on a pointer device.
+        "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-4 py-[9px]",
         "font-[family-name:var(--font-ui)] text-[length:var(--text-body-sm)] font-semibold",
         "transition-[background-color,color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
         selected

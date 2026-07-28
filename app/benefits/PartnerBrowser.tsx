@@ -41,9 +41,14 @@ export function PartnerBrowser() {
 
   return (
     <>
-      <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] p-6 min-[1060px]:top-[86px]">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4">
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))] items-end gap-4">
+      {/* Sticky, so its height is height the results never get back. On a phone the
+          original layout — full padding, each control on its own row and seven chips
+          wrapping to three rows — took some 45% of the viewport. Here the search and
+          the city share a row from 480px, the chips scroll in a single line, and the
+          result count moves down into the results themselves. */}
+      <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,24px)] min-[1060px]:top-[86px]">
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3 min-[1060px]:gap-4">
+          <div className="grid grid-cols-1 items-end gap-3 min-[480px]:grid-cols-2 min-[1060px]:grid-cols-3 min-[1060px]:gap-4">
             <Input
               icon="search"
               placeholder="חיפוש לפי קטגוריה או עיר"
@@ -58,7 +63,7 @@ export function PartnerBrowser() {
               onChange={(e) => setCity(e.target.value)}
             />
             <div
-              className="flex items-center justify-end gap-2.5 text-[length:var(--text-body-sm)] text-[var(--color-mute)]"
+              className="hidden items-center justify-end gap-2.5 pb-3 text-[length:var(--text-body-sm)] text-[var(--color-mute)] min-[1060px]:flex"
               aria-live="polite"
             >
               <span className="tnum font-bold text-[var(--color-ink)]">{shown.length}</span>
@@ -66,9 +71,14 @@ export function PartnerBrowser() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="hc-rail hc-rail-bleed flex snap-x gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible">
             {PARTNER_CATEGORIES.map((c) => (
-              <FilterChip key={c} selected={category === c} onClick={() => setCategory(c)}>
+              <FilterChip
+                key={c}
+                selected={category === c}
+                onClick={() => setCategory(c)}
+                className="flex-none snap-start"
+              >
                 {c}
               </FilterChip>
             ))}
@@ -76,22 +86,32 @@ export function PartnerBrowser() {
         </div>
       </div>
 
-      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(24px,4.4vw,40px)] pb-16">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-6">
+      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,40px)] pb-16">
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4 min-[1060px]:gap-6">
+          {/* The result count belongs here, not in the sticky bar: it is read once
+              per filter change, and a row of sticky chrome costs the results that
+              height on every screen of scrolling. */}
+          <span
+            className="text-[length:var(--text-body-sm)] text-[var(--color-mute)] min-[1060px]:hidden"
+            aria-live="polite"
+          >
+            <b className="tnum text-[var(--color-ink)]">{shown.length}</b> בתי עסק מוצגים
+          </span>
+
           {shown.length > 0 ? (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(230px,100%),1fr))] gap-4">
+            <div className="grid grid-cols-2 gap-3 min-[640px]:grid-cols-3 min-[900px]:grid-cols-4 min-[900px]:gap-4">
               {shown.map((p, i) => (
                 <Card
                   key={`${p.category}-${p.city}-${i}`}
                   tone="hairline"
-                  padding="18px"
+                  padding="clamp(12px,3vw,18px)"
                   interactive
                 >
-                  <div className="flex flex-col gap-3.5">
+                  <div className="flex h-full flex-col gap-3 min-[640px]:gap-3.5">
                     {/* Where the partner's logo goes. None were supplied with the
                         handoff, so this is the design system's sand-panel fallback. */}
-                    <div className="rounded-[12px] bg-[var(--color-canvas-warm)] p-2.5">
-                      <div className="grid h-[72px] place-items-center rounded-lg bg-[var(--color-canvas-soft)]">
+                    <div className="rounded-[12px] bg-[var(--color-canvas-warm)] p-2">
+                      <div className="grid h-[clamp(52px,13vw,72px)] place-items-center rounded-lg bg-[var(--color-canvas-soft)]">
                         <Icon
                           name={CATEGORY_ICON[p.category] ?? "store"}
                           size={26}
@@ -101,16 +121,18 @@ export function PartnerBrowser() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                      <b className="text-[clamp(15px,2.2vw,17px)]">{p.category}</b>
+                    <div className="flex flex-1 flex-col gap-1">
+                      <b className="text-[clamp(14px,2.2vw,17px)] leading-[1.35]">{p.category}</b>
                       <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                         {p.city}
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--color-border)] pt-3">
                       <span className="text-[13px] text-[var(--color-mute)]">{p.branches}</span>
-                      <Badge tone="gold">5% הנחה</Badge>
+                      <Badge tone="gold" className="whitespace-nowrap">
+                        5% הנחה
+                      </Badge>
                     </div>
                   </div>
                 </Card>

@@ -9,8 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function SearchPage() {
+  // dvh, not vh: on mobile Safari 100vh is the *expanded* viewport, so a 100vh
+  // page always hides a strip of itself behind the browser chrome.
   return (
-    <div className="min-h-screen bg-[var(--color-canvas-soft)]">
+    <div className="min-h-dvh bg-[var(--color-canvas-soft)]">
       <Container className="flex flex-col gap-6 px-[clamp(16px,4vw,24px)] py-[clamp(37px,7.1vw,64px)]">
         <span className="text-[13px] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
           חיפוש באתר

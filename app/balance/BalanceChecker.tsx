@@ -135,12 +135,14 @@ export function BalanceChecker() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(150px,100%),1fr))] gap-4 border-t border-[var(--color-border)] pt-5">
+              {/* One row of three at every width — split 2 + 1 the orphan reads as a
+                  fourth, unrelated figure. */}
+              <div className="grid grid-cols-3 gap-3 border-t border-[var(--color-border)] pt-5 min-[480px]:gap-4">
                 <div className="flex flex-col gap-1">
                   <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                     נחסך החודש
                   </span>
-                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(21px,4vw,28px)] font-extrabold text-[var(--color-positive)]">
+                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,5vw,28px)] font-extrabold text-[var(--color-positive)]">
                     <Figure value={286} prefix="₪" />
                   </span>
                 </div>
@@ -148,7 +150,7 @@ export function BalanceChecker() {
                   <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                     נחסך מתחילת השנה
                   </span>
-                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(21px,4vw,28px)] font-extrabold">
+                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,5vw,28px)] font-extrabold">
                     <Figure value={2914} prefix="₪" />
                   </span>
                 </div>
@@ -156,7 +158,7 @@ export function BalanceChecker() {
                   <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                     קניות החודש
                   </span>
-                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(21px,4vw,28px)] font-extrabold">
+                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,5vw,28px)] font-extrabold">
                     <Figure value={14} />
                   </span>
                 </div>

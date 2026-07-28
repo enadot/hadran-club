@@ -219,7 +219,9 @@ export function ActivateFlow() {
                   return (
                     <li
                       key={st.key}
-                      className="flex min-w-0 flex-[1_1_130px] items-center gap-2"
+                      // A clean 2×2 on a phone: at a 130px basis the four steps
+                      // break 2 + 1 + 1 in the narrowest cards.
+                      className="flex min-w-0 flex-[1_1_calc(50%-10px)] items-center gap-2 min-[560px]:flex-[1_1_130px]"
                       aria-current={state === "now" ? "step" : undefined}
                     >
                       <span
@@ -496,7 +498,6 @@ export function ActivateFlow() {
             holder={fullName}
             tier="חבר מועדון · הדרן קארד"
             number={cardMasked}
-            width="min(400px, calc(100vw - 48px))"
           />
 
           <Card tone="plain" padding="clamp(18px,5vw,28px)" className="w-full">

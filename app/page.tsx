@@ -76,8 +76,8 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────────────────
           Headline against the membership card. Rendered without a scroll reveal:
           it is above the fold, so animating it in would only delay the LCP. */}
-      <section className="bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(42px,8vw,72px)] pb-20">
-        <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-14">
+      <section className="bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,8vw,72px)] pb-[clamp(40px,8vw,80px)]">
+        <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[clamp(32px,6vw,56px)]">
           <div className="flex flex-col items-start gap-6">
             <Badge tone="gold" icon="badge-percent">
               <AnimatedShinyText
@@ -99,7 +99,9 @@ export default function HomePage() {
               טעינה מראש — מציגים בקופה וההנחה כבר בחשבון.
             </p>
 
-            <div className="flex flex-wrap gap-3">
+            {/* Stacked and full-bleed on a phone — two ragged, half-width pills
+                read as an afterthought at this size. Side by side from 480px up. */}
+            <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
               <Button as="a" href="/activate" size="lg">
                 קבלת הדרן קארד
               </Button>
@@ -115,9 +117,11 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-5">
-            <div className="flex flex-col items-start gap-2.5">
+            {/* On a phone the figure and its caption sit side by side, so the
+                headline and the card are not pushed a full screen apart. */}
+            <div className="flex w-full flex-row items-center justify-center gap-4 min-[480px]:w-auto min-[480px]:flex-col min-[480px]:items-start min-[480px]:gap-2.5">
               <span
-                className="font-[family-name:var(--font-display)] text-[148px] leading-[0.8] font-extrabold tracking-[-0.04em] text-[var(--gold-700)]"
+                className="font-[family-name:var(--font-display)] text-[clamp(84px,23vw,148px)] leading-[0.8] font-extrabold tracking-[-0.04em] text-[var(--gold-700)]"
                 dir="ltr"
               >
                 5%
@@ -129,13 +133,14 @@ export default function HomePage() {
               </span>
             </div>
 
-            {/* The one brand moment on this page: a soft gold beam around the card. */}
-            <div className="rotate-[-3deg]">
+            {/* The one brand moment on this page: a soft gold beam around the card.
+                The tilt is dropped below 480px — there the card already fills the
+                column, and a rotated 400px box would stick out past the gutter. */}
+            <div className="w-full max-w-[400px] rotate-0 min-[480px]:w-auto min-[480px]:rotate-[-3deg]">
               <div className="relative rounded-[var(--radius-2xl)]">
                 <MemberCard
                   holder="משפחת כהן"
                   tier="חבר מועדון · הדרן קארד"
-                  width="min(400px, calc(100vw - 48px))"
                 />
                 <BorderBeam
                   size={110}
@@ -153,9 +158,11 @@ export default function HomePage() {
 
       {/* ── Stat strip ───────────────────────────────────────────────────── */}
       <section className="border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(28px,5.3vw,48px)]">
+        {/* Four figures stacked one per row is a screen and a half of scrolling on a
+            phone. A fixed 2×2 reads as one block and keeps the comparison intact. */}
         <Reveal
           stagger
-          className="mx-auto grid max-w-[var(--container-max)] grid-cols-[repeat(auto-fit,minmax(min(210px,100%),1fr))] gap-6"
+          className="mx-auto grid max-w-[var(--container-max)] grid-cols-2 gap-x-5 gap-y-7 min-[900px]:grid-cols-4 min-[900px]:gap-6"
         >
           <StatBlock value="5%" label="הנחה מיידית" sublabel="בקופה, בכל קנייה" icon="badge-percent" />
           <StatBlock
@@ -280,29 +287,37 @@ export default function HomePage() {
                 רשתות מזון, ביגוד, ספרי קודש וכלי בית — בשכונות שבהן הקהילה קונה ממילא.
               </SectionLead>
             </div>
-            <Button as="a" href="/benefits" variant="tertiary" iconAfter="arrow-left">
+            <Button
+              as="a"
+              href="/benefits"
+              variant="tertiary"
+              iconAfter="arrow-left"
+              className="w-full justify-center min-[480px]:w-auto"
+            >
               לכל בתי העסק
             </Button>
           </Reveal>
 
+          {/* Two tiles per row on a phone. These are logo plates with a two-word
+              caption — one per row turns four of them into four screenfuls. */}
           <Reveal
             stagger
-            className="grid grid-cols-[repeat(auto-fit,minmax(min(200px,100%),1fr))] gap-4"
+            className="grid grid-cols-2 gap-3 min-[720px]:grid-cols-4 min-[720px]:gap-4"
           >
             {PARTNER_TILES.map((tile) => (
-              <Card key={tile.category} tone="plain" padding="20px">
+              <Card key={tile.category} tone="plain" padding="clamp(14px,3.5vw,20px)">
                 <div className="flex flex-col gap-3">
                   {/* No partner logos shipped with the handoff — the design system's
                       fallback is a sand panel with a gold icon disc. */}
-                  <div className="grid h-[74px] place-items-center rounded-[var(--radius-md)] bg-[var(--color-canvas-soft)]">
+                  <div className="grid h-[clamp(56px,15vw,74px)] place-items-center rounded-[var(--radius-md)] bg-[var(--color-canvas-soft)]">
                     <Icon name={tile.icon} size={26} color="var(--color-primary-deep)" />
                     <span className="sr-only">{tile.placeholder}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="min-w-0 text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                       {tile.category}
                     </span>
-                    <b className="text-[var(--color-primary-deep)]">5%</b>
+                    <b className="shrink-0 text-[var(--color-primary-deep)]">5%</b>
                   </div>
                 </div>
               </Card>
@@ -362,8 +377,8 @@ export default function HomePage() {
       <Band tone="white">
         <Container>
           <Reveal>
-            <Card tone="ink" padding="clamp(18px,5vw,48px)">
-              <div className="flex flex-wrap items-center justify-between gap-8">
+            <Card tone="ink" padding="clamp(20px,5vw,48px)">
+              <div className="flex flex-wrap items-center justify-between gap-[clamp(20px,4vw,32px)]">
                 <div className="flex flex-col gap-3">
                   <h3 className="m-0 font-[family-name:var(--font-display)] text-[clamp(26px,5.5vw,40px)] font-extrabold text-[var(--color-primary)]">
                     מגיע לכם שקט נפשי גם בקניות
@@ -372,7 +387,12 @@ export default function HomePage() {
                     מזמינים את הדרן קארד עוד היום, ומתחילים לחסוך בקנייה הראשונה.
                   </p>
                 </div>
-                <Button as="a" href="/activate" size="lg">
+                <Button
+                  as="a"
+                  href="/activate"
+                  size="lg"
+                  className="w-full justify-center min-[480px]:w-auto"
+                >
                   קבלת הדרן קארד
                 </Button>
               </div>

@@ -156,6 +156,24 @@
   box-sizing: border-box;
 }
 
+/* No page ever scrolls sideways. `clip` rather than `hidden` because `hidden`
+   turns the root into a scroll container, which would break the sticky nav and
+   the sticky filter bar on /benefits; `clip` just trims the overflow. The
+   `hidden` line is the fallback for engines without `clip`. Needed on <html>,
+   not <body> — only the root element's overflow propagates to the viewport.
+
+   This also absorbs the mobile drawer, which slides in from translateX(102%)
+   and therefore sits outside the viewport for the first frames of its
+   animation. */
+html {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+body {
+  max-width: 100%;
+}
+
 img,
 svg {
   max-width: 100%;
@@ -237,6 +255,48 @@ input[type="range"] {
   background: var(--color-border);
   border-radius: 9999px;
   border: 3px solid var(--color-canvas);
+}
+
+/* ── Horizontal scrollers ─────────────────────────────────────────────────────
+   Tab strips and chip rows scroll sideways on small screens rather than wrapping
+   into three ragged rows. The scrollbar itself is noise on a touch surface — the
+   overflowing content is its own affordance — so it is hidden, and momentum
+   scrolling is kept on iOS.
+   ────────────────────────────────────────────────────────────────────────── */
+.hc-rail {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.hc-rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* A rail's own gutter. `scroll-padding-inline` has to match the padding: these
+   rails snap, and a snap point sitting inside the container's padding gets
+   aligned to the padding *edge*, so the browser scrolls the gutter away on load
+   and the first chip arrives flush against the edge. Insetting the snapport by
+   the same amount makes the resting position the one that shows the gutter. */
+.hc-rail-gutter {
+  padding-inline: clamp(16px, 4vw, 24px);
+  scroll-padding-inline: clamp(16px, 4vw, 24px);
+}
+
+/* Pulls a rail out to the screen edges, so the row it scrolls under reads as
+   "there is more this way" instead of stopping at an arbitrary inset, and puts
+   the page gutter back inside.
+
+   Only below 1060px, where the site switches to its desktop nav: from there up
+   nothing needs to scroll, and bleeding would run the tab strip's underline past
+   the container it belongs to. */
+@media (max-width: 1059px) {
+  .hc-rail-bleed {
+    margin-inline: calc(clamp(16px, 4vw, 24px) * -1);
+    padding-inline: clamp(16px, 4vw, 24px);
+    scroll-padding-inline: clamp(16px, 4vw, 24px);
+  }
 }
 
 /* Reduced motion: drop every transform and reveal all content. Only colour

@@ -12,14 +12,19 @@ import { FOOTER_COLUMNS, FOOTER_NOTE, LEGAL_LINE, OPERATOR_LINE } from "@/lib/da
 export function Footer() {
   return (
     <>
-      <footer className="bg-[var(--color-canvas-ink)] px-[var(--space-xl)] py-[var(--space-3xl)] font-[family-name:var(--font-ui)] text-[var(--color-on-ink)]">
+      {/* The same gutter clamp as every band above it — a flat 24px left the footer
+          content a step further in than the page it closes on a 320px screen. */}
+      <footer className="bg-[var(--color-canvas-ink)] px-[clamp(16px,4vw,24px)] py-[clamp(32px,6vw,48px)] font-[family-name:var(--font-ui)] text-[var(--color-on-ink)]">
         <div className="mx-auto grid max-w-[var(--container-max)] grid-cols-1 gap-[22px] min-[560px]:grid-cols-2 min-[560px]:gap-6 min-[880px]:grid-cols-[1.4fr_repeat(3,1fr)] min-[880px]:gap-[var(--space-2xl)]">
           <div className="flex flex-col gap-[var(--space-lg)]">
+            {/* 84×44, matching the artwork's 1330×695.2 viewBox. At the previous
+                842×44 the box was ten times too wide, so `max-width: 100%` sized it
+                to the column and the lockup rendered centred inside it. */}
             <img
               src="/logo-lockup-on-dark.svg"
               alt="הדרן קלאב"
-              className="h-11 self-start"
-              width={842}
+              className="h-11 w-auto self-start"
+              width={84}
               height={44}
             />
             <p className="max-w-[320px] text-[length:var(--text-body-sm)] leading-[var(--lh-body-md)] text-[var(--sand-400)]">
@@ -47,7 +52,9 @@ export function Footer() {
       </footer>
 
       <div className="border-t border-[rgba(241,236,227,.12)] bg-[var(--color-canvas-ink)] px-[clamp(16px,4vw,24px)] py-[18px]">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-wrap justify-between gap-4 text-[length:var(--text-caption)] text-[var(--sand-400)]">
+        {/* Stacked on a phone: wrapped, these two lines end up ragged against
+            opposite edges and read as one broken sentence. */}
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-1.5 text-[length:var(--text-caption)] text-[var(--sand-400)] min-[720px]:flex-row min-[720px]:flex-wrap min-[720px]:justify-between min-[720px]:gap-4">
           <span>{LEGAL_LINE}</span>
           <span>{OPERATOR_LINE}</span>
         </div>

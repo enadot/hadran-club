@@ -23,12 +23,21 @@ function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive
   );
 }
 
+/**
+ * The strip scrolls sideways rather than wrapping, which is right for tabs — but a
+ * plain `overflow-x-auto` left the last tab sliced through mid-word with a scrollbar
+ * as the only hint. `hc-rail` hides that scrollbar, snapping gives each tab a resting
+ * position, and the gap tightens on a phone so four tabs come closer to fitting
+ * outright. Callers on a full-width page can add `hc-rail-bleed` to run the strip to
+ * the screen edges, which is what makes the overflow legible.
+ */
 function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "flex gap-[var(--space-xl)] overflow-x-auto border-b border-[var(--color-border)]",
+        "hc-rail flex snap-x snap-mandatory gap-[var(--space-lg)]",
+        "border-b border-[var(--color-border)] min-[640px]:gap-[var(--space-xl)]",
         "font-[family-name:var(--font-ui)]",
         className,
       )}
@@ -42,7 +51,10 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "-mb-px cursor-pointer border-b-2 border-transparent bg-transparent pb-3 whitespace-nowrap",
+        "-mb-px flex-none snap-start cursor-pointer border-b-2 border-transparent bg-transparent",
+        // inline-flex + items-end so the 44px touch target grows upward and the
+        // active underline stays tight under the label.
+        "inline-flex min-h-11 items-end pb-3 whitespace-nowrap",
         "text-[length:var(--text-body-md)] font-medium text-[var(--color-mute)]",
         "transition-[color,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
         "hover:text-[var(--color-ink)]",

@@ -85,7 +85,10 @@ export function MemberArea() {
               </div>
             </div>
 
-            <TabsList>
+            {/* The four tabs do not fit a phone. Bleeding the rail to the screen
+                edges — the container's own gutter is the same clamp — means the
+                next tab is visibly cut by the edge rather than by a stray inset. */}
+            <TabsList className="hc-rail-bleed">
               {TABS.map((t) => (
                 <TabsTrigger key={t.value} value={t.value}>
                   {t.label}
@@ -126,12 +129,14 @@ export function MemberArea() {
                         caption="הסכומים להמחשה. היתרה מתעדכנת בתום כל יום עסקים."
                       />
 
-                      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(120px,100%),1fr))] gap-4 border-t border-[var(--color-border)] pt-[18px]">
+                      {/* Three figures that are read against each other, so they stay
+                          on one row down to 320px rather than breaking 2 + 1. */}
+                      <div className="grid grid-cols-3 gap-3 border-t border-[var(--color-border)] pt-[18px] min-[480px]:gap-4">
                         <div className="flex flex-col gap-1">
                           <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                             נחסך החודש
                           </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(20px,3.6vw,26px)] font-extrabold text-[var(--color-positive)]">
+                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,4.6vw,26px)] font-extrabold text-[var(--color-positive)]">
                             ₪286
                           </span>
                         </div>
@@ -139,7 +144,7 @@ export function MemberArea() {
                           <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                             מתחילת השנה
                           </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(20px,3.6vw,26px)] font-extrabold">
+                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,4.6vw,26px)] font-extrabold">
                             ₪2,914
                           </span>
                         </div>
@@ -147,7 +152,7 @@ export function MemberArea() {
                           <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                             קניות החודש
                           </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(20px,3.6vw,26px)] font-extrabold">
+                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,4.6vw,26px)] font-extrabold">
                             14
                           </span>
                         </div>
@@ -189,7 +194,6 @@ export function MemberArea() {
                   <MemberCard
                     holder="משפחת כהן"
                     tier="חבר מועדון · הדרן קארד"
-                    width="min(400px, calc(100vw - 48px))"
                   />
 
                   <Card tone="plain" padding="24px" className="w-full">
@@ -291,7 +295,6 @@ export function MemberArea() {
                   <MemberCard
                     holder="משפחת כהן"
                     tier="חבר מועדון · הדרן קארד"
-                    width="min(400px, calc(100vw - 48px))"
                   />
                   <span className="text-center text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                     מציגים את הכרטיס בקופה לפני התשלום. אין צורך באפליקציה או בקוד.

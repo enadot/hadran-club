@@ -127,19 +127,22 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
       {children}
 
       {isOpen ? (
+        // On a phone this is a sheet, not a floating box: the original 51px top
+        // inset plus a 46vh result list left it hovering over half a screen of
+        // dimmed page with only three results visible.
         <div
           onClick={close}
-          className="hc-scrim fixed inset-0 z-[60] flex items-start justify-center bg-[rgba(18,16,11,.45)] px-[clamp(16px,4vw,24px)] pt-[clamp(51px,9.8vw,88px)] pb-6"
+          className="hc-scrim fixed inset-0 z-[60] flex items-start justify-center bg-[rgba(18,16,11,.45)] px-[clamp(8px,4vw,24px)] pt-[clamp(12px,9.8vw,88px)] pb-[clamp(8px,2vw,24px)]"
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-label="חיפוש באתר"
             onClick={(e) => e.stopPropagation()}
-            className="hc-modal flex w-full max-w-[660px] flex-col overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-canvas)] shadow-[var(--shadow-overlay)]"
+            className="hc-modal flex max-h-full w-full max-w-[660px] flex-col overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-canvas)] shadow-[var(--shadow-overlay)]"
           >
             {/* Query row */}
-            <div className="flex items-center gap-3.5 border-b border-[var(--color-border)] px-[clamp(16px,4vw,24px)] py-5">
+            <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-[clamp(16px,4vw,24px)] py-4 min-[640px]:gap-3.5 min-[640px]:py-5">
               <Icon name="search" size={22} color="var(--color-primary-deep)" />
               <input
                 ref={inputRef}
@@ -150,7 +153,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                 }}
                 placeholder="שם בית עסק, קטגוריה, עיר או שאלה"
                 aria-label="חיפוש"
-                className="min-w-0 flex-1 border-none bg-transparent font-[family-name:var(--font-ui)] text-[clamp(17px,2.5vw,20px)] font-medium text-[var(--color-ink)] outline-none placeholder:text-[var(--color-mute)]"
+                className="min-w-0 flex-1 border-none bg-transparent font-[family-name:var(--font-ui)] text-[clamp(16px,2.5vw,20px)] font-medium text-[var(--color-ink)] outline-none placeholder:text-[var(--color-mute)]"
               />
               {query ? (
                 <IconButton
@@ -166,13 +169,24 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                   }}
                 />
               ) : null}
-              <span className="whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--color-border)] px-2 py-1 text-[length:var(--text-caption)] font-semibold text-[var(--color-mute)]">
+              {/* "Esc" means nothing on a touch screen and there is no other way out
+                  of the sheet there but tapping the scrim, so a phone gets a real
+                  close button and a pointer device keeps the key hint. */}
+              <button
+                type="button"
+                onClick={close}
+                aria-label="סגירת החיפוש"
+                className="grid size-11 flex-none place-items-center rounded-full border border-[var(--color-border)] text-[var(--color-ink)] min-[640px]:hidden"
+              >
+                <Icon name="x" size={20} />
+              </button>
+              <span className="hidden whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--color-border)] px-2 py-1 text-[length:var(--text-caption)] font-semibold text-[var(--color-mute)] min-[640px]:inline">
                 Esc
               </span>
             </div>
 
             {/* Chips */}
-            <div className="flex gap-2 overflow-x-auto border-b border-[var(--color-border)] px-[clamp(16px,4vw,24px)] py-3.5">
+            <div className="hc-rail hc-rail-gutter flex snap-x gap-2 border-b border-[var(--color-border)] py-3.5">
               {SEARCH_CHIPS.map((label) => {
                 const on = chip === label && !query;
                 return (
@@ -185,7 +199,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                       setActive(0);
                     }}
                     className={cn(
-                      "flex-none cursor-pointer rounded-full border px-3.5 py-2",
+                      "flex-none snap-start cursor-pointer rounded-full border px-3.5 py-2",
                       "font-[family-name:var(--font-ui)] text-[length:var(--text-body-sm)] font-semibold",
                       "transition-[background-color,color,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
                       on
@@ -199,8 +213,9 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
               })}
             </div>
 
-            {/* Results */}
-            <div className="hc-scroll max-h-[46vh] min-h-[200px] overflow-y-auto py-2">
+            {/* Results. `flex-1` lets the list take whatever the sheet has left on a
+                phone; the 46vh cap is kept from 640px up, where the dialog floats. */}
+            <div className="hc-scroll min-h-[160px] flex-1 overflow-y-auto py-2 min-[640px]:max-h-[46vh] min-[640px]:flex-none">
               {showRecent ? (
                 <>
                   <div className="flex items-center justify-between gap-3 px-[clamp(16px,4vw,24px)] pt-2.5 pb-1">
@@ -300,9 +315,10 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
               ) : null}
             </div>
 
-            {/* Keyboard legend */}
-            <div className="flex items-center justify-between gap-4 border-t border-[var(--color-border)] bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] py-3.5">
-              <div className="flex flex-wrap gap-4 text-[length:var(--text-caption)] text-[var(--color-mute)]">
+            {/* Keyboard legend — hidden on a phone, where it is a row of instructions
+                for keys the reader does not have. The link to the full list stays. */}
+            <div className="flex flex-none items-center justify-between gap-4 border-t border-[var(--color-border)] bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] py-3.5">
+              <div className="hidden flex-wrap gap-4 text-[length:var(--text-caption)] text-[var(--color-mute)] min-[640px]:flex">
                 <span className="flex items-center gap-1.5">
                   <b className="font-bold text-[var(--color-ink)]">↑ ↓</b> ניווט
                 </span>
