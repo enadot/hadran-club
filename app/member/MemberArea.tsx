@@ -10,14 +10,16 @@ import { Checkbox } from "@/components/brand/Checkbox";
 import { Figure } from "@/components/brand/Figure";
 import { Input } from "@/components/brand/Input";
 import { MemberCard } from "@/components/brand/MemberCard";
-import { SavingsMeter } from "@/components/brand/SavingsMeter";
 import { Select } from "@/components/brand/Select";
 import {
   MEMBER_ACTIVITY,
   MEMBER_CITY_OPTIONS,
   MONTH_OPTIONS,
+  SAVINGS_WINDOWS,
   monthSavings,
+  type SavingsWindow,
 } from "@/lib/data/member";
+import { cn } from "@/lib/utils";
 
 const EMPTY_DETAILS = {
   first: "יעקב",
@@ -46,9 +48,13 @@ const TABS = [
 export function MemberArea() {
   const [tab, setTab] = React.useState("overview");
   const [month, setMonth] = React.useState("tamuz");
+  // `window_` — `window` is the global.
+  const [window_, setWindow] = React.useState<SavingsWindow>("month");
   const [details, setDetails] = React.useState(EMPTY_DETAILS);
   const [saved, setSaved] = React.useState(false);
 
+  const active =
+    SAVINGS_WINDOWS.find((w) => w.value === window_) ?? SAVINGS_WINDOWS[0];
   const history = MEMBER_ACTIVITY[month] ?? [];
   const recent = MEMBER_ACTIVITY.tamuz.slice(0, 4);
 
@@ -106,56 +112,80 @@ export function MemberArea() {
                 <div className="flex flex-col gap-6">
                   <Card tone="plain" padding="clamp(18px,5vw,28px)">
                     <div className="flex flex-col gap-[22px]">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex flex-col gap-1.5">
+                      {/* The saving is the headline, not the balance. A loaded
+                          balance only exists if a budget was put on the card; the
+                          accumulated saving is what every member has and what the
+                          membership is actually for. Leading with the balance also
+                          put two unrelated shekel figures side by side with no
+                          hierarchy between them. */}
+                      <div className="flex flex-col gap-3.5">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
                           <span className="text-[15px] font-semibold text-[var(--color-mute)]">
-                            יתרה זמינה בכרטיס
+                            חסכתם עם הדרן קארד
                           </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(32px,7.5vw,56px)] leading-none font-extrabold">
-                            <Figure value={1240} prefix="₪" />
+                          <span className="text-end text-[13px] text-[var(--color-mute)]">
+                            עודכן היום · כ״ג בתמוז, 9:40
                           </span>
                         </div>
-                        <span className="text-end text-[13px] text-[var(--color-mute)]">
-                          עודכן היום
-                          <br />
-                          כ״ג בתמוז, 9:40
+
+                        {/* Window switch. One figure that changes meaning beats three
+                            competing figures — the pattern every savings dashboard
+                            worth copying has converged on. */}
+                        <div
+                          role="tablist"
+                          aria-label="טווח החיסכון"
+                          className="flex flex-wrap gap-2"
+                        >
+                          {SAVINGS_WINDOWS.map((w) => (
+                            <button
+                              key={w.value}
+                              type="button"
+                              role="tab"
+                              aria-selected={window_ === w.value}
+                              onClick={() => setWindow(w.value)}
+                              className={cn(
+                                "min-h-9 flex-none cursor-pointer rounded-full border px-3.5 py-1.5",
+                                "text-[length:var(--text-body-sm)] font-semibold",
+                                "transition-[background-color,color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+                                window_ === w.value
+                                  ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-primary)]"
+                                  : "border-[var(--color-border)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:bg-[var(--color-canvas-soft)]",
+                              )}
+                            >
+                              {w.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        <span
+                          className="tnum font-[family-name:var(--font-display)] text-[clamp(38px,9vw,64px)] leading-none font-extrabold text-[var(--color-positive)]"
+                          aria-live="polite"
+                        >
+                          <Figure key={active.value} value={active.amount} prefix="₪" />
+                        </span>
+                        <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
+                          {active.note} · {active.purchases} קניות שבהן מומשה ההטבה
                         </span>
                       </div>
 
-                      <SavingsMeter
-                        value={286}
-                        max={400}
-                        label="נחסך החודש"
-                        caption="הסכומים להמחשה. היתרה מתעדכנת בתום כל יום עסקים."
-                      />
+                      <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
+                        הסכומים להמחשה. הרישום מתעדכן בתום כל יום עסקים.
+                      </span>
 
-                      {/* Three figures that are read against each other, so they stay
-                          on one row down to 320px rather than breaking 2 + 1. */}
-                      <div className="grid grid-cols-3 gap-3 border-t border-[var(--color-border)] pt-[18px] min-[480px]:gap-4">
-                        <div className="flex flex-col gap-1">
+                      {/* The loaded balance keeps its place, one level down, and says
+                          plainly that it is optional — the card works without it. */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] pt-[18px]">
+                        <div className="flex flex-col gap-0.5">
                           <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                            נחסך החודש
+                            יתרה טעונה בכרטיס
                           </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,4.6vw,26px)] font-extrabold text-[var(--color-positive)]">
-                            ₪286
+                          <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
+                            רשות. ההנחה בקופה עובדת גם בלי טעינה.
                           </span>
                         </div>
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                            מתחילת השנה
-                          </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,4.6vw,26px)] font-extrabold">
-                            ₪2,914
-                          </span>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                            קניות החודש
-                          </span>
-                          <span className="tnum font-[family-name:var(--font-display)] text-[clamp(18px,4.6vw,26px)] font-extrabold">
-                            14
-                          </span>
-                        </div>
+                        <span className="tnum font-[family-name:var(--font-display)] text-[clamp(20px,4.4vw,26px)] font-extrabold">
+                          ₪1,240
+                        </span>
                       </div>
                     </div>
                   </Card>
@@ -317,9 +347,11 @@ export function MemberArea() {
                         <span className="text-[var(--color-mute)]">בתוקף עד</span>
                         <span className="tnum font-semibold">08/2027</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-[var(--color-mute)]">הנחה בכל בית עסק שותף</span>
-                        <span className="font-bold text-[var(--color-positive)]">5%</span>
+                      <div className="flex justify-between gap-4">
+                        <span className="text-[var(--color-mute)]">גישה להטבות</span>
+                        <span className="text-end font-bold text-[var(--color-positive)]">
+                          כל השותפים, כולל הבלעדיים
+                        </span>
                       </div>
                     </div>
                   </Card>

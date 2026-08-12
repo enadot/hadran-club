@@ -8,7 +8,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: "דף הבית", href: "/", icon: "home" },
   { label: "בתי העסק", href: "/benefits", icon: "store" },
   { label: "הפעלת כרטיס", href: "/activate", icon: "credit-card" },
-  { label: "בדיקת יתרה", href: "/balance", icon: "wallet" },
+  { label: "בדיקת חיסכון", href: "/balance", icon: "wallet" },
   { label: "לבתי עסק", href: "/merchants", icon: "store" },
   { label: "שאלות ותשובות", href: "/faq", icon: "help-circle" },
   { label: "אזור אישי", href: "/member", icon: "user" },
@@ -36,7 +36,7 @@ export const FOOTER_COLUMNS: {
     title: "הכרטיס",
     links: [
       { label: "הפעלת כרטיס", href: "/activate" },
-      { label: "בדיקת יתרה", href: "/balance" },
+      { label: "בדיקת חיסכון", href: "/balance" },
       { label: "אזור אישי", href: "/member" },
       { label: "אובדן או גניבה", href: "/faq" },
     ],
@@ -45,6 +45,7 @@ export const FOOTER_COLUMNS: {
     title: "בתי עסק",
     links: [
       { label: "רשימת בתי העסק", href: "/benefits" },
+      { label: "חנויות בלעדיות", href: "/benefits?tier=exclusive" },
       { label: "הצטרפות עסקים", href: "/merchants#form" },
       { label: "אזור בעלי עסקים", href: "/merchants" },
       { label: "יצירת קשר", href: "/merchants#form" },
@@ -53,7 +54,7 @@ export const FOOTER_COLUMNS: {
 ];
 
 export const FOOTER_NOTE =
-  "מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש.";
+  "מועדון ההטבות של הדרן. כרטיס אחד שפותח רשת רחבה של הטבות אצל השותפים שלנו — ההנחה יורדת בקופה, בלי נקודות, בלי קופונים ובלי טעינה מראש.";
 
 export const LEGAL_LINE = "© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.";
 export const OPERATOR_LINE = "מופעל על ידי קהילות קארד";

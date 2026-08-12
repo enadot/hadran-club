@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { BalanceChecker } from "./BalanceChecker";
 
 export const metadata: Metadata = {
-  title: "בדיקת יתרה",
+  title: "בדיקת חיסכון",
   description:
-    "הזנת מספר הכרטיס וארבע ספרות אחרונות של מספר הזהות מציגה את היתרה בכרטיס, את החיסכון שנצבר ואת הקניות האחרונות.",
+    "הזנת מספר הכרטיס וארבע ספרות אחרונות של מספר הזהות מציגה את החיסכון שנצבר, את מצב הכרטיס ואת הקניות האחרונות.",
 };
 
 export default function BalancePage() {
@@ -15,9 +15,9 @@ export default function BalancePage() {
           <span className="text-[13px] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
             הדרן קארד
           </span>
-          <h1 className="m-0 text-[clamp(27px,6vw,44px)] leading-[1.08]">בדיקת יתרה</h1>
+          <h1 className="m-0 text-[clamp(27px,6vw,44px)] leading-[1.08]">כמה חסכתם</h1>
           <p className="m-0 text-[clamp(16px,2.3vw,18px)] text-[var(--color-body)]">
-            הזנת מספר הכרטיס וארבע ספרות אחרונות של מספר הזהות מציגה את היתרה בכרטיס, את החיסכון
+            הזנת מספר הכרטיס וארבע ספרות אחרונות של מספר הזהות מציגה את החיסכון
             שנצבר ואת הקניות האחרונות.
           </p>
         </div>

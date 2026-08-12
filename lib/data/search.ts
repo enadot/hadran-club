@@ -1,4 +1,12 @@
-/** Search index — verbatim from the PARTNERS / PAGES / FAQS arrays in Search.dc.html. */
+/**
+ * The global search index.
+ *
+ * Partners are no longer duplicated here: the prototype kept a second, differently
+ * named list, so a hit could link to /benefits and then not exist there. The one
+ * list in lib/data/partners.ts is the source now.
+ */
+import { PARTNERS, partnerInitials } from "./partners";
+import { BENEFIT_TIERS } from "./benefits";
 
 export type SearchKind = "partner" | "page" | "faq";
 
@@ -8,21 +16,9 @@ export type SearchResult = {
   meta: string;
   href: string;
   initials: string;
-  showDiscount: boolean;
+  /** The benefit tier label, shown on partner rows. Absent on pages and questions. */
+  benefitLabel?: string;
 };
-
-export const SEARCH_PARTNERS = [
-  { name: "שפע ברכת השם", category: "רשת מזון ומכולת", city: "ירושלים" },
-  { name: "מכולת הבית", category: "רשת מזון ומכולת", city: "בני ברק" },
-  { name: "קצביית הכשרות", category: "בשר, עוף ודגים", city: "בני ברק" },
-  { name: "דגי הצפון", category: "בשר, עוף ודגים", city: "חיפה" },
-  { name: "הלבשה למשפחה", category: "ביגוד והנעלה", city: "ירושלים" },
-  { name: "נעלי הדר", category: "ביגוד והנעלה", city: "אלעד" },
-  { name: "אוצר הספרים", category: "ספרי קודש ויודאיקה", city: "ירושלים" },
-  { name: "יודאיקה מהדרין", category: "ספרי קודש ויודאיקה", city: "בית שמש" },
-  { name: "כלי בית שלמה", category: "כלי בית וריהוט", city: "מודיעין עילית" },
-  { name: "פארם משפחה", category: "פארמה וטיפוח", city: "בני ברק" },
-];
 
 export const SEARCH_PAGES = [
   {
@@ -33,9 +29,9 @@ export const SEARCH_PAGES = [
   },
   {
     name: "בדיקת יתרה",
-    meta: "יתרה לשימוש, חיסכון מצטבר והיסטוריית קניות",
+    meta: "החיסכון שנצבר, מצב הכרטיס והיסטוריית הקניות",
     href: "/balance",
-    kw: "יתרה חיסכון היסטוריה כמה נשאר",
+    kw: "יתרה חיסכון היסטוריה כמה נשאר כמה חסכתי",
   },
   {
     name: "אזור אישי",
@@ -56,7 +52,7 @@ export const SEARCH_FAQS = [
     name: "איך מקבלים את ההנחה בקופה?",
     meta: "מציגים את הכרטיס לפני התשלום — ההנחה יורדת מהחשבון",
     href: "/faq",
-    kw: "הנחה קופה 5% איך",
+    kw: "הנחה קופה איך אחוז",
   },
   {
     name: "מה קורה אם הכרטיס אבד?",
@@ -70,10 +66,17 @@ export const SEARCH_FAQS = [
     href: "/faq",
     kw: "טעינה נקודות קופון מראש",
   },
+  {
+    name: "אילו חנויות בלעדיות למועדון?",
+    meta: "יש בתי עסק שההטבה בהם זמינה אך ורק לחברי הדרן קלאב",
+    href: "/benefits?tier=exclusive",
+    kw: "בלעדי בלעדיות רק לחברים נבחרת",
+  },
 ];
 
 export const SEARCH_CHIPS = [
   "הכל",
+  "בלעדי",
   "מזון ומכולת",
   "בשר ודגים",
   "ביגוד",
@@ -85,6 +88,7 @@ export const SEARCH_CHIPS = [
 /** Each chip stands in for a query string; "הכל" clears the search. */
 export const CHIP_QUERY: Record<string, string> = {
   הכל: "",
+  בלעדי: "בלעדי",
   "מזון ומכולת": "מזון",
   "בשר ודגים": "בשר",
   ביגוד: "ביגוד",
@@ -93,7 +97,7 @@ export const CHIP_QUERY: Record<string, string> = {
   "בני ברק": "בני ברק",
 };
 
-export const RECENT_SEARCHES = ["מכולת בני ברק", "ספרי קודש", "בדיקת יתרה"];
+export const RECENT_SEARCHES = ["מכולת בני ברק", "ספרי קודש", "חנויות בלעדיות"];
 
 export const GROUP_TITLES: Record<SearchKind, string> = {
   partner: "בתי עסק שותפים",
@@ -107,15 +111,23 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
   if (!q) return [];
   const hit = (s: string) => (s || "").includes(q);
 
-  const partners: SearchResult[] = SEARCH_PARTNERS.filter(
-    (p) => hit(p.name) || hit(p.category) || hit(p.city),
+  const partners: SearchResult[] = PARTNERS.filter(
+    (p) =>
+      hit(p.name) ||
+      hit(p.category) ||
+      hit(p.city) ||
+      // So the "בלעדי" chip and a typed "בלעדי" both reach the exclusive shops.
+      hit(BENEFIT_TIERS[p.tier].label) ||
+      hit(p.benefit),
   ).map((p) => ({
     kind: "partner",
     name: p.name,
     meta: `${p.category} · ${p.city}`,
-    href: "/benefits",
-    initials: p.name.trim().slice(0, 2),
-    showDiscount: true,
+    // Deep-links the directory straight to the shop, so the result lands on the
+    // row it promised rather than on an unfiltered list of everything.
+    href: `/benefits?q=${encodeURIComponent(p.name)}`,
+    initials: partnerInitials(p.name),
+    benefitLabel: BENEFIT_TIERS[p.tier].label,
   }));
 
   const pages: SearchResult[] = SEARCH_PAGES.filter(
@@ -126,7 +138,6 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
     meta: p.meta,
     href: p.href,
     initials: "דף",
-    showDiscount: false,
   }));
 
   const faqs: SearchResult[] = SEARCH_FAQS.filter(
@@ -137,7 +148,6 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
     meta: p.meta,
     href: p.href,
     initials: "?",
-    showDiscount: false,
   }));
 
   return (

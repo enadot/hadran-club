@@ -7,12 +7,18 @@ import { cn } from "@/lib/utils";
  * Credit-card aspect ratio 1.586:1, --radius-2xl (32px), the reserved brand
  * gradient as fill, and --shadow-gold beneath. The gold variant renders the logo
  * mark in ink via brightness(0); the ink variant keeps the gold artwork as-is.
+ *
+ * The artwork used to print "5%" where `mark` now sits. The benefit is per-merchant,
+ * so a single figure embossed on the card was the one claim the card could never
+ * keep — and it aged the artwork to whatever the rate happened to be that quarter.
+ * The wordmark says the same thing the card is actually for: membership.
  */
 export type MemberCardProps = Omit<React.ComponentPropsWithoutRef<"div">, "style"> & {
   holder?: string;
   number?: string;
   tier?: string;
-  discount?: string;
+  /** The top-end lockup. Defaults to the club wordmark. */
+  mark?: string;
   variant?: "gold" | "ink";
   logoSrc?: string;
   /**
@@ -30,7 +36,7 @@ export function MemberCard({
   holder = "ישראל ישראלי",
   number = "4271 •••• •••• 8032",
   tier = "חבר מועדון",
-  discount = "5%",
+  mark = "הדרן קלאב",
   variant = "gold",
   logoSrc = "/logo-mark.svg",
   width = "min(400px, 100%)",
@@ -60,8 +66,8 @@ export function MemberCard({
           className="h-[46px]"
           style={{ filter: dark ? "none" : "brightness(0)", opacity: dark ? 1 : 0.85 }}
         />
-        <span className="font-[family-name:var(--font-display)] text-[length:var(--text-display-sm)] font-extrabold leading-none tracking-[-0.02em]">
-          {discount}
+        <span className="text-[length:var(--text-body-sm)] font-bold tracking-[var(--tracking-wide)] opacity-70">
+          {mark}
         </span>
       </div>
 

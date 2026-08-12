@@ -8,11 +8,15 @@ import { Card } from "@/components/brand/Card";
 import { Figure } from "@/components/brand/Figure";
 import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
-import { SavingsMeter } from "@/components/brand/SavingsMeter";
 import { RECENT_PURCHASES } from "@/lib/data/activity";
 import { SUPPORT_PHONE } from "@/lib/data/site";
-
-const onlyDigits = (v: string) => v.replace(/\D/g, "");
+import { SAVINGS_WINDOWS } from "@/lib/data/member";
+import {
+  formatCardNumber,
+  maskCardNumber,
+  onlyDigits,
+  pretendRequest,
+} from "@/lib/forms";
 
 /**
  * Balance lookup: a two-field form that swaps to the result view.
@@ -27,9 +31,15 @@ export function BalanceChecker() {
   const [idTail, setIdTail] = React.useState("");
   const [cardError, setCardError] = React.useState<string | null>(null);
   const [idError, setIdError] = React.useState<string | null>(null);
+  // A lookup is a network round trip. It needs to say it is working, and it needs
+  // an answer for "that card was not found" — neither of which existed before, so
+  // a wrong-but-well-formed number silently returned someone else's figures.
+  const [checking, setChecking] = React.useState(false);
+  const [lookupError, setLookupError] = React.useState<string | null>(null);
   const resultRef = React.useRef<HTMLDivElement>(null);
 
-  const check = () => {
+  const check = async () => {
+    if (checking) return;
     const c = onlyDigits(card);
     const t = onlyDigits(idTail);
     const nextCardError = c.length === 16 ? null : "יש להזין 16 ספרות המופיעות על הכרטיס";
@@ -42,15 +52,22 @@ export function BalanceChecker() {
     }
     setCardError(null);
     setIdError(null);
-    setView("result");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setLookupError(null);
+    setChecking(true);
+    try {
+      await pretendRequest(true);
+      setView("result");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setLookupError(
+        "לא מצאנו כרטיס שמתאים לפרטים האלה. כדאי לבדוק את המספר ואת ארבע הספרות, או להתקשר למוקד המועדון.",
+      );
+    } finally {
+      setChecking(false);
+    }
   };
 
-  const digits = onlyDigits(card);
-  const maskedCard =
-    digits.length === 16
-      ? `${digits.slice(0, 4)} •••• •••• ${digits.slice(12)}`
-      : "4271 •••• •••• 8032";
+  const maskedCard = maskCardNumber(card, "4271 •••• •••• 8032");
 
   // Move focus into the result once it replaces the form, so the change is announced.
   React.useEffect(() => {
@@ -75,28 +92,59 @@ export function BalanceChecker() {
               icon="credit-card"
               inputMode="numeric"
               autoComplete="off"
-              value={card}
+              dir="ltr"
+              className="ltr text-start tnum tracking-[0.04em]"
+              maxLength={19}
+              value={formatCardNumber(card)}
               onChange={(e) => {
                 setCard(e.target.value);
                 setCardError(null);
+                setLookupError(null);
               }}
               error={cardError}
-              hint="16 הספרות המופיעות על הכרטיס"
+              hint="16 הספרות בשורה הארוכה שעל גב הכרטיס"
             />
             <Input
               label="4 ספרות אחרונות של מספר הזהות"
               placeholder="0000"
               inputMode="numeric"
               autoComplete="off"
-              value={idTail}
+              dir="ltr"
+              className="ltr text-start tnum"
+              maxLength={4}
+              value={onlyDigits(idTail).slice(0, 4)}
               onChange={(e) => {
                 setIdTail(e.target.value);
                 setIdError(null);
+                setLookupError(null);
               }}
               error={idError}
             />
-            <Button type="submit" size="lg" fullWidth>
-              בדיקת יתרה
+
+            {lookupError ? (
+              <div
+                role="alert"
+                className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-[var(--color-negative-pale)] p-3.5"
+              >
+                <span className="mt-0.5 flex-none">
+                  <Icon name="circle-alert" size={18} color="var(--color-negative-deep)" />
+                </span>
+                <span className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-negative-deep)]">
+                  {lookupError}
+                </span>
+              </div>
+            ) : null}
+
+            <Button
+              type="submit"
+              size="lg"
+              fullWidth
+              disabled={checking}
+              aria-busy={checking || undefined}
+              icon={checking ? "loader" : undefined}
+              className={checking ? "[&>svg]:animate-spin" : undefined}
+            >
+              {checking ? "בודקים…" : "בדיקת החיסכון"}
             </Button>
             <div className="flex items-center justify-center gap-2 text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
               <Icon name="shield-check" size={18} color="var(--color-primary-deep)" />
@@ -116,10 +164,10 @@ export function BalanceChecker() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-[15px] font-semibold text-[var(--color-mute)]">
-                    יתרה זמינה בכרטיס
+                    חסכתם עם הדרן קארד מאז ההצטרפות
                   </span>
-                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-none font-extrabold">
-                    <Figure value={1240} prefix="₪" />
+                  <span className="tnum font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-none font-extrabold text-[var(--color-positive)]">
+                    <Figure value={SAVINGS_WINDOWS[2].amount} prefix="₪" />
                   </span>
                   <span className="tnum ltr text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
                     {maskedCard}
@@ -164,12 +212,9 @@ export function BalanceChecker() {
                 </div>
               </div>
 
-              <SavingsMeter
-                value={286}
-                max={400}
-                label="החיסכון החודשי שלכם"
-                caption="הסכומים להמחשה. היתרה מתעדכנת בתום כל יום עסקים."
-              />
+              <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
+                הסכומים להמחשה. הרישום מתעדכן בתום כל יום עסקים.
+              </span>
             </div>
           </Card>
 
@@ -207,6 +252,7 @@ export function BalanceChecker() {
                 setView("form");
                 setCard("");
                 setIdTail("");
+                setLookupError(null);
               }}
             >
               בדיקת כרטיס אחר

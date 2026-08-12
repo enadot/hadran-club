@@ -63,3 +63,15 @@ export function monthSavings(rows: Purchase[]) {
   const total = rows.reduce((sum, r) => sum + Number(r.saved.replace(/[^\d.]/g, "")), 0);
   return "₪" + total.toFixed(2).replace(/\.00$/, "");
 }
+
+/** Headline savings figures, by window. The member area used to lead with a
+ *  "יתרה זמינה" — a stored balance the card only has if a budget was loaded onto
+ *  it. What every member has, and what the club is actually selling, is the
+ *  accumulated saving, so that is the number the page opens with now. */
+export const SAVINGS_WINDOWS = [
+  { value: "month", label: "החודש", amount: 286, purchases: 14, note: "תמוז תשפ״ו" },
+  { value: "year", label: "מתחילת השנה", amount: 2914, purchases: 132, note: "תשפ״ו" },
+  { value: "all", label: "מאז ההצטרפות", amount: 7480, purchases: 361, note: "מאז תשפ״ד" },
+] as const;
+
+export type SavingsWindow = (typeof SAVINGS_WINDOWS)[number]["value"];
