@@ -56,7 +56,7 @@ export function PlanChooser({ value, onChange, className }: PlanChooserProps) {
             <b className="text-[clamp(17px,2.6vw,21px)]">{plan.name}</b>
           </div>
           {plan.flag ? (
-            <Badge tone="gold" className="flex-none text-[12px]">
+            <Badge tone="gold" className="flex-none text-[length:var(--text-caption)]">
               {plan.flag}
             </Badge>
           ) : null}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Band, Container } from "@/components/site/Band";
+import { Band, Container, Eyebrow } from "@/components/site/Band";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
@@ -45,9 +45,7 @@ export default function BenefitsPage() {
       <section className="bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,6.2vw,56px)] pb-9">
         <Container className="flex flex-col gap-7">
           <div className="flex max-w-[720px] flex-col gap-3.5">
-            <span className="text-[13px] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
-              הנבחרת שלנו
-            </span>
+            <Eyebrow>הנבחרת שלנו</Eyebrow>
             <h1 className="m-0 text-[clamp(30px,7vw,52px)] leading-[1.06]">בתי העסק השותפים</h1>
             <p className="m-0 text-[clamp(16px,2.4vw,19px)] leading-[1.6] text-[var(--color-body)]">
               ההטבה נקבעת מול כל שותף בנפרד — מהנחה קבועה על הסל היום-יומי ועד להטבות עמוקות

@@ -19,6 +19,9 @@ export type BenefitTier = "basic" | "deep" | "exclusive";
 export type BenefitTierMeta = {
   /** The badge label on a partner row. */
   label: string;
+  /** The same thing in one word, for badges sharing a line with a shop name on a
+   *  phone — the full label wrapped and left every row a different height. */
+  short: string;
   /** One line explaining what the tier means, for the detail sheet and legend. */
   description: string;
   /** Badge tone from the design system's existing palette — no new tokens. */
@@ -30,6 +33,7 @@ export type BenefitTierMeta = {
 export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
   basic: {
     label: "הטבה קבועה",
+    short: "קבועה",
     description:
       "הנחה שוטפת על הסל כולו, בעיקר במוצרי יסוד וברשתות הגדולות. זו ההטבה שמלווה את הקנייה השבועית.",
     tone: "neutral",
@@ -37,6 +41,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
   },
   deep: {
     label: "הטבה מורחבת",
+    short: "מורחבת",
     description:
       "הטבה עמוקה משמעותית, בקטגוריות שבהן לכוח הקנייה של הקהילה יש משקל — אופנה, אופטיקה ומוצרים ייעודיים.",
     tone: "gold",
@@ -44,6 +49,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
   },
   exclusive: {
     label: "בלעדי לחברי המועדון",
+    short: "בלעדי",
     description:
       "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב. כאן הכרטיס אינו מוזיל את הקנייה — הוא מה שפותח אותה.",
     tone: "ink",

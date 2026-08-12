@@ -67,6 +67,7 @@ const SHOWCASE = [...PARTNERS]
 
 export default function HomePage() {
   const exclusiveCount = PARTNERS.filter((p) => p.tier === "exclusive").length;
+  const cityCount = new Set(PARTNERS.map((p) => p.city)).size;
 
   return (
     <>
@@ -117,8 +118,11 @@ export default function HomePage() {
           <div className="flex flex-col items-center gap-6">
             {/* The one brand moment on this page: a soft gold beam around the card.
                 The tilt is dropped below 480px — there the card already fills the
-                column, and a rotated 400px box would stick out past the gutter. */}
-            <div className="w-full max-w-[400px] rotate-0 min-[480px]:w-auto min-[480px]:rotate-[-3deg]">
+                column, and a rotated 400px box would stick out past the gutter.
+                The width stays explicit at every size: MemberCard is min(400px,100%),
+                so an `w-auto` wrapper leaves it no containing width to resolve
+                against and the artwork collapses to its content. */}
+            <div className="order-2 w-full max-w-[400px] rotate-0 min-[480px]:rotate-[-3deg]">
               <div className="relative rounded-[var(--radius-2xl)]">
                 <MemberCard holder="משפחת כהן" tier="חבר מועדון · הדרן קארד" />
                 <BorderBeam
@@ -135,7 +139,7 @@ export default function HomePage() {
             {/* Replaces the hero's giant "5%". The benefit is a range set per
                 merchant, so the honest headline figure is the shape of the range,
                 not a number the club would have to defend at every till. */}
-            <ul className="m-0 flex w-full max-w-[400px] list-none flex-col gap-1.5 p-0">
+            <ul className="order-1 m-0 flex w-full max-w-[400px] list-none flex-col gap-1.5 p-0 min-[480px]:order-3">
               {BENEFIT_TIER_ORDER.map((t) => {
                 const meta = BENEFIT_TIERS[t];
                 return (
@@ -181,7 +185,7 @@ export default function HomePage() {
               icon="wallet"
             />
             <StatBlock
-              value={<Figure value={7} />}
+              value={<Figure value={cityCount} />}
               label="יישובים"
               sublabel="ובכל אחד מהם הנבחרת שלנו"
               icon="map-pin"
@@ -335,7 +339,7 @@ export default function HomePage() {
                         </span>
                       </div>
                       {p.tier === "exclusive" ? (
-                        <Badge tone="ink" icon={meta.icon} className="self-start text-[12px]">
+                        <Badge tone="ink" icon={meta.icon} className="self-start text-[length:var(--text-caption)]">
                           בלעדי
                         </Badge>
                       ) : null}

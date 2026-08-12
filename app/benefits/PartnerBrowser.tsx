@@ -53,7 +53,7 @@ export function PartnerBrowser() {
 
   const query = params.get("q") ?? "";
   const city = params.get("city") ?? "all";
-  const category = params.get("cat") ?? "הכל";
+  const category = params.get("cat") ?? "כל הקטגוריות";
   const tier = (params.get("tier") ?? "all") as BenefitTier | "all";
   const sort = params.get("sort") ?? "featured";
 
@@ -67,7 +67,7 @@ export function PartnerBrowser() {
       for (const [k, v] of Object.entries(patch)) {
         // Defaults are absent from the URL rather than spelled out, so a shared
         // link carries only what was actually chosen.
-        if (!v || v === "all" || v === "הכל" || v === "featured") next.delete(k);
+        if (!v || v === "all" || v === "כל הקטגוריות" || v === "featured") next.delete(k);
         else next.set(k, v);
       }
       const qs = next.toString();
@@ -79,14 +79,14 @@ export function PartnerBrowser() {
   const activeCount =
     (query ? 1 : 0) +
     (city !== "all" ? 1 : 0) +
-    (category !== "הכל" ? 1 : 0) +
+    (category !== "כל הקטגוריות" ? 1 : 0) +
     (tier !== "all" ? 1 : 0);
 
   const shown = React.useMemo(() => {
     const q = query.trim();
     const list = PARTNERS.filter(
       (p) =>
-        (category === "הכל" || p.category === category) &&
+        (category === "כל הקטגוריות" || p.category === category) &&
         (city === "all" || p.city === city) &&
         (tier === "all" || p.tier === tier) &&
         (!q || p.name.includes(q) || p.category.includes(q) || p.city.includes(q)),
@@ -114,7 +114,7 @@ export function PartnerBrowser() {
     <>
       <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,20px)] min-[1060px]:top-[86px]">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3">
-          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-[2fr_1fr] min-[1060px]:grid-cols-[2fr_1fr_1fr]">
+          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[2fr_1fr_1fr]">
             <Input
               icon="search"
               placeholder="שם בית עסק, קטגוריה או עיר"
@@ -133,46 +133,64 @@ export function PartnerBrowser() {
               value={sort}
               aria-label="מיון הרשימה"
               onChange={(e) => setParam({ sort: e.target.value })}
-              wrapperClassName="hidden min-[1060px]:flex"
+              wrapperClassName="min-[560px]:col-span-2 min-[1060px]:col-span-1"
             />
           </div>
 
-          {/* Tier chips lead, because "בלעדי" is the club's actual argument and it
-              was not filterable — or even visible — before. */}
-          <div className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible">
-            <FilterChip
-              selected={tier === "all"}
-              onClick={() => setParam({ tier: "all" })}
-              className="flex-none snap-start"
+          {/* Two axes, two rows. Run as one strip they read as a single group of
+              filters with two chips lit at once, which is exactly the wrong thing
+              to say about tier and category — they combine, they do not compete. */}
+          <div className="flex flex-col gap-2">
+            <div
+              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
+              role="group"
+              aria-label="סינון לפי סוג ההטבה"
             >
-              כל ההטבות
-            </FilterChip>
-            {BENEFIT_TIER_ORDER.map((t) => (
+              {/* The label is desktop-only: on a phone it costs a chip's width of
+                  a rail that is already scrolling. The reset chips carry distinct
+                  wording instead, so two lit chips never read as one contradictory
+                  pair of "הכל"s. */}
+              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
+                ההטבה
+              </span>
               <FilterChip
-                key={t}
-                selected={tier === t}
-                onClick={() => setParam({ tier: t })}
+                selected={tier === "all"}
+                onClick={() => setParam({ tier: "all" })}
                 className="flex-none snap-start"
               >
-                {BENEFIT_TIERS[t].label}
+                כל ההטבות
               </FilterChip>
-            ))}
+              {BENEFIT_TIER_ORDER.map((t) => (
+                <FilterChip
+                  key={t}
+                  selected={tier === t}
+                  onClick={() => setParam({ tier: t })}
+                  className="flex-none snap-start"
+                >
+                  {BENEFIT_TIERS[t].label}
+                </FilterChip>
+              ))}
+            </div>
 
-            <span
-              aria-hidden="true"
-              className="mx-1 h-6 w-px flex-none self-center bg-[var(--color-border)]"
-            />
-
-            {PARTNER_CATEGORIES.map((c) => (
-              <FilterChip
-                key={c}
-                selected={category === c}
-                onClick={() => setParam({ cat: c })}
-                className="flex-none snap-start"
-              >
-                {c}
-              </FilterChip>
-            ))}
+            <div
+              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
+              role="group"
+              aria-label="סינון לפי קטגוריה"
+            >
+              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
+                קטגוריה
+              </span>
+              {PARTNER_CATEGORIES.map((c) => (
+                <FilterChip
+                  key={c}
+                  selected={category === c}
+                  onClick={() => setParam({ cat: c })}
+                  className="flex-none snap-start"
+                >
+                  {c}
+                </FilterChip>
+              ))}
+            </div>
           </div>
 
           {/* Result count and reset. Announced, because filtering changes the list
@@ -231,21 +249,34 @@ export function PartnerBrowser() {
                           : "border-[var(--color-border)] hover:border-[var(--color-primary-neutral)]",
                       )}
                     >
-                      <span className="grid size-12 flex-none place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-[17px] font-extrabold text-[var(--color-primary-deep)] min-[560px]:size-14 min-[560px]:text-xl">
+                      <span className="grid size-12 flex-none place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-[length:var(--text-body-md)] font-extrabold text-[var(--color-primary-deep)] min-[560px]:size-14 min-[560px]:text-[length:var(--text-body-lg)]">
                         {partnerInitials(p.name)}
                       </span>
 
                       <span className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <b className="text-[clamp(15px,2.3vw,17px)] leading-[1.3] text-[var(--color-ink)]">
+                        <span className="flex items-center gap-2">
+                          <b className="min-w-0 truncate text-[clamp(15px,2.3vw,17px)] leading-[1.3] text-[var(--color-ink)]">
                             {p.name}
                           </b>
-                          <Badge tone={meta.tone} icon={meta.icon} className="text-[13px]">
-                            {meta.label}
+                          {/* One word on a phone, the full label from 560px. The
+                              long label wrapped under the name and left every row
+                              a different height, which is what a scannable list
+                              cannot afford. */}
+                          <Badge
+                            tone={meta.tone}
+                            icon={meta.icon}
+                            className="flex-none text-[length:var(--text-caption)] min-[560px]:text-[length:var(--text-body-sm)]"
+                          >
+                            <span className="min-[560px]:hidden">{meta.short}</span>
+                            <span className="hidden min-[560px]:inline">{meta.label}</span>
                           </Badge>
                         </span>
                         <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                          {p.category} · {p.city} · {branchLabel(p.branches)}
+                          {p.category} · {p.city}
+                          <span className="hidden min-[560px]:inline">
+                            {" · "}
+                            {branchLabel(p.branches)}
+                          </span>
                         </span>
                       </span>
 

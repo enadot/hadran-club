@@ -205,7 +205,7 @@ export const PARTNERS: Partner[] = [
 ];
 
 export const PARTNER_CATEGORIES = [
-  "הכל",
+  "כל הקטגוריות",
   "רשת מזון ומכולת",
   "בשר, עוף ודגים",
   "ביגוד והנעלה",
@@ -245,8 +245,13 @@ export const CATEGORY_ICON: Record<string, string> = {
   "צרכי כתיבה ומשרד": "pencil",
 };
 
-/** Two-letter mark for the logo plate fallback. */
+/** Two-letter mark for the logo plate fallback.
+ *  Takes the first letter of each of the first two words where there are two, so
+ *  "כלי בית שלמה" reads "כב" rather than "כל". Hebrew has no case to lean on and
+ *  no definite-article rule worth applying — stripping a leading ה turned
+ *  "הלבשה למשפחה" into "לב", which is not the shop. */
 export function partnerInitials(name: string) {
-  const clean = name.replace(/^ה/, "");
-  return clean.trim().slice(0, 2);
+  const words = name.replace(/[·]/g, " ").split(/\s+/).filter(Boolean);
+  if (words.length >= 2) return words[0][0] + words[1][0];
+  return (words[0] ?? "").slice(0, 2);
 }

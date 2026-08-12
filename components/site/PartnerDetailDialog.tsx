@@ -12,7 +12,7 @@ import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Icon } from "@/components/brand/Icon";
 import { BENEFIT_TIERS, BENEFIT_DISCLAIMER, EXACT_BENEFIT_CTA } from "@/lib/data/benefits";
-import { CATEGORY_ICON, branchLabel, partnerInitials, type Partner } from "@/lib/data/partners";
+import { branchLabel, partnerInitials, type Partner } from "@/lib/data/partners";
 
 /**
  * The partner detail sheet.
@@ -89,11 +89,7 @@ export function PartnerDetailDialog({
               </div>
 
               <div className="flex items-center gap-2.5 border-t border-[var(--color-border)] pt-5 text-[length:var(--text-body-sm)] text-[var(--color-body)]">
-                <Icon
-                  name={CATEGORY_ICON[partner.category] ?? "store"}
-                  size={18}
-                  color="var(--color-primary-deep)"
-                />
+                <Icon name="map-pin" size={18} color="var(--color-primary-deep)" />
                 <span>{branchLabel(partner.branches)} · {partner.city}</span>
               </div>
 
