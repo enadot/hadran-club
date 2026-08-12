@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Icon } from "@/components/brand/Icon";
@@ -30,8 +31,15 @@ export function PlanChooser({ value, onChange, className }: PlanChooserProps) {
   const cards = PLANS.map((plan) => {
     const on = value === plan.id;
     return (
-      <label
+      // Pointer-only warmth on the surface a visitor is deciding between. Nothing
+      // moves until a cursor is on the card, and nothing happens at all on a
+      // phone or under prefers-reduced-motion.
+      <SpotlightCard
         key={plan.id}
+        spotlightColor="var(--gold-200)"
+        className="h-full rounded-[var(--radius-xl)]"
+      >
+      <label
         htmlFor={selectable ? `plan-${plan.id}` : undefined}
         className={cn(
           "flex h-full flex-col gap-4 rounded-[var(--radius-xl)] border p-[clamp(20px,4vw,28px)]",
@@ -100,6 +108,7 @@ export function PlanChooser({ value, onChange, className }: PlanChooserProps) {
           </Button>
         ) : null}
       </label>
+      </SpotlightCard>
     );
   });
 

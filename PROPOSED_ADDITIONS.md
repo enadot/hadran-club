@@ -202,17 +202,52 @@
 
 ---
 
-## 8. React Bits — חסום ברמת הרשת
+## 8. React Bits — מה נלקח ומה נדחה במכוון
 
-לא פער עיצובי, אבל שייך לכאן: הרישום `@react-bits` נוסף ל-`components.json`
-כמבוקש, אבל `reactbits.dev` חסום במדיניות ה-egress של הסביבה הזו
-(403 על CONNECT). לכן לא נמשך ממנו אף רכיב, ואף רכיב React Bits אינו בקוד.
+הרישום `@react-bits` נוסף ל-`components.json` והחסימה הוסרה. הרג׳יסטרי מכיל
+**166 רכיבים** (כל אחד בארבע גרסאות JS/TS × CSS/Tailwind).
 
-`@shadcn` ו-`@magicui` עובדים, ומהם נמשכו הרכיבים שבשימוש.
-כשהחסימה תוסר אפשר להריץ:
+**נלקח רכיב אחד: `SpotlightCard`** — הילה רכה שעוקבת אחרי הסמן על כרטיס.
+מותאם ב-`components/reactbits/spotlight-card.tsx`, ומופעל על שני משטחי החלטה:
+כרטיסי המסלול וכרטיסי ״למי זה מיועד״.
 
-```bash
-npx shadcn@latest add @react-bits/<component>
-```
+ארבעה שינויים מהמקור, כולם הכרחיים כאן:
 
-הרישום כבר מוגדר, כך שלא נדרשת הכנה נוספת.
+1. **בלי משטח משלו.** המקור מקבע `rounded-3xl border-neutral-800 bg-neutral-900
+   p-8` — מערכת עיצוב אחרת לגמרי. העטיפה שקופה, וה-`Card` שלנו ממשיך להחזיק
+   את המשטח.
+2. **`spotlightColor` היה מוקלד כתבנית `rgba(...)`** ולא איפשר להעביר טוקן.
+   עכשיו הוא מקבל כל צבע CSS, וברירת המחדל היא טוקן זהב מהסולם הקיים.
+3. **מושבת ב-pointer גס וב-`prefers-reduced-motion`.** בנייד אין סמן לעקוב
+   אחריו, והאפקט היה נדלק רק בלחיצה.
+4. **פוקוס מקלדת מאיר את מרכז הכרטיס**, לא את הפינה — במקור המיקום נשאר 0,0
+   ונראה ככתם תועה.
+
+מאומת: `opacity 0 → 1` בריחוף על pointer עדין; **אפס** אלמנטים מרונדרים
+ב-pointer גס וב-reduced-motion.
+
+### מה נדחה, ולמה
+
+הרוב המוחלט של הרג׳יסטרי הוא **קישוט אמביינטי ו-WebGL**: `Aurora`, `Ballpit`,
+`Hyperspeed`, `Galaxy`, `Plasma`, `LiquidChrome`, `SplashCursor`, `Ferrofluid`,
+`GlitchText`, `DecryptedText`, `MetallicPaint` וכדומה. הם לא נלקחו — לא מטעמי
+טעם, אלא כי הם סותרים ישירות כללים כתובים:
+
+| רכיב / משפחה | מה חוסם |
+| --- | --- |
+| `Aurora`, `Ballpit`, `Galaxy`, `Plasma`, `Dither`, `Noise`, `Threads` | `CLAUDE.md` §8 — ״רגע-קסם אחד בלבד בעמוד״, וזה ה-BorderBeam |
+| `CardSwap`, `Carousel`, `DepthCarousel`, `LogoLoop`, `InfiniteMenu` | `CLAUDE.md` §8 — ״אין קרוסלות אוטומטיות״ |
+| `ScrollStack`, `ScrollExpand`, `ScrollVelocity`, `ScrollFloat` | `CLAUDE.md` §8 — ״אין parallax, אין scroll-hijacking״ |
+| `GlitchText`, `ScrambledText`, `DecryptedText`, `FuzzyText`, `FallingText` | §3 — הטון הוא ״מועדון״, לא ״שוק״; וטקסט עברי שמתפרק פוגע בקריאוּת |
+| `SplashCursor`, `BlobCursor`, `TargetCursor`, `GhostCursor` | דורסים את הסמן — עלות נגישות בלי ערך למשפחה שמזמינה כרטיס |
+| כל משפחת ה-WebGL (`ModelViewer`, `Lanyard`, `Iridescence`, `Prism`) | §9 — RSC כברירת מחדל, Hero בלי אנימציה; shader בכל עמוד הורג את ה-LCP |
+
+**`LogoLoop` הוא ההפסד היחיד שכואב.** סעיף 8 בבריף אומר שלוגואים של הרשתות הם
+חלק מהותי מהמסר, והוא בדיוק הרכיב לזה — אבל הוא מרקי שרץ מעצמו, כלומר קרוסלה
+אוטומטית. אם תרצה אותו כשהלוגואים יגיעו, זו החלטה שלך לרכך את הכלל, ואני אטמיע
+אותו עם `prefers-reduced-motion` ועם השהיה בריחוף.
+
+רכיבים ששקלתי ודחיתי כי **כבר יש לנו את אותה יכולת**, וההחלפה היתה churn נטו:
+`CountUp` (יש `NumberTicker` עטוף ב-`Figure`), `ShinyText` (יש
+`AnimatedShinyText`), `FadeContent` / `AnimatedContent` (יש `Reveal` על GSAP),
+`Stepper` (ל-`/activate` יש stepper משולב בזרימה).
