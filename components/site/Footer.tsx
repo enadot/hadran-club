@@ -37,15 +37,31 @@ export function Footer() {
               <h4 className="m-0 font-[family-name:var(--font-ui)] text-[length:var(--text-body-sm)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary)]">
                 {column.title}
               </h4>
-              {column.links.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-[length:var(--text-body-sm)] text-[var(--sand-300)] no-underline transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:text-[var(--color-primary)] hover:underline hover:underline-offset-[3px]"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {column.links.map((link) => {
+                const className =
+                  "text-[length:var(--text-body-sm)] text-[var(--sand-300)] no-underline transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:text-[var(--color-primary)] hover:underline hover:underline-offset-[3px]";
+
+                // The member area lives on the operator's platform, not here.
+                if (link.external) {
+                  return (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={className}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                }
+
+                return (
+                  <Link key={link.label} href={link.href} className={className}>
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
           ))}
         </div>

@@ -11,6 +11,7 @@ import { Figure } from "@/components/brand/Figure";
 import { BorderBeam } from "@/components/magic/border-beam";
 import { AnimatedShinyText } from "@/components/magic/animated-shiny-text";
 import { SavingsCalculator } from "@/components/site/SavingsCalculator";
+import { MEMBER_AREA_URL } from "@/lib/data/site";
 
 /** The three how-it-works steps, verbatim from Home.dc.html. */
 const STEPS = [
@@ -59,7 +60,8 @@ const AUDIENCES = [
     title: "לקוח הדרן קיים",
     body: "הכרטיס הוא הטבה נוספת ללקוחות הדרן. נכנסים לאזור האישי ורואים את החיסכון שנצבר.",
     cta: "לאזור האישי",
-    href: "/member",
+    href: MEMBER_AREA_URL,
+    external: true,
   },
   {
     icon: "store",
@@ -338,8 +340,9 @@ export default function HomePage() {
             stagger
             className="grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-6"
           >
-            {AUDIENCES.map((a) => (
-              <Link key={a.title} href={a.href} className="no-underline">
+            {AUDIENCES.map((a) => {
+              const external = "external" in a && a.external;
+              const card = (
                 <Card tone="hairline" padding="clamp(18px,5vw,28px)" interactive className="h-full">
                   <div className="flex h-full flex-col gap-3.5">
                     <Icon name={a.icon} size={28} color="var(--color-primary-deep)" />
@@ -347,12 +350,28 @@ export default function HomePage() {
                     <span className="flex-1 leading-[1.6] text-[var(--color-body)]">{a.body}</span>
                     <span className="flex items-center gap-1.5 font-bold text-[var(--color-primary-deep)]">
                       {a.cta}
-                      <Icon name="arrow-left" size={18} />
+                      <Icon name={external ? "external-link" : "arrow-left"} size={18} />
                     </span>
                   </div>
                 </Card>
-              </Link>
-            ))}
+              );
+
+              return external ? (
+                <a
+                  key={a.title}
+                  href={a.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="no-underline"
+                >
+                  {card}
+                </a>
+              ) : (
+                <Link key={a.title} href={a.href} className="no-underline">
+                  {card}
+                </Link>
+              );
+            })}
           </Reveal>
         </Container>
       </Band>

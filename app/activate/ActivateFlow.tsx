@@ -12,6 +12,7 @@ import { Input } from "@/components/brand/Input";
 import { MemberCard } from "@/components/brand/MemberCard";
 import { Select } from "@/components/brand/Select";
 import { submitActivation } from "@/lib/api/client";
+import { MEMBER_AREA_URL } from "@/lib/data/site";
 import {
   CARD_ERROR,
   isCardInputValid,
@@ -503,7 +504,13 @@ export function ActivateFlow() {
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    <Button as="a" href="/member">
+                    <Button
+                      as="a"
+                      href={MEMBER_AREA_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      iconAfter="external-link"
+                    >
                       לאזור האישי
                     </Button>
                     <Button as="a" href="/benefits" variant="tertiary">

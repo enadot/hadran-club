@@ -1,5 +1,7 @@
 /** Search index — verbatim from the PARTNERS / PAGES / FAQS arrays in Search.dc.html. */
 
+import { MEMBER_AREA_URL } from "./site";
+
 export type SearchKind = "partner" | "page" | "faq";
 
 export type SearchResult = {
@@ -9,6 +11,8 @@ export type SearchResult = {
   href: string;
   initials: string;
   showDiscount: boolean;
+  /** Leaves the site — the operator's member area is the only such destination. */
+  external?: boolean;
 };
 
 export const SEARCH_PARTNERS = [
@@ -33,15 +37,16 @@ export const SEARCH_PAGES = [
   },
   {
     name: "בדיקת יתרה",
-    meta: "יתרה לשימוש, חיסכון מצטבר והיסטוריית קניות",
+    meta: "יתרה זמינה בכרטיס, סטטוס וטעינה עצמית",
     href: "/balance",
-    kw: "יתרה חיסכון היסטוריה כמה נשאר",
+    kw: "יתרה טעינה סטטוס כמה נשאר",
   },
   {
     name: "אזור אישי",
-    meta: "ניהול החברות, פרטי המשפחה והכרטיסים",
-    href: "/member",
+    meta: "ניהול החברות, פרטי המשפחה והכרטיסים — במערכת קהילות קארד",
+    href: MEMBER_AREA_URL,
     kw: "אישי חברות משפחה",
+    external: true,
   },
   {
     name: "הצטרפות בית עסק",
@@ -127,6 +132,7 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
     href: p.href,
     initials: "דף",
     showDiscount: false,
+    external: "external" in p ? p.external : undefined,
   }));
 
   const faqs: SearchResult[] = SEARCH_FAQS.filter(

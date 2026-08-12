@@ -36,8 +36,12 @@
 | `/balance` | **בדיקת יתרה** | הזנת מספר כרטיס מציגה יתרה זמינה וסטטוס מה-API הציבורי, ומאפשרת טעינה בכרטיס אשראי |
 | `/merchants` | **הצטרפות בתי עסק** | Landing לבעלי עסקים: קהל ממוקד, ללא עלות הקמה, אינטגרציה בקופה |
 | `/faq` | **שאלות ותשובות** | Accordion עם 5 קבוצות (ההנחה · הכרטיס · בתי עסק · החברות · הכל) — ב-`lib/data/faq.ts` |
-| `/member` | **אזור אישי** | חברות המשפחה, כרטיסים פעילים, היסטוריית קניות לפי חודשים עבריים, סך החיסכון |
 | `/search` | **חיפוש באתר** | חיפוש רוחבי בבתי עסק, עמודים ותשובות נפוצות; זמין גם כ-Dialog גלובלי (`SearchDialog`) |
+
+**האזור האישי אינו חלק מהאתר.** הוא מתופעל על ידי **קהילות קארד** במערכת שלהם, וכל הפניה אליו
+באתר — בתפריט, ב-footer, בדף הבית, בסיום ההפעלה ובתוצאת בדיקת היתרה — היא קישור יוצא הנפתח
+בלשונית חדשה. הכתובת נקבעת ב-`MEMBER_AREA_URL` (`lib/data/site.ts`) ונשלטת דרך משתנה הסביבה
+`NEXT_PUBLIC_MEMBER_AREA_URL`, כך שהמפעיל מעדכן אותה בלי שינוי קוד.
 
 ---
 
@@ -59,7 +63,7 @@ lib/
   api/                  ← שכבת השירות מול קהילות קארד: kehilot.ts (שרת) + client.ts (דפדפן)
   card.ts               ← ולידציה ופורמט של מספר כרטיס, טלפון, דוא״ל, סכומים וסטטוס
   data/                 ← Static content שמופיע ב-page.tsx: NAV_LINKS, FOOTER_COLS,
-                          PARTNERS, MEMBER_ACTIVITY, FAQ, SEARCH_INDEX
+                          PARTNERS, FAQ, SEARCH_INDEX, MEMBER_AREA_URL
   fonts.ts              ← next/font declarations (Afek local, Frank Ruhl Libre)
   motion.ts             ← easings + duration presets משותפים
   utils.ts              ← cn() helper (clsx + tailwind-merge)
@@ -121,6 +125,7 @@ CORS למקור הזה, כתובת ה-API לא נכנסת ל-bundle של הלק�
 
 ```bash
 KEHILOT_API_BASE=https://kehilotcard.co.il/api/v1   # ברירת מחדל; דורסים רק לסביבת בדיקות
+NEXT_PUBLIC_MEMBER_AREA_URL=https://kehilotcard.co.il  # יעד הקישור "אזור אישי"
 ```
 
 ### טיפול בשגיאות

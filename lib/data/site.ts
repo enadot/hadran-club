@@ -1,6 +1,21 @@
 /** Shared chrome data — the nav links and footer columns from the prototypes. */
 
-export type NavLink = { label: string; href: string; icon: string };
+/**
+ * The member area is not part of this site. It is operated by Kehilot Card on their
+ * own platform, so every "אזור אישי" affordance here is an outbound link. The address
+ * is set per environment, which lets the operator point it wherever their member login
+ * lives without a code change.
+ */
+export const MEMBER_AREA_URL =
+  process.env.NEXT_PUBLIC_MEMBER_AREA_URL ?? "https://kehilotcard.co.il";
+
+export type NavLink = {
+  label: string;
+  href: string;
+  icon: string;
+  /** Leaves the site — rendered as a plain anchor opening in a new tab. */
+  external?: boolean;
+};
 
 /** Order and labels are verbatim from the `links` array in every *.dc.html.
  *  Icons come from SiteNav.dc.html's ICONS map. */
@@ -11,7 +26,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: "בדיקת יתרה", href: "/balance", icon: "wallet" },
   { label: "לבתי עסק", href: "/merchants", icon: "store" },
   { label: "שאלות ותשובות", href: "/faq", icon: "help-circle" },
-  { label: "אזור אישי", href: "/member", icon: "user" },
+  { label: "אזור אישי", href: MEMBER_AREA_URL, icon: "user", external: true },
 ];
 
 /**
@@ -21,7 +36,7 @@ export const NAV_LINKS: NavLink[] = [
  */
 export const FOOTER_COLUMNS: {
   title: string;
-  links: { label: string; href: string }[];
+  links: { label: string; href: string; external?: boolean }[];
 }[] = [
   {
     title: "המועדון",
@@ -37,7 +52,7 @@ export const FOOTER_COLUMNS: {
     links: [
       { label: "הפעלת כרטיס", href: "/activate" },
       { label: "בדיקת יתרה", href: "/balance" },
-      { label: "אזור אישי", href: "/member" },
+      { label: "אזור אישי", href: MEMBER_AREA_URL, external: true },
       { label: "אובדן או גניבה", href: "/faq" },
     ],
   },

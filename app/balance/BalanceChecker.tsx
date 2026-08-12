@@ -10,7 +10,7 @@ import { Input } from "@/components/brand/Input";
 import { TopUpPanel } from "@/components/site/TopUpPanel";
 import { CARD_NOT_FOUND_MESSAGE, fetchBalance, type BalanceResponse } from "@/lib/api/client";
 import { CARD_ERROR, describeCardStatus, formatMoney, isCardInputValid, maskCard } from "@/lib/card";
-import { SUPPORT_PHONE } from "@/lib/data/site";
+import { MEMBER_AREA_URL, SUPPORT_PHONE } from "@/lib/data/site";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -156,7 +156,13 @@ export function BalanceChecker() {
           <TopUpPanel cardInput={card} disabled={!status.canTopUp} />
 
           <div className="flex flex-wrap gap-3">
-            <Button as="a" href="/member">
+            <Button
+              as="a"
+              href={MEMBER_AREA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              iconAfter="external-link"
+            >
               לאזור האישי
             </Button>
             <Button variant="tertiary" onClick={reset}>
