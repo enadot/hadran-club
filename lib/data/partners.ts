@@ -1,31 +1,207 @@
+import type { BenefitTier } from "./benefits";
+
 /**
- * The partner directory for /benefits — verbatim from PARTNERS in Benefits.dc.html.
- * The prototype's tiles are titled by category, not by trade name: no partner names
- * or logos were supplied with the handoff.
+ * The partner directory behind /benefits and the global search.
+ *
+ * The original handoff titled every tile by category, because no trade names came
+ * with it — while Search.dc.html carried a *separate* list that did have names. The
+ * two drifted: searching "אוצר הספרים" returned a result that linked to /benefits,
+ * where no such shop existed. They are one list now, and lib/data/search.ts reads
+ * from here.
+ *
+ * `tier` describes the depth of the benefit, not its size — see lib/data/benefits.ts
+ * for why there is no percentage on this record. `terms` are the per-merchant rules
+ * the FAQ already promises live "בכרטיס בית העסק"; before this they had nowhere to
+ * be shown.
  */
 export type Partner = {
+  name: string;
   category: string;
   city: string;
-  branches: string;
+  /** Branch count as a number, so it can be sorted and pluralised correctly. */
+  branches: number;
+  tier: BenefitTier;
+  /** The benefit in the merchant's own words, e.g. "הנחה על הסל כולו". */
+  benefit: string;
+  /** Per-merchant conditions, shown in the detail dialog. */
+  terms: string[];
 };
 
+/** "4 סניפים" / "סניף אחד" — Hebrew has no bare "1 branch". */
+export function branchLabel(n: number) {
+  return n === 1 ? "סניף אחד" : `${n} סניפים`;
+}
+
 export const PARTNERS: Partner[] = [
-  { category: "רשת מזון ומכולת", city: "בני ברק", branches: "4 סניפים" },
-  { category: "רשת מזון ומכולת", city: "ירושלים", branches: "7 סניפים" },
-  { category: "רשת מזון ומכולת", city: "בית שמש", branches: "2 סניפים" },
-  { category: "מכולת שכונתית", city: "מודיעין עילית", branches: "סניף אחד" },
-  { category: "בשר, עוף ודגים", city: "בני ברק", branches: "3 סניפים" },
-  { category: "בשר, עוף ודגים", city: "ירושלים", branches: "סניף אחד" },
-  { category: "ביגוד והנעלה", city: "בני ברק", branches: "2 סניפים" },
-  { category: "ביגוד והנעלה", city: "אלעד", branches: "סניף אחד" },
-  { category: "ספרי קודש ויודאיקה", city: "ירושלים", branches: "3 סניפים" },
-  { category: "ספרי קודש ויודאיקה", city: "בני ברק", branches: "סניף אחד" },
-  { category: "כלי בית וריהוט", city: "בית שמש", branches: "2 סניפים" },
-  { category: "כלי בית וריהוט", city: "ביתר עילית", branches: "סניף אחד" },
-  { category: "צעצועים ומתנות", city: "בני ברק", branches: "סניף אחד" },
-  { category: "פארמה וטיפוח", city: "ירושלים", branches: "4 סניפים" },
-  { category: "אופטיקה", city: "מודיעין עילית", branches: "סניף אחד" },
-  { category: "צרכי כתיבה ומשרד", city: "אלעד", branches: "2 סניפים" },
+  {
+    name: "שפע ברכת השם",
+    category: "רשת מזון ומכולת",
+    city: "ירושלים",
+    branches: 7,
+    tier: "basic",
+    benefit: "הנחה על הסל כולו, בכל קנייה",
+    terms: [
+      "ההנחה חלה על הסל כולו, גם על מחירי מבצע",
+      "מוצרים בפיקוח מחירים מוחרגים על פי חוק",
+      "ללא מינימום קנייה",
+    ],
+  },
+  {
+    name: "מכולת הבית",
+    category: "רשת מזון ומכולת",
+    city: "בני ברק",
+    branches: 4,
+    tier: "basic",
+    benefit: "הנחה על הסל כולו, בכל קנייה",
+    terms: ["ההנחה חלה על הסל כולו", "מוצרים בפיקוח מחירים מוחרגים על פי חוק"],
+  },
+  {
+    name: "שער המזון",
+    category: "רשת מזון ומכולת",
+    city: "בית שמש",
+    branches: 2,
+    tier: "basic",
+    benefit: "הנחה על הסל כולו, בכל קנייה",
+    terms: ["ההנחה חלה על הסל כולו", "מוצרים בפיקוח מחירים מוחרגים על פי חוק"],
+  },
+  {
+    name: "מכולת שכונת הגפן",
+    category: "מכולת שכונתית",
+    city: "מודיעין עילית",
+    branches: 1,
+    tier: "basic",
+    benefit: "הנחה על הסל כולו, בכל קנייה",
+    terms: ["ההנחה חלה על הסל כולו", "אינה חלה על מוצרי טבק ועל פיקדון"],
+  },
+  {
+    name: "קצביית הכשרות",
+    category: "בשר, עוף ודגים",
+    city: "בני ברק",
+    branches: 3,
+    tier: "basic",
+    benefit: "הנחה על כל הקנייה בקצבייה",
+    terms: ["ההנחה חלה על כל המוצרים בקצבייה", "אינה מצטברת עם מבצעי סוף יום"],
+  },
+  {
+    name: "דגי הצפון",
+    category: "בשר, עוף ודגים",
+    city: "ירושלים",
+    branches: 1,
+    tier: "basic",
+    benefit: "הנחה על כל הקנייה",
+    terms: ["ההנחה חלה על כל המוצרים", "ללא מינימום קנייה"],
+  },
+  {
+    name: "הלבשה למשפחה",
+    category: "ביגוד והנעלה",
+    city: "בני ברק",
+    branches: 2,
+    tier: "deep",
+    benefit: "הטבה מורחבת על כל הקולקציה",
+    terms: [
+      "ההטבה חלה על הקולקציה המלאה, כולל פריטי עונה",
+      "אינה מצטברת עם מבצעי סוף עונה",
+      "מימוש בסניפים המשתתפים בלבד",
+    ],
+  },
+  {
+    name: "נעלי הדר",
+    category: "ביגוד והנעלה",
+    city: "אלעד",
+    branches: 1,
+    tier: "deep",
+    benefit: "הטבה מורחבת על כל הנעליים",
+    terms: ["ההטבה חלה על כל דגמי הנעליים", "אינה מצטברת עם מבצעים אחרים"],
+  },
+  {
+    name: "בגדי ילדים · הדר הבית",
+    category: "ביגוד והנעלה",
+    city: "ירושלים",
+    branches: 3,
+    tier: "exclusive",
+    benefit: "הטבה שזמינה אך ורק לחברי הדרן קלאב",
+    terms: [
+      "ההטבה אינה מוצעת ללקוחות שאינם חברי המועדון",
+      "יש להציג את הדרן קארד לפני התשלום",
+      "מימוש בכל הסניפים",
+    ],
+  },
+  {
+    name: "אוצר הספרים",
+    category: "ספרי קודש ויודאיקה",
+    city: "ירושלים",
+    branches: 3,
+    tier: "basic",
+    benefit: "הנחה על כל הספרים והיודאיקה",
+    terms: ["ההנחה חלה על כל המדף", "אינה חלה על הזמנות מיוחדות"],
+  },
+  {
+    name: "יודאיקה מהדרין",
+    category: "ספרי קודש ויודאיקה",
+    city: "בני ברק",
+    branches: 1,
+    tier: "deep",
+    benefit: "הטבה מורחבת על תשמישי קדושה",
+    terms: ["ההטבה חלה על תשמישי קדושה ועל מהדורות מיוחדות", "אינה חלה על עבודות סופר סת״ם"],
+  },
+  {
+    name: "כלי בית שלמה",
+    category: "כלי בית וריהוט",
+    city: "בית שמש",
+    branches: 2,
+    tier: "deep",
+    benefit: "הטבה מורחבת על כלי בית",
+    terms: ["ההטבה חלה על כלי בית ועל כלי מטבח", "ריהוט בהזמנה — בתיאום מול הסניף"],
+  },
+  {
+    name: "בית וריהוט · ביתר",
+    category: "כלי בית וריהוט",
+    city: "ביתר עילית",
+    branches: 1,
+    tier: "basic",
+    benefit: "הנחה על כל החנות",
+    terms: ["ההנחה חלה על כל מוצרי החנות"],
+  },
+  {
+    name: "עולם הצעצועים",
+    category: "צעצועים ומתנות",
+    city: "בני ברק",
+    branches: 1,
+    tier: "deep",
+    benefit: "הטבה מורחבת על צעצועים ומתנות",
+    terms: ["ההטבה חלה על כל החנות", "אינה חלה על כרטיסי מתנה"],
+  },
+  {
+    name: "פארם משפחה",
+    category: "פארמה וטיפוח",
+    city: "ירושלים",
+    branches: 4,
+    tier: "basic",
+    benefit: "הנחה על מוצרי טיפוח ופארמה",
+    terms: ["ההנחה חלה על מוצרי טיפוח", "תרופות מרשם מוחרגות על פי חוק"],
+  },
+  {
+    name: "אופטיקה מרכז",
+    category: "אופטיקה",
+    city: "מודיעין עילית",
+    branches: 1,
+    tier: "exclusive",
+    benefit: "הטבה שזמינה אך ורק לחברי הדרן קלאב",
+    terms: [
+      "ההטבה אינה מוצעת ללקוחות שאינם חברי המועדון",
+      "כוללת בדיקת ראייה ללא תשלום",
+      "חלה על מסגרות ועל עדשות",
+    ],
+  },
+  {
+    name: "צרכי כתיבה · הדר",
+    category: "צרכי כתיבה ומשרד",
+    city: "אלעד",
+    branches: 2,
+    tier: "basic",
+    benefit: "הנחה על כל צרכי הכתיבה",
+    terms: ["ההנחה חלה על כל החנות", "ערכות בית ספר — בתיאום מול הסניף"],
+  },
 ];
 
 export const PARTNER_CATEGORIES = [
@@ -48,7 +224,14 @@ export const CITY_OPTIONS = [
   { value: "ביתר עילית", label: "ביתר עילית" },
 ];
 
-/** Icon per category, for the tile placeholder where a logo would sit. */
+export const SORT_OPTIONS = [
+  { value: "featured", label: "מיון: הנבחרת שלנו" },
+  { value: "name", label: "מיון: לפי שם" },
+  { value: "branches", label: "מיון: לפי מספר סניפים" },
+  { value: "city", label: "מיון: לפי עיר" },
+];
+
+/** Icon per category, for the plate where a partner logo will sit. */
 export const CATEGORY_ICON: Record<string, string> = {
   "רשת מזון ומכולת": "shopping-cart",
   "מכולת שכונתית": "store",
@@ -61,3 +244,9 @@ export const CATEGORY_ICON: Record<string, string> = {
   אופטיקה: "search",
   "צרכי כתיבה ומשרד": "pencil",
 };
+
+/** Two-letter mark for the logo plate fallback. */
+export function partnerInitials(name: string) {
+  const clean = name.replace(/^ה/, "");
+  return clean.trim().slice(0, 2);
+}
