@@ -27,16 +27,37 @@ import { branchLabel, partnerInitials, type Partner } from "@/lib/data/partners"
  */
 export function PartnerDetailDialog({
   partner,
+  open,
   onOpenChange,
+  restoreFocusTo,
 }: {
   partner: Partner | null;
+  open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** The row that opened the dialog, refocused on close. */
+  restoreFocusTo?: React.RefObject<HTMLButtonElement | null>;
 }) {
+  // The partner is held past the close rather than cleared with it. Driving
+  // `open` off `partner === null` meant the content unmounted in the same commit
+  // as the close, and Radix — which restores focus to whatever was focused when
+  // it opened — had nothing left to restore to, so focus fell to <body>.
   const tier = partner ? BENEFIT_TIERS[partner.tier] : null;
 
   return (
-    <Dialog open={!!partner} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto p-0 sm:max-w-[520px]">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="max-h-[calc(100dvh-2rem)] gap-0 overflow-y-auto p-0 sm:max-w-[520px]"
+        // Radix restores focus to its own DialogTrigger. This dialog has none —
+        // it is opened from whichever row was clicked — so without this the
+        // caret lands on <body> and a keyboard user restarts from the top of the
+        // page every time they close a shop.
+        onCloseAutoFocus={(e) => {
+          const target = restoreFocusTo?.current;
+          if (!target) return;
+          e.preventDefault();
+          target.focus();
+        }}
+      >
         {partner && tier ? (
           <>
             <DialogHeader className="flex flex-col gap-4 border-b border-[var(--color-border)] p-[clamp(20px,5vw,28px)] text-start sm:text-start">

@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
@@ -205,22 +204,52 @@ export function ActivateFlow() {
             </p>
           </div>
 
-          {/* Track switch. Changing track restarts the flow. */}
-          <Tabs
-            value={mode}
-            onValueChange={(v) => {
-              setMode(v as Mode);
-              setStep(0);
-              setErrors({});
-              setTermsError(false);
-            }}
-            className="gap-0"
+          {/* Track switch. Changing track restarts the flow.
+
+              Not Radix Tabs, which is what this was: the form below is not a
+              tabpanel — it is one form whose steps differ — so every trigger
+              carried an aria-controls pointing at a panel that does not exist,
+              and a screen reader announced a tab with nothing to move into.
+              Two toggle buttons say exactly what this is. */}
+          <div
+            role="group"
+            aria-label="בחירת מסלול"
+            className="hc-rail flex snap-x gap-[var(--space-lg)] border-b border-[var(--color-border)] min-[640px]:gap-[var(--space-xl)]"
           >
-            <TabsList>
-              <TabsTrigger value="activate">הפעלת כרטיס שקיבלתי</TabsTrigger>
-              <TabsTrigger value="order">הזמנת כרטיס חדש</TabsTrigger>
-            </TabsList>
-          </Tabs>
+            {(
+              [
+                ["activate", "הפעלת כרטיס שקיבלתי"],
+                ["order", "הזמנת כרטיס חדש"],
+              ] as const
+            ).map(([value, label]) => {
+              const on = mode === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => {
+                    setMode(value);
+                    setStep(0);
+                    setErrors({});
+                    setTermsError(false);
+                    setSubmitError(null);
+                  }}
+                  className={cn(
+                    "-mb-px inline-flex min-h-11 flex-none snap-start cursor-pointer items-end",
+                    "border-b-2 bg-transparent pb-3 whitespace-nowrap",
+                    "text-[length:var(--text-body-md)]",
+                    "transition-[color,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
+                    on
+                      ? "border-[var(--color-primary-deep)] font-bold text-[var(--color-ink)]"
+                      : "border-transparent font-medium text-[var(--color-body)] hover:text-[var(--color-ink)]",
+                  )}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
 
           <Card tone="plain" padding="clamp(18px,5vw,32px)">
             <div className="flex flex-col gap-7">

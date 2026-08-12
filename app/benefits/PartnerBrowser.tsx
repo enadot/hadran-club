@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { EmptyState } from "@/components/brand/EmptyState";
@@ -46,47 +46,98 @@ const TIER_RANK: Record<BenefitTier, number> = { exclusive: 0, deep: 1, basic: 2
  *    a neighbour; before this it was unshareable, and the search dialog had nowhere
  *    to deep-link to.
  */
+type Filters = {
+  q: string;
+  city: string;
+  cat: string;
+  tier: BenefitTier | "all";
+  sort: string;
+};
+
+const DEFAULTS: Filters = {
+  q: "",
+  city: "all",
+  cat: "כל הקטגוריות",
+  tier: "all",
+  sort: "featured",
+};
+
+function readFilters(params: URLSearchParams): Filters {
+  return {
+    q: params.get("q") ?? DEFAULTS.q,
+    city: params.get("city") ?? DEFAULTS.city,
+    cat: params.get("cat") ?? DEFAULTS.cat,
+    tier: (params.get("tier") as BenefitTier | null) ?? DEFAULTS.tier,
+    sort: params.get("sort") ?? DEFAULTS.sort,
+  };
+}
+
+/** Only what was actually chosen ends up in the URL, so a shared link is short
+ *  and a cleared filter leaves no trace of itself. */
+function toQuery(f: Filters) {
+  const p = new URLSearchParams();
+  for (const k of Object.keys(DEFAULTS) as (keyof Filters)[]) {
+    if (f[k] !== DEFAULTS[k] && f[k]) p.set(k, String(f[k]));
+  }
+  return p.toString();
+}
+
 export function PartnerBrowser() {
-  const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
 
-  const query = params.get("q") ?? "";
-  const city = params.get("city") ?? "all";
-  const category = params.get("cat") ?? "כל הקטגוריות";
-  const tier = (params.get("tier") ?? "all") as BenefitTier | "all";
-  const sort = params.get("sort") ?? "featured";
+  // The filters are React state mirrored into the URL, not state derived from it.
+  //
+  // Deriving them meant every keystroke in the search box went through
+  // router.replace and cost an RSC round trip — and, worse, replacing with a
+  // bare pathname from a page that was *loaded* with a query string is a no-op
+  // in the App Router. Anyone opening a shared ?tier=exclusive link and pressing
+  // "ניקוי הסינון" watched nothing happen. history.replaceState has neither
+  // problem, and deep links still work because the first read seeds the state.
+  const [filters, setFilters] = React.useState<Filters>(() => readFilters(params));
+
+  const { q: query, city, cat: category, tier, sort } = filters;
 
   const [selected, setSelected] = React.useState<Partner | null>(null);
+  const [detailOpen, setDetailOpen] = React.useState(false);
+  const lastTrigger = React.useRef<HTMLButtonElement | null>(null);
 
-  /** Writes filter state to the URL. `replace` so filtering does not fill the
-   *  back stack — Back should leave the directory, not undo one chip. */
-  const setParam = React.useCallback(
-    (patch: Record<string, string>) => {
-      const next = new URLSearchParams(params.toString());
-      for (const [k, v] of Object.entries(patch)) {
-        // Defaults are absent from the URL rather than spelled out, so a shared
-        // link carries only what was actually chosen.
-        if (!v || v === "all" || v === "כל הקטגוריות" || v === "featured") next.delete(k);
-        else next.set(k, v);
-      }
-      const qs = next.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  const apply = React.useCallback(
+    (patch: Partial<Filters>) => {
+      setFilters((prev) => {
+        const next = { ...prev, ...patch };
+        const qs = toQuery(next);
+        window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
+        return next;
+      });
     },
-    [params, pathname, router],
+    [pathname],
   );
+
+  const reset = React.useCallback(() => {
+    setFilters(DEFAULTS);
+    window.history.replaceState(null, "", pathname);
+  }, [pathname]);
+
+  // Back/forward still move through whatever the URL says.
+  React.useEffect(() => {
+    const onPop = () =>
+      setFilters(readFilters(new URLSearchParams(window.location.search)));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   const activeCount =
     (query ? 1 : 0) +
     (city !== "all" ? 1 : 0) +
-    (category !== "כל הקטגוריות" ? 1 : 0) +
+    (category !== DEFAULTS.cat ? 1 : 0) +
     (tier !== "all" ? 1 : 0);
 
   const shown = React.useMemo(() => {
     const q = query.trim();
     const list = PARTNERS.filter(
       (p) =>
-        (category === "כל הקטגוריות" || p.category === category) &&
+        (category === DEFAULTS.cat || p.category === category) &&
         (city === "all" || p.city === city) &&
         (tier === "all" || p.tier === tier) &&
         (!q || p.name.includes(q) || p.category.includes(q) || p.city.includes(q)),
@@ -120,19 +171,19 @@ export function PartnerBrowser() {
               placeholder="שם בית עסק, קטגוריה או עיר"
               aria-label="חיפוש בית עסק"
               value={query}
-              onChange={(e) => setParam({ q: e.target.value })}
+              onChange={(e) => apply({ q: e.target.value })}
             />
             <Select
               options={CITY_OPTIONS}
               value={city}
               aria-label="סינון לפי עיר"
-              onChange={(e) => setParam({ city: e.target.value })}
+              onChange={(e) => apply({ city: e.target.value })}
             />
             <Select
               options={SORT_OPTIONS}
               value={sort}
               aria-label="מיון הרשימה"
-              onChange={(e) => setParam({ sort: e.target.value })}
+              onChange={(e) => apply({ sort: e.target.value })}
               wrapperClassName="min-[560px]:col-span-2 min-[1060px]:col-span-1"
             />
           </div>
@@ -155,7 +206,7 @@ export function PartnerBrowser() {
               </span>
               <FilterChip
                 selected={tier === "all"}
-                onClick={() => setParam({ tier: "all" })}
+                onClick={() => apply({ tier: "all" })}
                 className="flex-none snap-start"
               >
                 כל ההטבות
@@ -164,7 +215,7 @@ export function PartnerBrowser() {
                 <FilterChip
                   key={t}
                   selected={tier === t}
-                  onClick={() => setParam({ tier: t })}
+                  onClick={() => apply({ tier: t })}
                   className="flex-none snap-start"
                 >
                   {BENEFIT_TIERS[t].label}
@@ -184,7 +235,7 @@ export function PartnerBrowser() {
                 <FilterChip
                   key={c}
                   selected={category === c}
-                  onClick={() => setParam({ cat: c })}
+                  onClick={() => apply({ cat: c })}
                   className="flex-none snap-start"
                 >
                   {c}
@@ -215,7 +266,7 @@ export function PartnerBrowser() {
                 variant="ghost"
                 size="sm"
                 icon="x"
-                onClick={() => router.replace(pathname, { scroll: false })}
+                onClick={reset}
               >
                 ניקוי הסינון
               </Button>
@@ -234,7 +285,11 @@ export function PartnerBrowser() {
                   <li key={p.name} className="min-w-0">
                     <button
                       type="button"
-                      onClick={() => setSelected(p)}
+                      onClick={(e) => {
+                        lastTrigger.current = e.currentTarget;
+                        setSelected(p);
+                        setDetailOpen(true);
+                      }}
                       aria-label={`${p.name} — ${meta.label}. פתיחת פרטי ההטבה`}
                       className={cn(
                         "flex w-full items-center gap-3.5 rounded-[var(--radius-xl)] border p-3.5 text-start min-[560px]:gap-4 min-[560px]:p-4",
@@ -298,7 +353,7 @@ export function PartnerBrowser() {
               description="אפשר לנקות את הסינון ולהתחיל מחדש, או לספר לנו איפה אתם קונים כדי שנפנה לבית העסק."
               action={
                 <div className="flex flex-wrap justify-center gap-2.5">
-                  <Button onClick={() => router.replace(pathname, { scroll: false })}>
+                  <Button onClick={reset}>
                     ניקוי הסינון
                   </Button>
                   <Button as="a" href="/merchants" variant="tertiary">
@@ -335,7 +390,12 @@ export function PartnerBrowser() {
         </div>
       </div>
 
-      <PartnerDetailDialog partner={selected} onOpenChange={(o) => !o && setSelected(null)} />
+      <PartnerDetailDialog
+        partner={selected}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        restoreFocusTo={lastTrigger}
+      />
     </>
   );
 }
