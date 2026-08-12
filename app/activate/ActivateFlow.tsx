@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert } from "@/components/brand/Alert";
 import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
@@ -10,6 +11,15 @@ import { Icon, type IconName } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { MemberCard } from "@/components/brand/MemberCard";
 import { Select } from "@/components/brand/Select";
+import { submitActivation } from "@/lib/api/client";
+import {
+  CARD_ERROR,
+  isCardInputValid,
+  isEmailValid,
+  isPhoneValid,
+  maskCard,
+  onlyDigits,
+} from "@/lib/card";
 import { cn } from "@/lib/utils";
 import { prefersReducedMotion } from "@/lib/motion";
 
@@ -32,11 +42,11 @@ const FLOWS = {
 type Mode = keyof typeof FLOWS;
 type FieldKey =
   | "cardNumber"
-  | "cvv"
   | "first"
   | "last"
   | "id"
   | "phone"
+  | "email"
   | "city"
   | "street"
   | "plan"
@@ -44,11 +54,11 @@ type FieldKey =
 
 const EMPTY = {
   cardNumber: "",
-  cvv: "",
   first: "",
   last: "",
   id: "",
   phone: "",
+  email: "",
   city: "בני ברק",
   street: "",
   plan: "year" as "year" | "month",
@@ -75,12 +85,15 @@ const NOTES: { icon: IconName; text: string }[] = [
   { icon: "phone", text: "צריכים עזרה? מוקד המועדון זמין בימים א׳–ה׳, 9:00–17:00." },
 ];
 
-const onlyDigits = (v: string) => v.replace(/\D/g, "");
-
 /**
  * The card activation / ordering flow: two tracks of four steps each, with a stepper,
  * per-step validation and a live MemberCard that takes the holder name and masked
  * number from the form as it is filled in.
+ *
+ * The activation track posts to the platform's public activation endpoint, which binds
+ * a card that arrived in the post to the member who received it. The ordering track is
+ * a front-of-house form only — issuing a new card is not a public operation, so that
+ * track collects details and hands over to the club office.
  */
 export function ActivateFlow() {
   const [mode, setMode] = React.useState<Mode>("activate");
@@ -88,6 +101,9 @@ export function ActivateFlow() {
   const [f, setF] = React.useState(EMPTY);
   const [errors, setErrors] = React.useState<Partial<Record<FieldKey, string>>>({});
   const [termsError, setTermsError] = React.useState(false);
+  const [pending, setPending] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
+  const [issuedMemberId, setIssuedMemberId] = React.useState<string | null>(null);
 
   const flow = FLOWS[mode];
   const stepKey = flow[Math.min(step, flow.length - 1)].key;
@@ -103,15 +119,14 @@ export function ActivateFlow() {
   const validate = () => {
     const e: Partial<Record<FieldKey, string>> = {};
     if (stepKey === "card") {
-      if (onlyDigits(f.cardNumber).length !== 16)
-        e.cardNumber = "יש להזין 16 ספרות המופיעות על הכרטיס";
-      if (onlyDigits(f.cvv).length !== 3) e.cvv = "יש להזין שלוש ספרות";
+      if (!isCardInputValid(f.cardNumber)) e.cardNumber = CARD_ERROR;
     }
     if (stepKey === "personal") {
       if (f.first.trim().length < 2) e.first = "שדה חובה";
       if (f.last.trim().length < 2) e.last = "שדה חובה";
       if (onlyDigits(f.id).length !== 9) e.id = "מספר זהות בן 9 ספרות";
-      if (onlyDigits(f.phone).length < 9) e.phone = "מספר טלפון נייד";
+      if (!isPhoneValid(f.phone)) e.phone = "מספר טלפון נייד תקין";
+      if (!isEmailValid(f.email)) e.email = "כתובת דוא״ל תקינה, לשליחת אישור ההפעלה";
       if (f.street.trim().length < 2) e.street = "שדה חובה";
     }
     return e;
@@ -120,8 +135,8 @@ export function ActivateFlow() {
   const scrollTop = () =>
     window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
 
-  const next = () => {
-    if (stepKey === "done") return;
+  const next = async () => {
+    if (stepKey === "done" || pending) return;
 
     if (stepKey === "confirm") {
       if (!f.terms) {
@@ -129,6 +144,27 @@ export function ActivateFlow() {
         return;
       }
       setTermsError(false);
+      setSubmitError(null);
+
+      // Only the activation track has a card to bind; an order has nothing to send yet.
+      if (!isOrder) {
+        setPending(true);
+        const result = await submitActivation({
+          cardInput: f.cardNumber,
+          firstName: f.first,
+          lastName: f.last,
+          phone: f.phone,
+          email: f.email,
+        });
+        setPending(false);
+
+        if (!result.ok) {
+          setSubmitError(result.message);
+          return;
+        }
+        setIssuedMemberId(result.data.member_id);
+      }
+
       setStep((s) => s + 1);
       scrollTop();
       return;
@@ -148,19 +184,17 @@ export function ActivateFlow() {
     setErrors({});
   };
 
-  const digits = onlyDigits(f.cardNumber);
-  const cardMasked =
-    digits.length === 16
-      ? `${digits.slice(0, 4)} •••• •••• ${digits.slice(12)}`
-      : "0000 •••• •••• 0000";
+  const cardMasked = maskCard(f.cardNumber) || "0000 •••• •••• 0000";
   const fullName = `${f.first} ${f.last}`.trim() || "שם החבר";
-  const memberId = `8032-${onlyDigits(f.id).slice(-4) || "0000"}`;
+  // The platform assigns the member number; until it answers, the card tail stands in.
+  const memberId = issuedMemberId ?? `8032-${onlyDigits(f.id).slice(-4) || "0000"}`;
 
   const summary = [
     ...(isOrder ? [] : [{ k: "מספר הכרטיס", v: cardMasked }]),
     { k: "שם מלא", v: fullName },
     { k: "מספר זהות", v: f.id || "—" },
     { k: "טלפון נייד", v: f.phone || "—" },
+    { k: "דוא״ל", v: f.email || "—" },
     { k: "כתובת למשלוח", v: `${f.street ? f.street + ", " : ""}${f.city}` },
     ...(isOrder ? [{ k: "מסלול", v: f.plan === "year" ? "שנתי · ₪249" : "חודשי · ₪29" }] : []),
   ];
@@ -268,17 +302,7 @@ export function ActivateFlow() {
                     value={f.cardNumber}
                     onChange={(e) => set("cardNumber")(e.target.value)}
                     error={errors.cardNumber}
-                    hint="16 ספרות, ללא רווחים"
-                  />
-                  <Input
-                    label="קוד אימות"
-                    placeholder="000"
-                    inputMode="numeric"
-                    autoComplete="off"
-                    value={f.cvv}
-                    onChange={(e) => set("cvv")(e.target.value)}
-                    error={errors.cvv}
-                    hint="שלוש הספרות בגב הכרטיס"
+                    hint="8 הספרות האחרונות שעל הכרטיס. אפשר להזין גם את המספר המלא."
                   />
                 </div>
               ) : null}
@@ -324,6 +348,18 @@ export function ActivateFlow() {
                       error={errors.phone}
                     />
                   </div>
+                  <Input
+                    label="דוא״ל"
+                    placeholder="name@example.com"
+                    type="email"
+                    inputMode="email"
+                    icon="mail"
+                    autoComplete="email"
+                    value={f.email}
+                    onChange={(e) => set("email")(e.target.value)}
+                    error={errors.email}
+                    hint="לשליחת אישור ההפעלה ועדכונים על בתי עסק חדשים"
+                  />
                   <div className="grid grid-cols-[repeat(auto-fit,minmax(min(180px,100%),1fr))] gap-4">
                     <Select
                       label="עיר"
@@ -347,7 +383,8 @@ export function ActivateFlow() {
                   <div className="flex flex-col gap-1.5">
                     <b className="text-[clamp(18px,2.8vw,22px)]">בחירת מסלול</b>
                     <span className="text-[15px] text-[var(--color-body)]">
-                      שני המסלולים כוללים את אותה הנחה של 5% בכל בתי העסק השותפים.
+                      שני המסלולים כוללים את אותה מערכת ההטבות — מהנחות קבועות ועד עשרות
+                      אחוזים בחנויות נבחרות.
                     </span>
                   </div>
                   {/* A radiogroup so the two plans are one arrow-navigable choice. */}
@@ -427,6 +464,7 @@ export function ActivateFlow() {
                       יש לאשר את תקנון המועדון כדי להמשיך
                     </span>
                   ) : null}
+                  {submitError ? <Alert>{submitError}</Alert> : null}
                 </div>
               ) : null}
 
@@ -441,8 +479,8 @@ export function ActivateFlow() {
                   </b>
                   <p className="m-0 text-[clamp(15px,2.2vw,17px)] leading-[1.6] text-[var(--color-body)]">
                     {isOrder
-                      ? "הדרן קארד יישלח לכתובת שהזנתם תוך חמישה ימי עסקים. עם קבלתו נכנסים לעמוד ההפעלה, ומהרגע הזה 5% יורדים מכל קנייה."
-                      : "מהרגע הזה מציגים את הכרטיס בקופה ו-5% יורדים מהחשבון. את החיסכון שנצבר אפשר לראות בכל עת באזור האישי."}
+                      ? "הדרן קארד יישלח לכתובת שהזנתם תוך חמישה ימי עסקים. עם קבלתו נכנסים לעמוד ההפעלה, ומהרגע הזה ההנחה יורדת בקופה בכל בית עסק שותף."
+                      : "הכרטיס משויך אליכם ופעיל. מציגים אותו בקופה וההנחה יורדת מהחשבון במקום — בלי צבירה ובלי קופון. אישור ההפעלה נשלח לדוא״ל שהזנתם."}
                   </p>
 
                   <div className="flex w-full flex-col gap-3 rounded-2xl bg-[var(--color-canvas-warm)] p-5">
@@ -454,11 +492,13 @@ export function ActivateFlow() {
                       <span className="text-[15px] text-[var(--color-mute)]">מספר חבר</span>
                       <span className="tnum ltr font-semibold">{memberId}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4">
                       <span className="text-[15px] text-[var(--color-mute)]">
-                        הנחה בכל בית עסק שותף
+                        ההטבה בבתי העסק השותפים
                       </span>
-                      <span className="font-bold text-[var(--color-positive)]">5%</span>
+                      <span className="text-end font-bold text-[var(--color-positive)]">
+                        משתנה לפי בית עסק — עד עשרות אחוזים
+                      </span>
                     </div>
                   </div>
 
@@ -476,15 +516,29 @@ export function ActivateFlow() {
               {/* Back / continue. "Back" is chevron-right in RTL. */}
               {stepKey !== "done" ? (
                 <div className="flex items-center justify-between gap-4 border-t border-[var(--color-border)] pt-2">
-                  <Button variant="ghost" icon="chevron-right" onClick={back} disabled={step === 0}>
+                  <Button
+                    variant="ghost"
+                    icon="chevron-right"
+                    onClick={back}
+                    disabled={step === 0 || pending}
+                  >
                     חזרה
                   </Button>
-                  <Button size="lg" onClick={next}>
-                    {stepKey === "confirm"
-                      ? isOrder
-                        ? "אישור והזמנה"
-                        : "אישור והפעלה"
-                      : "המשך"}
+                  <Button size="lg" onClick={next} disabled={pending}>
+                    {pending ? (
+                      <>
+                        <Icon name="loader" size={20} className="animate-spin" />
+                        מפעילים את הכרטיס…
+                      </>
+                    ) : stepKey === "confirm" ? (
+                      isOrder ? (
+                        "אישור והזמנה"
+                      ) : (
+                        "אישור והפעלה"
+                      )
+                    ) : (
+                      "המשך"
+                    )}
                   </Button>
                 </div>
               ) : null}
