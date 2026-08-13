@@ -8,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Icon } from "@/components/brand/Icon";
-import { BENEFIT_TIERS, BENEFIT_DISCLAIMER, EXACT_BENEFIT_CTA } from "@/lib/data/benefits";
-import { branchLabel, partnerInitials, type Partner } from "@/lib/data/partners";
+import { PartnerLogo } from "@/components/brand/PartnerLogo";
+import { BENEFIT_DISCLAIMER, EXACT_BENEFIT_CTA } from "@/lib/data/benefits";
+import { branchLabel, type Partner } from "@/lib/data/partners";
 
 /**
  * The partner detail sheet.
@@ -41,8 +41,6 @@ export function PartnerDetailDialog({
   // `open` off `partner === null` meant the content unmounted in the same commit
   // as the close, and Radix — which restores focus to whatever was focused when
   // it opened — had nothing left to restore to, so focus fell to <body>.
-  const tier = partner ? BENEFIT_TIERS[partner.tier] : null;
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -58,13 +56,11 @@ export function PartnerDetailDialog({
           target.focus();
         }}
       >
-        {partner && tier ? (
+        {partner ? (
           <>
-            <DialogHeader className="flex flex-col gap-4 border-b border-[var(--color-border)] p-[clamp(20px,5vw,28px)] text-start sm:text-start">
+            <DialogHeader className="border-b border-[var(--color-border)] p-[clamp(20px,5vw,28px)] text-start sm:text-start">
               <div className="flex items-start gap-4">
-                <span className="grid size-14 flex-none place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-xl font-extrabold text-[var(--color-primary-deep)]">
-                  {partnerInitials(partner.name)}
-                </span>
+                <PartnerLogo partner={partner} className="size-14 text-xl" />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <DialogTitle className="font-[family-name:var(--font-display)] text-[clamp(20px,3.6vw,26px)] leading-[1.2] font-extrabold">
                     {partner.name}
@@ -74,10 +70,6 @@ export function PartnerDetailDialog({
                   </DialogDescription>
                 </div>
               </div>
-
-              <Badge tone={tier.tone} icon={tier.icon} className="self-start">
-                {tier.label}
-              </Badge>
             </DialogHeader>
 
             <div className="flex flex-col gap-6 p-[clamp(20px,5vw,28px)]">
@@ -86,9 +78,6 @@ export function PartnerDetailDialog({
                   ההטבה
                 </span>
                 <b className="text-[clamp(17px,2.6vw,20px)] leading-[1.4]">{partner.benefit}</b>
-                <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
-                  {tier.description}
-                </span>
               </div>
 
               <div className="flex flex-col gap-3 border-t border-[var(--color-border)] pt-5">

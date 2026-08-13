@@ -6,7 +6,6 @@
  * list in lib/data/partners.ts is the source now.
  */
 import { PARTNERS, partnerInitials } from "./partners";
-import { BENEFIT_TIERS } from "./benefits";
 
 import { MEMBER_AREA_URL } from "./site";
 
@@ -18,8 +17,6 @@ export type SearchResult = {
   meta: string;
   href: string;
   initials: string;
-  /** The benefit tier label, shown on partner rows. Absent on pages and questions. */
-  benefitLabel?: string;
   /** Leaves the site — the operator's member area is the only such destination. */
   external?: boolean;
 };
@@ -74,7 +71,7 @@ export const SEARCH_FAQS = [
   {
     name: "אילו חנויות בלעדיות למועדון?",
     meta: "יש בתי עסק שההטבה בהם זמינה אך ורק לחברי הדרן קלאב",
-    href: "/benefits?tier=exclusive",
+    href: "/benefits?exclusive=1",
     kw: "בלעדי בלעדיות רק לחברים נבחרת",
   },
 ];
@@ -121,8 +118,9 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
       hit(p.name) ||
       hit(p.category) ||
       hit(p.city) ||
-      // So the "בלעדי" chip and a typed "בלעדי" both reach the exclusive shops.
-      hit(BENEFIT_TIERS[p.tier].label) ||
+      // So the "בלעדי" chip and a typed "בלעדי" both reach the club-only shops,
+      // which say so in their own benefit line rather than through a badge.
+      (!!p.exclusive && hit("בלעדי")) ||
       hit(p.benefit),
   ).map((p) => ({
     kind: "partner",
@@ -132,7 +130,6 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
     // row it promised rather than on an unfiltered list of everything.
     href: `/benefits?q=${encodeURIComponent(p.name)}`,
     initials: partnerInitials(p.name),
-    benefitLabel: BENEFIT_TIERS[p.tier].label,
   }));
 
   const pages: SearchResult[] = SEARCH_PAGES.filter(

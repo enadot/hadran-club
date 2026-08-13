@@ -13,7 +13,7 @@ import { Badge } from "./Badge";
 export type PartnerTileProps = React.ComponentPropsWithoutRef<"div"> & {
   name?: string;
   category?: string;
-  /** The benefit tier label, e.g. "הטבה מורחבת". Never a bare percentage. */
+  /** What the shop gives, in the merchant's own words. Never a bare percentage. */
   benefit?: string;
   benefitTone?: "neutral" | "gold" | "ink";
   logoSrc?: string;

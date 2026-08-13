@@ -1,5 +1,3 @@
-import type { BenefitTier } from "./benefits";
-
 /**
  * The partner directory behind /benefits and the global search.
  *
@@ -9,10 +7,10 @@ import type { BenefitTier } from "./benefits";
  * where no such shop existed. They are one list now, and lib/data/search.ts reads
  * from here.
  *
- * `tier` describes the depth of the benefit, not its size — see lib/data/benefits.ts
- * for why there is no percentage on this record. `terms` are the per-merchant rules
- * the FAQ already promises live "בכרטיס בית העסק"; before this they had nowhere to
- * be shown.
+ * There is no percentage and no benefit-tier label on this record — see
+ * lib/data/benefits.ts. What the shop gives is said once, in the merchant's own
+ * words, in `benefit`. `terms` are the per-merchant rules the FAQ already promises
+ * live "בכרטיס בית העסק"; before this they had nowhere to be shown.
  */
 export type Partner = {
   name: string;
@@ -20,7 +18,18 @@ export type Partner = {
   city: string;
   /** Branch count as a number, so it can be sorted and pluralised correctly. */
   branches: number;
-  tier: BenefitTier;
+  /**
+   * Set only on shops whose benefit exists nowhere else. It carries no badge of its
+   * own — `benefit` says so in words — but it orders the roster and backs the
+   * "חנויות בלעדיות" deep link from the footer.
+   */
+  exclusive?: boolean;
+  /**
+   * Path to the shop's logo under public/partners/, e.g. "/partners/hadar.svg".
+   * Absent until the partner supplies one; every surface falls back to the Hebrew
+   * initials plate. See public/partners/README.md.
+   */
+  logo?: string;
   /** The benefit in the merchant's own words, e.g. "הנחה על הסל כולו". */
   benefit: string;
   /** Per-merchant conditions, shown in the detail dialog. */
@@ -38,7 +47,6 @@ export const PARTNERS: Partner[] = [
     category: "רשת מזון ומכולת",
     city: "ירושלים",
     branches: 7,
-    tier: "basic",
     benefit: "הנחה על הסל כולו, בכל קנייה",
     terms: [
       "ההנחה חלה על הסל כולו, גם על מחירי מבצע",
@@ -51,7 +59,6 @@ export const PARTNERS: Partner[] = [
     category: "רשת מזון ומכולת",
     city: "בני ברק",
     branches: 4,
-    tier: "basic",
     benefit: "הנחה על הסל כולו, בכל קנייה",
     terms: ["ההנחה חלה על הסל כולו", "מוצרים בפיקוח מחירים מוחרגים על פי חוק"],
   },
@@ -60,7 +67,6 @@ export const PARTNERS: Partner[] = [
     category: "רשת מזון ומכולת",
     city: "בית שמש",
     branches: 2,
-    tier: "basic",
     benefit: "הנחה על הסל כולו, בכל קנייה",
     terms: ["ההנחה חלה על הסל כולו", "מוצרים בפיקוח מחירים מוחרגים על פי חוק"],
   },
@@ -69,7 +75,6 @@ export const PARTNERS: Partner[] = [
     category: "מכולת שכונתית",
     city: "מודיעין עילית",
     branches: 1,
-    tier: "basic",
     benefit: "הנחה על הסל כולו, בכל קנייה",
     terms: ["ההנחה חלה על הסל כולו", "אינה חלה על מוצרי טבק ועל פיקדון"],
   },
@@ -78,7 +83,6 @@ export const PARTNERS: Partner[] = [
     category: "בשר, עוף ודגים",
     city: "בני ברק",
     branches: 3,
-    tier: "basic",
     benefit: "הנחה על כל הקנייה בקצבייה",
     terms: ["ההנחה חלה על כל המוצרים בקצבייה", "אינה מצטברת עם מבצעי סוף יום"],
   },
@@ -87,7 +91,6 @@ export const PARTNERS: Partner[] = [
     category: "בשר, עוף ודגים",
     city: "ירושלים",
     branches: 1,
-    tier: "basic",
     benefit: "הנחה על כל הקנייה",
     terms: ["ההנחה חלה על כל המוצרים", "ללא מינימום קנייה"],
   },
@@ -96,8 +99,7 @@ export const PARTNERS: Partner[] = [
     category: "ביגוד והנעלה",
     city: "בני ברק",
     branches: 2,
-    tier: "deep",
-    benefit: "הטבה מורחבת על כל הקולקציה",
+    benefit: "הנחה מוגדלת על כל הקולקציה",
     terms: [
       "ההטבה חלה על הקולקציה המלאה, כולל פריטי עונה",
       "אינה מצטברת עם מבצעי סוף עונה",
@@ -109,8 +111,7 @@ export const PARTNERS: Partner[] = [
     category: "ביגוד והנעלה",
     city: "אלעד",
     branches: 1,
-    tier: "deep",
-    benefit: "הטבה מורחבת על כל הנעליים",
+    benefit: "הנחה מוגדלת על כל דגמי הנעליים",
     terms: ["ההטבה חלה על כל דגמי הנעליים", "אינה מצטברת עם מבצעים אחרים"],
   },
   {
@@ -118,7 +119,7 @@ export const PARTNERS: Partner[] = [
     category: "ביגוד והנעלה",
     city: "ירושלים",
     branches: 3,
-    tier: "exclusive",
+    exclusive: true,
     benefit: "הטבה שזמינה אך ורק לחברי הדרן קלאב",
     terms: [
       "ההטבה אינה מוצעת ללקוחות שאינם חברי המועדון",
@@ -131,7 +132,6 @@ export const PARTNERS: Partner[] = [
     category: "ספרי קודש ויודאיקה",
     city: "ירושלים",
     branches: 3,
-    tier: "basic",
     benefit: "הנחה על כל הספרים והיודאיקה",
     terms: ["ההנחה חלה על כל המדף", "אינה חלה על הזמנות מיוחדות"],
   },
@@ -140,8 +140,7 @@ export const PARTNERS: Partner[] = [
     category: "ספרי קודש ויודאיקה",
     city: "בני ברק",
     branches: 1,
-    tier: "deep",
-    benefit: "הטבה מורחבת על תשמישי קדושה",
+    benefit: "הנחה מוגדלת על תשמישי קדושה",
     terms: ["ההטבה חלה על תשמישי קדושה ועל מהדורות מיוחדות", "אינה חלה על עבודות סופר סת״ם"],
   },
   {
@@ -149,8 +148,7 @@ export const PARTNERS: Partner[] = [
     category: "כלי בית וריהוט",
     city: "בית שמש",
     branches: 2,
-    tier: "deep",
-    benefit: "הטבה מורחבת על כלי בית",
+    benefit: "הנחה מוגדלת על כלי בית ומטבח",
     terms: ["ההטבה חלה על כלי בית ועל כלי מטבח", "ריהוט בהזמנה — בתיאום מול הסניף"],
   },
   {
@@ -158,7 +156,6 @@ export const PARTNERS: Partner[] = [
     category: "כלי בית וריהוט",
     city: "ביתר עילית",
     branches: 1,
-    tier: "basic",
     benefit: "הנחה על כל החנות",
     terms: ["ההנחה חלה על כל מוצרי החנות"],
   },
@@ -167,8 +164,7 @@ export const PARTNERS: Partner[] = [
     category: "צעצועים ומתנות",
     city: "בני ברק",
     branches: 1,
-    tier: "deep",
-    benefit: "הטבה מורחבת על צעצועים ומתנות",
+    benefit: "הנחה מוגדלת על צעצועים ומתנות",
     terms: ["ההטבה חלה על כל החנות", "אינה חלה על כרטיסי מתנה"],
   },
   {
@@ -176,7 +172,6 @@ export const PARTNERS: Partner[] = [
     category: "פארמה וטיפוח",
     city: "ירושלים",
     branches: 4,
-    tier: "basic",
     benefit: "הנחה על מוצרי טיפוח ופארמה",
     terms: ["ההנחה חלה על מוצרי טיפוח", "תרופות מרשם מוחרגות על פי חוק"],
   },
@@ -185,7 +180,7 @@ export const PARTNERS: Partner[] = [
     category: "אופטיקה",
     city: "מודיעין עילית",
     branches: 1,
-    tier: "exclusive",
+    exclusive: true,
     benefit: "הטבה שזמינה אך ורק לחברי הדרן קלאב",
     terms: [
       "ההטבה אינה מוצעת ללקוחות שאינם חברי המועדון",
@@ -198,7 +193,6 @@ export const PARTNERS: Partner[] = [
     category: "צרכי כתיבה ומשרד",
     city: "אלעד",
     branches: 2,
-    tier: "basic",
     benefit: "הנחה על כל צרכי הכתיבה",
     terms: ["ההנחה חלה על כל החנות", "ערכות בית ספר — בתיאום מול הסניף"],
   },
@@ -240,7 +234,7 @@ export const CATEGORY_ICON: Record<string, string> = {
   "ספרי קודש ויודאיקה": "book",
   "כלי בית וריהוט": "package",
   "צעצועים ומתנות": "gift",
-  "פארמה וטיפוח": "sparkles",
+  "פארמה וטיפוח": "shopping-bag",
   אופטיקה: "search",
   "צרכי כתיבה ומשרד": "pencil",
 };

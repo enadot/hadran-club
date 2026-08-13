@@ -1,64 +1,16 @@
 /**
- * The benefit-depth model.
+ * The shared benefit copy.
  *
- * The strategic brief is explicit that the discount is a *range*, not a number:
- * "אחוזים בודדים במוצרי יסוד וברשתות הגדולות, ועד עשרות אחוזים במותגי אופנה,
- * אופטיקה ומוצרים ייעודיים". Until the real per-merchant figures arrive from the
- * קהילות קארד API, the site describes that range qualitatively rather than
- * publishing a single flat percentage it cannot stand behind.
+ * The strategic brief is explicit that the discount is a *range*, not a number: the
+ * benefit is set per merchant, so the site describes it qualitatively and defers the
+ * exact figure to the member's own card rather than publishing a headline percentage
+ * it cannot stand behind at every till.
  *
- * Three tiers, in ascending order of depth. `exclusive` is not "deeper still" —
- * it is a different axis (access rather than size) and is the club's strongest
- * argument, so it carries the ink badge that nothing else on the page uses.
+ * The directory used to carry a three-tier vocabulary on top of this (a fixed /
+ * extended / exclusive label badged on every row and offered as a filter). It was
+ * removed: the per-merchant `benefit` line on each partner record already says what
+ * the shop gives, in the merchant's own words, without a taxonomy in front of it.
  */
-import type { IconName } from "@/components/brand/Icon";
-import type { BadgeTone } from "@/components/brand/Badge";
-
-export type BenefitTier = "basic" | "deep" | "exclusive";
-
-export type BenefitTierMeta = {
-  /** The badge label on a partner row. */
-  label: string;
-  /** The same thing in one word, for badges sharing a line with a shop name on a
-   *  phone — the full label wrapped and left every row a different height. */
-  short: string;
-  /** One line explaining what the tier means, for the detail sheet and legend. */
-  description: string;
-  /** Badge tone from the design system's existing palette — no new tokens. */
-  tone: BadgeTone;
-  /** Chosen from the icon set already in components/brand/Icon.tsx. */
-  icon: IconName;
-};
-
-export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
-  basic: {
-    label: "הטבה קבועה",
-    short: "קבועה",
-    description:
-      "הנחה שוטפת על הסל כולו, בעיקר במוצרי יסוד וברשתות הגדולות. זו ההטבה שמלווה את הקנייה השבועית.",
-    tone: "neutral",
-    icon: "shopping-cart",
-  },
-  deep: {
-    label: "הטבה מורחבת",
-    short: "מורחבת",
-    description:
-      "הטבה עמוקה משמעותית, בקטגוריות שבהן לכוח הקנייה של הקהילה יש משקל — אופנה, אופטיקה ומוצרים ייעודיים.",
-    tone: "gold",
-    icon: "sparkles",
-  },
-  exclusive: {
-    label: "בלעדי לחברי המועדון",
-    short: "בלעדי",
-    description:
-      "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב. כאן הכרטיס אינו מוזיל את הקנייה — הוא מה שפותח אותה.",
-    tone: "ink",
-    icon: "ticket",
-  },
-};
-
-/** The order tiers are listed in filters and legends. */
-export const BENEFIT_TIER_ORDER: BenefitTier[] = ["exclusive", "deep", "basic"];
 
 /**
  * The line shown wherever the exact figure would otherwise go. Deliberately not a

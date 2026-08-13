@@ -60,7 +60,7 @@ export const FOOTER_COLUMNS: {
     title: "בתי עסק",
     links: [
       { label: "רשימת בתי העסק", href: "/benefits" },
-      { label: "חנויות בלעדיות", href: "/benefits?tier=exclusive" },
+      { label: "חנויות בלעדיות", href: "/benefits?exclusive=1" },
       { label: "הצטרפות עסקים", href: "/merchants#form" },
       { label: "אזור בעלי עסקים", href: "/merchants" },
       { label: "יצירת קשר", href: "/merchants#form" },

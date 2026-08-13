@@ -276,11 +276,6 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                             {it.meta}
                           </span>
                         </span>
-                        {it.benefitLabel ? (
-                          <span className="hidden flex-none text-[length:var(--text-body-sm)] font-semibold text-[var(--color-primary-deep)] min-[480px]:inline">
-                            {it.benefitLabel}
-                          </span>
-                        ) : null}
                         <Icon
                           name={it.external ? "external-link" : "chevron-left"}
                           size={18}

@@ -3,16 +3,14 @@ import { Suspense } from "react";
 import { Band, Container, Eyebrow } from "@/components/site/Band";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
-import { Icon } from "@/components/brand/Icon";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
 import { PartnerBrowser } from "./PartnerBrowser";
 
 export const metadata: Metadata = {
   title: "בתי העסק השותפים",
   description:
-    "הנבחרת שלנו — רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית. לכל שותף סוג ההטבה שלו, ויש חנויות שההטבה בהן זמינה אך ורק לחברי הדרן קלאב.",
+    "הנבחרת שלנו — רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית. ההטבה נקבעת מול כל שותף בנפרד, ויש חנויות שההטבה בהן זמינה אך ורק לחברי הדרן קלאב.",
 };
 
 /** The filter bar and the list are one interactive unit; this stands in for both
@@ -36,7 +34,7 @@ function BrowserSkeleton() {
 }
 
 export default function BenefitsPage() {
-  const exclusive = PARTNERS.filter((p) => p.tier === "exclusive").length;
+  const exclusive = PARTNERS.filter((p) => p.exclusive).length;
   const categories = new Set(PARTNERS.map((p) => p.category)).size;
   const cities = new Set(PARTNERS.map((p) => p.city)).size;
 
@@ -51,31 +49,6 @@ export default function BenefitsPage() {
               ההטבה נקבעת מול כל שותף בנפרד — מהנחה קבועה על הסל היום-יומי ועד להטבות עמוקות
               בקטגוריות נבחרות. יש כאן גם חנויות שההטבה בהן זמינה אך ורק לחברי המועדון.
             </p>
-          </div>
-
-          {/* A legend, not a stat strip. The three tiers are the vocabulary the whole
-              page is filtered and badged by, so they are explained once, up front —
-              the previous strip advertised a flat figure the club does not offer. */}
-          <div className="grid grid-cols-1 gap-2.5 min-[720px]:grid-cols-3 min-[720px]:gap-3">
-            {BENEFIT_TIER_ORDER.map((t) => {
-              const meta = BENEFIT_TIERS[t];
-              return (
-                <div
-                  key={t}
-                  className="flex items-start gap-3 rounded-[var(--radius-lg)] bg-[var(--color-canvas)] p-3.5"
-                >
-                  <span className="mt-0.5 flex-none">
-                    <Icon name={meta.icon} size={20} color="var(--color-primary-deep)" />
-                  </span>
-                  <span className="flex flex-col gap-0.5">
-                    <b className="text-[length:var(--text-body-sm)]">{meta.label}</b>
-                    <span className="text-[length:var(--text-caption)] leading-[1.5] text-[var(--color-mute)]">
-                      {meta.description}
-                    </span>
-                  </span>
-                </div>
-              );
-            })}
           </div>
 
           <div className="flex flex-wrap gap-x-8 gap-y-3">
