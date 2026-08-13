@@ -276,9 +276,9 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                             {it.meta}
                           </span>
                         </span>
-                        {it.showDiscount ? (
-                          <span className="tnum flex-none text-[length:var(--text-body-sm)] font-bold text-[var(--color-positive)]">
-                            הטבה בקופה
+                        {it.benefitLabel ? (
+                          <span className="hidden flex-none text-[length:var(--text-body-sm)] font-semibold text-[var(--color-primary-deep)] min-[480px]:inline">
+                            {it.benefitLabel}
                           </span>
                         ) : null}
                         <Icon
@@ -359,7 +359,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                 onClick={close}
                 className="text-[13px] font-bold text-[var(--color-primary-deep)] no-underline"
               >
-                כל 312 בתי העסק
+                לרשימת בתי העסק המלאה
               </Link>
             </div>
           </div>
