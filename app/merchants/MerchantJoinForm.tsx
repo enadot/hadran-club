@@ -5,8 +5,10 @@ import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Checkbox } from "@/components/brand/Checkbox";
+import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
+import { pretendRequest } from "@/lib/forms";
 
 const CATEGORY_OPTIONS = [
   "רשת מזון ומכולת",
@@ -49,6 +51,8 @@ export function MerchantJoinForm() {
   const [f, setF] = React.useState(EMPTY);
   const [errors, setErrors] = React.useState<Errors>({});
   const [termsError, setTermsError] = React.useState(false);
+  const [sending, setSending] = React.useState(false);
+  const [sendError, setSendError] = React.useState<string | null>(null);
   const doneRef = React.useRef<HTMLDivElement>(null);
 
   const set =
@@ -58,7 +62,8 @@ export function MerchantJoinForm() {
       setErrors((e) => ({ ...e, [k]: undefined }));
     };
 
-  const submit = () => {
+  const submit = async () => {
+    if (sending) return;
     const e: Errors = {};
     if (f.business.trim().length < 2) e.business = "שדה חובה";
     if (f.contact.trim().length < 2) e.contact = "שדה חובה";
@@ -75,7 +80,18 @@ export function MerchantJoinForm() {
     }
     setErrors({});
     setTermsError(false);
-    setDone(true);
+    setSendError(null);
+    setSending(true);
+    try {
+      await pretendRequest(true);
+      setDone(true);
+    } catch {
+      setSendError(
+        "לא הצלחנו לשלוח את הפרטים כרגע. אפשר לנסות שוב, או להתקשר אלינו ישירות.",
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   React.useEffect(() => {
@@ -189,8 +205,30 @@ export function MerchantJoinForm() {
             </span>
           ) : null}
 
-          <Button type="submit" size="lg" fullWidth>
-            שליחת הפרטים
+          {sendError ? (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-[var(--color-negative-pale)] p-3.5"
+            >
+              <span className="mt-0.5 flex-none">
+                <Icon name="circle-alert" size={18} color="var(--color-negative-deep)" />
+              </span>
+              <span className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-negative-deep)]">
+                {sendError}
+              </span>
+            </div>
+          ) : null}
+
+          <Button
+            type="submit"
+            size="lg"
+            fullWidth
+            disabled={sending}
+            aria-busy={sending || undefined}
+            icon={sending ? "loader" : undefined}
+            className={sending ? "[&>svg]:animate-spin" : undefined}
+          >
+            {sending ? "שולחים…" : "שליחת הפרטים"}
           </Button>
 
           <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">

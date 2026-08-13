@@ -1,156 +1,401 @@
 "use client";
 
 import * as React from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/brand/Badge";
-import { Card } from "@/components/brand/Card";
+import { Button } from "@/components/brand/Button";
 import { EmptyState } from "@/components/brand/EmptyState";
 import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
 import { FilterChip } from "@/components/site/FilterChip";
+import { PartnerDetailDialog } from "@/components/site/PartnerDetailDialog";
 import {
-  CATEGORY_ICON,
+  BENEFIT_DISCLAIMER,
+  BENEFIT_TIERS,
+  BENEFIT_TIER_ORDER,
+  EXACT_BENEFIT_CTA,
+  type BenefitTier,
+} from "@/lib/data/benefits";
+import {
   CITY_OPTIONS,
   PARTNERS,
   PARTNER_CATEGORIES,
+  SORT_OPTIONS,
+  branchLabel,
+  partnerInitials,
+  type Partner,
 } from "@/lib/data/partners";
+import { cn } from "@/lib/utils";
+
+const TIER_RANK: Record<BenefitTier, number> = { exclusive: 0, deep: 1, basic: 2 };
 
 /**
- * The partner directory: free-text search, a city select and category chips, all
- * ANDed together exactly as Benefits.dc.html filters them. The free-text term matches
- * category or city.
+ * The partner directory — "מנוע החיסכון האישי" in the brief.
  *
- * The filter bar is sticky beneath the nav. The nav is 86px on desktop and 65px on
- * mobile, so the offset is set per breakpoint rather than at the prototype's flat 86px,
- * which would leave a gap on small screens.
+ * Three things changed from the handoff, all of them structural:
+ *
+ * 1. Rows, not tiles. Every tile carried the same icon plate and the same badge, so a
+ *    grid of them was sixteen near-identical squares — nothing to scan for. The
+ *    information here is textual (name, category, city, what the benefit is), and a
+ *    row fits roughly twice as many of them on a phone.
+ * 2. The filters have a state. There is a count of what is active, one control to
+ *    clear it, and a sort — none of which existed, so a filtered list could not be
+ *    reasoned about or undone except by reloading.
+ * 3. The state lives in the URL. A filtered directory is the thing a member sends to
+ *    a neighbour; before this it was unshareable, and the search dialog had nowhere
+ *    to deep-link to.
  */
+type Filters = {
+  q: string;
+  city: string;
+  cat: string;
+  tier: BenefitTier | "all";
+  sort: string;
+};
+
+const DEFAULTS: Filters = {
+  q: "",
+  city: "all",
+  cat: "כל הקטגוריות",
+  tier: "all",
+  sort: "featured",
+};
+
+function readFilters(params: URLSearchParams): Filters {
+  return {
+    q: params.get("q") ?? DEFAULTS.q,
+    city: params.get("city") ?? DEFAULTS.city,
+    cat: params.get("cat") ?? DEFAULTS.cat,
+    tier: (params.get("tier") as BenefitTier | null) ?? DEFAULTS.tier,
+    sort: params.get("sort") ?? DEFAULTS.sort,
+  };
+}
+
+/** Only what was actually chosen ends up in the URL, so a shared link is short
+ *  and a cleared filter leaves no trace of itself. */
+function toQuery(f: Filters) {
+  const p = new URLSearchParams();
+  for (const k of Object.keys(DEFAULTS) as (keyof Filters)[]) {
+    if (f[k] !== DEFAULTS[k] && f[k]) p.set(k, String(f[k]));
+  }
+  return p.toString();
+}
+
 export function PartnerBrowser() {
-  const [query, setQuery] = React.useState("");
-  const [city, setCity] = React.useState("all");
-  const [category, setCategory] = React.useState("הכל");
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  // The filters are React state mirrored into the URL, not state derived from it.
+  //
+  // Deriving them meant every keystroke in the search box went through
+  // router.replace and cost an RSC round trip — and, worse, replacing with a
+  // bare pathname from a page that was *loaded* with a query string is a no-op
+  // in the App Router. Anyone opening a shared ?tier=exclusive link and pressing
+  // "ניקוי הסינון" watched nothing happen. history.replaceState has neither
+  // problem, and deep links still work because the first read seeds the state.
+  const [filters, setFilters] = React.useState<Filters>(() => readFilters(params));
+
+  const { q: query, city, cat: category, tier, sort } = filters;
+
+  const [selected, setSelected] = React.useState<Partner | null>(null);
+  const [detailOpen, setDetailOpen] = React.useState(false);
+  const lastTrigger = React.useRef<HTMLButtonElement | null>(null);
+
+  const apply = React.useCallback(
+    (patch: Partial<Filters>) => {
+      setFilters((prev) => {
+        const next = { ...prev, ...patch };
+        const qs = toQuery(next);
+        window.history.replaceState(null, "", qs ? `${pathname}?${qs}` : pathname);
+        return next;
+      });
+    },
+    [pathname],
+  );
+
+  const reset = React.useCallback(() => {
+    setFilters(DEFAULTS);
+    window.history.replaceState(null, "", pathname);
+  }, [pathname]);
+
+  // Back/forward still move through whatever the URL says.
+  React.useEffect(() => {
+    const onPop = () =>
+      setFilters(readFilters(new URLSearchParams(window.location.search)));
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const activeCount =
+    (query ? 1 : 0) +
+    (city !== "all" ? 1 : 0) +
+    (category !== DEFAULTS.cat ? 1 : 0) +
+    (tier !== "all" ? 1 : 0);
 
   const shown = React.useMemo(() => {
     const q = query.trim();
-    return PARTNERS.filter(
+    const list = PARTNERS.filter(
       (p) =>
-        (category === "הכל" || p.category === category) &&
+        (category === DEFAULTS.cat || p.category === category) &&
         (city === "all" || p.city === city) &&
-        (!q || p.category.includes(q) || p.city.includes(q)),
+        (tier === "all" || p.tier === tier) &&
+        (!q || p.name.includes(q) || p.category.includes(q) || p.city.includes(q)),
     );
-  }, [query, city, category]);
+
+    const sorted = [...list];
+    if (sort === "name") sorted.sort((a, b) => a.name.localeCompare(b.name, "he"));
+    else if (sort === "branches") sorted.sort((a, b) => b.branches - a.branches);
+    else if (sort === "city") sorted.sort((a, b) => a.city.localeCompare(b.city, "he"));
+    // "featured" is the club's own order: exclusive shops first, then depth, then name.
+    else
+      sorted.sort(
+        (a, b) =>
+          TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.name.localeCompare(b.name, "he"),
+      );
+    return sorted;
+  }, [query, city, category, tier, sort]);
+
+  const exclusiveCount = React.useMemo(
+    () => PARTNERS.filter((p) => p.tier === "exclusive").length,
+    [],
+  );
 
   return (
     <>
-      {/* Sticky, so its height is height the results never get back. On a phone the
-          original layout — full padding, each control on its own row and seven chips
-          wrapping to three rows — took some 45% of the viewport. Here the search and
-          the city share a row from 480px, the chips scroll in a single line, and the
-          result count moves down into the results themselves. */}
-      <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,24px)] min-[1060px]:top-[86px]">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3 min-[1060px]:gap-4">
-          <div className="grid grid-cols-1 items-end gap-3 min-[480px]:grid-cols-2 min-[1060px]:grid-cols-3 min-[1060px]:gap-4">
+      <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,20px)] min-[1060px]:top-[86px]">
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3">
+          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[2fr_1fr_1fr]">
             <Input
               icon="search"
-              placeholder="חיפוש לפי קטגוריה או עיר"
-              aria-label="חיפוש לפי קטגוריה או עיר"
+              placeholder="שם בית עסק, קטגוריה או עיר"
+              aria-label="חיפוש בית עסק"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => apply({ q: e.target.value })}
             />
             <Select
               options={CITY_OPTIONS}
               value={city}
               aria-label="סינון לפי עיר"
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => apply({ city: e.target.value })}
             />
+            <Select
+              options={SORT_OPTIONS}
+              value={sort}
+              aria-label="מיון הרשימה"
+              onChange={(e) => apply({ sort: e.target.value })}
+              wrapperClassName="min-[560px]:col-span-2 min-[1060px]:col-span-1"
+            />
+          </div>
+
+          {/* Two axes, two rows. Run as one strip they read as a single group of
+              filters with two chips lit at once, which is exactly the wrong thing
+              to say about tier and category — they combine, they do not compete. */}
+          <div className="flex flex-col gap-2">
             <div
-              className="hidden items-center justify-end gap-2.5 pb-3 text-[length:var(--text-body-sm)] text-[var(--color-mute)] min-[1060px]:flex"
-              aria-live="polite"
+              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
+              role="group"
+              aria-label="סינון לפי סוג ההטבה"
             >
-              <span className="tnum font-bold text-[var(--color-ink)]">{shown.length}</span>
-              <span>בתי עסק מוצגים</span>
+              {/* The label is desktop-only: on a phone it costs a chip's width of
+                  a rail that is already scrolling. The reset chips carry distinct
+                  wording instead, so two lit chips never read as one contradictory
+                  pair of "הכל"s. */}
+              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
+                ההטבה
+              </span>
+              <FilterChip
+                selected={tier === "all"}
+                onClick={() => apply({ tier: "all" })}
+                className="flex-none snap-start"
+              >
+                כל ההטבות
+              </FilterChip>
+              {BENEFIT_TIER_ORDER.map((t) => (
+                <FilterChip
+                  key={t}
+                  selected={tier === t}
+                  onClick={() => apply({ tier: t })}
+                  className="flex-none snap-start"
+                >
+                  {BENEFIT_TIERS[t].label}
+                </FilterChip>
+              ))}
+            </div>
+
+            <div
+              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
+              role="group"
+              aria-label="סינון לפי קטגוריה"
+            >
+              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
+                קטגוריה
+              </span>
+              {PARTNER_CATEGORIES.map((c) => (
+                <FilterChip
+                  key={c}
+                  selected={category === c}
+                  onClick={() => apply({ cat: c })}
+                  className="flex-none snap-start"
+                >
+                  {c}
+                </FilterChip>
+              ))}
             </div>
           </div>
 
-          <div className="hc-rail hc-rail-bleed flex snap-x gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible">
-            {PARTNER_CATEGORIES.map((c) => (
-              <FilterChip
-                key={c}
-                selected={category === c}
-                onClick={() => setCategory(c)}
-                className="flex-none snap-start"
+          {/* Result count and reset. Announced, because filtering changes the list
+              below without moving focus. */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span
+              className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]"
+              aria-live="polite"
+            >
+              <b className="tnum text-[var(--color-ink)]">{shown.length}</b>
+              {shown.length === 1 ? " בית עסק" : " בתי עסק"}
+              {activeCount > 0 ? (
+                <span className="text-[var(--color-mute)]">
+                  {" · "}
+                  {activeCount === 1 ? "סינון אחד פעיל" : `${activeCount} סינונים פעילים`}
+                </span>
+              ) : null}
+            </span>
+
+            {activeCount > 0 ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                icon="x"
+                onClick={reset}
               >
-                {c}
-              </FilterChip>
-            ))}
+                ניקוי הסינון
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>
 
-      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,40px)] pb-16">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4 min-[1060px]:gap-6">
-          {/* The result count belongs here, not in the sticky bar: it is read once
-              per filter change, and a row of sticky chrome costs the results that
-              height on every screen of scrolling. */}
-          <span
-            className="text-[length:var(--text-body-sm)] text-[var(--color-mute)] min-[1060px]:hidden"
-            aria-live="polite"
-          >
-            <b className="tnum text-[var(--color-ink)]">{shown.length}</b> בתי עסק מוצגים
-          </span>
-
+      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,32px)] pb-16">
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-5">
           {shown.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 min-[640px]:grid-cols-3 min-[900px]:grid-cols-4 min-[900px]:gap-4">
-              {shown.map((p, i) => (
-                <Card
-                  key={`${p.category}-${p.city}-${i}`}
-                  tone="hairline"
-                  padding="clamp(12px,3vw,18px)"
-                  interactive
-                >
-                  <div className="flex h-full flex-col gap-3 min-[640px]:gap-3.5">
-                    {/* Where the partner's logo goes. None were supplied with the
-                        handoff, so this is the design system's sand-panel fallback. */}
-                    <div className="rounded-[12px] bg-[var(--color-canvas-warm)] p-2">
-                      <div className="grid h-[clamp(52px,13vw,72px)] place-items-center rounded-lg bg-[var(--color-canvas-soft)]">
-                        <Icon
-                          name={CATEGORY_ICON[p.category] ?? "store"}
-                          size={26}
-                          color="var(--color-primary-deep)"
-                        />
-                        <span className="sr-only">לוגו בית העסק</span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-1 flex-col gap-1">
-                      <b className="text-[clamp(14px,2.2vw,17px)] leading-[1.35]">{p.category}</b>
-                      <span className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                        {p.city}
+            <ul className="m-0 flex list-none flex-col gap-2.5 p-0 min-[900px]:grid min-[900px]:grid-cols-2 min-[900px]:gap-3">
+              {shown.map((p) => {
+                const meta = BENEFIT_TIERS[p.tier];
+                return (
+                  <li key={p.name} className="min-w-0">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        lastTrigger.current = e.currentTarget;
+                        setSelected(p);
+                        setDetailOpen(true);
+                      }}
+                      aria-label={`${p.name} — ${meta.label}. פתיחת פרטי ההטבה`}
+                      className={cn(
+                        "flex w-full items-center gap-3.5 rounded-[var(--radius-xl)] border p-3.5 text-start min-[560px]:gap-4 min-[560px]:p-4",
+                        "cursor-pointer bg-[var(--color-canvas)]",
+                        "transition-[border-color,box-shadow,transform] duration-[var(--duration-base)] ease-[var(--ease-out)]",
+                        "hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)]",
+                        // Exclusive shops carry an ink hairline so they read as a
+                        // different class of thing while scrolling past, not only
+                        // once the badge is read.
+                        p.tier === "exclusive"
+                          ? "border-[var(--color-ink)]"
+                          : "border-[var(--color-border)] hover:border-[var(--color-primary-neutral)]",
+                      )}
+                    >
+                      <span className="grid size-12 flex-none place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-[length:var(--text-body-md)] font-extrabold text-[var(--color-primary-deep)] min-[560px]:size-14 min-[560px]:text-[length:var(--text-body-lg)]">
+                        {partnerInitials(p.name)}
                       </span>
-                    </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--color-border)] pt-3">
-                      <span className="text-[13px] text-[var(--color-mute)]">{p.branches}</span>
-                      <Badge tone="gold" className="whitespace-nowrap">
-                        5% הנחה
-                      </Badge>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                      <span className="flex min-w-0 flex-1 flex-col gap-1">
+                        <span className="flex items-center gap-2">
+                          <b className="min-w-0 truncate text-[clamp(15px,2.3vw,17px)] leading-[1.3] text-[var(--color-ink)]">
+                            {p.name}
+                          </b>
+                          {/* One word on a phone, the full label from 560px. The
+                              long label wrapped under the name and left every row
+                              a different height, which is what a scannable list
+                              cannot afford. */}
+                          <Badge
+                            tone={meta.tone}
+                            icon={meta.icon}
+                            className="flex-none text-[length:var(--text-caption)] min-[560px]:text-[length:var(--text-body-sm)]"
+                          >
+                            <span className="min-[560px]:hidden">{meta.short}</span>
+                            <span className="hidden min-[560px]:inline">{meta.label}</span>
+                          </Badge>
+                        </span>
+                        <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
+                          {p.category} · {p.city}
+                          <span className="hidden min-[560px]:inline">
+                            {" · "}
+                            {branchLabel(p.branches)}
+                          </span>
+                        </span>
+                      </span>
+
+                      <Icon
+                        name="chevron-left"
+                        size={20}
+                        color="var(--color-mute)"
+                        className="flex-none"
+                      />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           ) : (
             <EmptyState
               icon="store"
               title="לא נמצאו בתי עסק"
-              description="נסו לנקות את הסינון או לחפש קטגוריה אחרת. הרשימה מתעדכנת מדי חודש עם בתי עסק חדשים."
+              description="אפשר לנקות את הסינון ולהתחיל מחדש, או לספר לנו איפה אתם קונים כדי שנפנה לבית העסק."
+              action={
+                <div className="flex flex-wrap justify-center gap-2.5">
+                  <Button onClick={reset}>
+                    ניקוי הסינון
+                  </Button>
+                  <Button as="a" href="/merchants" variant="tertiary">
+                    הצטרפות בתי עסק
+                  </Button>
+                </div>
+              }
             />
           )}
 
+          {/* The list is a shop window until the member can see their own number on
+              it. This is the brief's "הזינו מספר כרטיס לצפייה בהטבה המדויקת שלכם". */}
+          <div className="mt-2 flex flex-col gap-4 rounded-[var(--radius-xl)] bg-[var(--color-canvas-soft)] p-[clamp(18px,4vw,28px)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
+            <div className="flex flex-col gap-1.5">
+              <b className="text-[clamp(17px,2.6vw,20px)]">{EXACT_BENEFIT_CTA}</b>
+              <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
+                הרשימה כאן מציגה את סוג ההטבה. עם מספר הכרטיס רואים את ההטבה המדויקת בכל שותף,
+                כולל {exclusiveCount === 1 ? "החנות הבלעדית" : "החנויות הבלעדיות"} למועדון.
+              </span>
+            </div>
+            <div className="flex flex-col gap-2.5 min-[420px]:flex-row min-[720px]:flex-none">
+              <Button as="a" href="/balance" className="justify-center">
+                כניסה עם מספר כרטיס
+              </Button>
+              <Button as="a" href="/activate" variant="tertiary" className="justify-center">
+                קבלת הדרן קארד
+              </Button>
+            </div>
+          </div>
+
           <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
-            הרשימה להמחשה. ההנחה בכפוף לתקנון המועדון ולתנאי בית העסק. ט.ל.ח.
+            {BENEFIT_DISCLAIMER}
           </span>
         </div>
       </div>
+
+      <PartnerDetailDialog
+        partner={selected}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        restoreFocusTo={lastTrigger}
+      />
     </>
   );
 }
