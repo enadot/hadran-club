@@ -55,7 +55,10 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
         // inline-flex + items-end so the 44px touch target grows upward and the
         // active underline stays tight under the label.
         "inline-flex min-h-11 items-end pb-3 whitespace-nowrap",
-        "text-[length:var(--text-body-md)] font-medium text-[var(--color-mute)]",
+        // --color-body, not --color-mute: an inactive tab is an interactive
+        // control, and --color-mute is 3.67:1 on canvas, below WCAG AA. See
+        // PROPOSED_ADDITIONS.md §1 — the token itself is left alone here.
+        "text-[length:var(--text-body-md)] font-medium text-[var(--color-body)]",
         "transition-[color,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
         "hover:text-[var(--color-ink)]",
         "data-[state=active]:border-[var(--color-primary-deep)] data-[state=active]:font-bold data-[state=active]:text-[var(--color-ink)]",

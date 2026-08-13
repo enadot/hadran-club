@@ -1,6 +1,21 @@
 /** Shared chrome data — the nav links and footer columns from the prototypes. */
 
-export type NavLink = { label: string; href: string; icon: string };
+/**
+ * The member area is not part of this site. It is operated by Kehilot Card on their
+ * own platform, so every "אזור אישי" affordance here is an outbound link. The address
+ * is set per environment, which lets the operator point it wherever their member login
+ * lives without a code change.
+ */
+export const MEMBER_AREA_URL =
+  process.env.NEXT_PUBLIC_MEMBER_AREA_URL ?? "https://kehilotcard.co.il";
+
+export type NavLink = {
+  label: string;
+  href: string;
+  icon: string;
+  /** Leaves the site — rendered as a plain anchor opening in a new tab. */
+  external?: boolean;
+};
 
 /** Order and labels are verbatim from the `links` array in every *.dc.html.
  *  Icons come from SiteNav.dc.html's ICONS map. */
@@ -8,10 +23,10 @@ export const NAV_LINKS: NavLink[] = [
   { label: "דף הבית", href: "/", icon: "home" },
   { label: "בתי העסק", href: "/benefits", icon: "store" },
   { label: "הפעלת כרטיס", href: "/activate", icon: "credit-card" },
-  { label: "בדיקת יתרה", href: "/balance", icon: "wallet" },
+  { label: "בדיקת חיסכון", href: "/balance", icon: "wallet" },
   { label: "לבתי עסק", href: "/merchants", icon: "store" },
   { label: "שאלות ותשובות", href: "/faq", icon: "help-circle" },
-  { label: "אזור אישי", href: "/member", icon: "user" },
+  { label: "אזור אישי", href: MEMBER_AREA_URL, icon: "user", external: true },
 ];
 
 /**
@@ -21,7 +36,7 @@ export const NAV_LINKS: NavLink[] = [
  */
 export const FOOTER_COLUMNS: {
   title: string;
-  links: { label: string; href: string }[];
+  links: { label: string; href: string; external?: boolean }[];
 }[] = [
   {
     title: "המועדון",
@@ -36,8 +51,8 @@ export const FOOTER_COLUMNS: {
     title: "הכרטיס",
     links: [
       { label: "הפעלת כרטיס", href: "/activate" },
-      { label: "בדיקת יתרה", href: "/balance" },
-      { label: "אזור אישי", href: "/member" },
+      { label: "בדיקת חיסכון", href: "/balance" },
+      { label: "אזור אישי", href: MEMBER_AREA_URL, external: true },
       { label: "אובדן או גניבה", href: "/faq" },
     ],
   },
@@ -45,6 +60,7 @@ export const FOOTER_COLUMNS: {
     title: "בתי עסק",
     links: [
       { label: "רשימת בתי העסק", href: "/benefits" },
+      { label: "חנויות בלעדיות", href: "/benefits?tier=exclusive" },
       { label: "הצטרפות עסקים", href: "/merchants#form" },
       { label: "אזור בעלי עסקים", href: "/merchants" },
       { label: "יצירת קשר", href: "/merchants#form" },
@@ -53,7 +69,7 @@ export const FOOTER_COLUMNS: {
 ];
 
 export const FOOTER_NOTE =
-  "מועדון ההטבות של הדרן. 5% הנחה מיידית בקופה בכל בתי העסק השותפים — בלי נקודות, בלי קופונים ובלי טעינה מראש.";
+  "מועדון ההטבות של הדרן. כרטיס אחד שפותח רשת רחבה של הטבות אצל השותפים שלנו — ההנחה יורדת בקופה, בלי נקודות, בלי קופונים ובלי טעינה מראש.";
 
 export const LEGAL_LINE = "© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.";
 export const OPERATOR_LINE = "מופעל על ידי קהילות קארד";

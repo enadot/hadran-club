@@ -90,7 +90,8 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
         if (it) {
           e.preventDefault();
           close();
-          router.push(it.href);
+          if (it.external) window.open(it.href, "_blank", "noopener,noreferrer");
+          else router.push(it.href);
         }
       }
     };
@@ -255,20 +256,15 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                   {group.items.map((it, i) => {
                     const idx = groupOffsets[gi] + i;
                     const on = idx === active;
-                    return (
-                      <Link
-                        key={`${group.kind}-${it.name}`}
-                        href={it.href}
-                        onClick={close}
-                        onMouseEnter={() => setActive(idx)}
-                        className={cn(
-                          "flex items-center gap-3.5 px-[clamp(16px,4vw,24px)] py-3 no-underline",
-                          "border-s-[3px] text-[var(--color-ink)]",
-                          on
-                            ? "border-s-[var(--color-primary)] bg-[var(--color-canvas-soft)]"
-                            : "border-s-transparent bg-transparent",
-                        )}
-                      >
+                    const rowClass = cn(
+                      "flex items-center gap-3.5 px-[clamp(16px,4vw,24px)] py-3 no-underline",
+                      "border-s-[3px] text-[var(--color-ink)]",
+                      on
+                        ? "border-s-[var(--color-primary)] bg-[var(--color-canvas-soft)]"
+                        : "border-s-transparent bg-transparent",
+                    );
+                    const row = (
+                      <>
                         <span className="grid size-11 flex-none place-items-center rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-base font-extrabold text-[var(--color-primary-deep)]">
                           {it.initials}
                         </span>
@@ -280,12 +276,44 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                             {it.meta}
                           </span>
                         </span>
-                        {it.showDiscount ? (
-                          <span className="tnum flex-none text-[length:var(--text-body-sm)] font-bold text-[var(--color-positive)]">
-                            5% בקופה
+                        {it.benefitLabel ? (
+                          <span className="hidden flex-none text-[length:var(--text-body-sm)] font-semibold text-[var(--color-primary-deep)] min-[480px]:inline">
+                            {it.benefitLabel}
                           </span>
                         ) : null}
-                        <Icon name="chevron-left" size={18} color="var(--color-mute)" />
+                        <Icon
+                          name={it.external ? "external-link" : "chevron-left"}
+                          size={18}
+                          color="var(--color-mute)"
+                        />
+                      </>
+                    );
+
+                    if (it.external) {
+                      return (
+                        <a
+                          key={`${group.kind}-${it.name}`}
+                          href={it.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={close}
+                          onMouseEnter={() => setActive(idx)}
+                          className={rowClass}
+                        >
+                          {row}
+                        </a>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={`${group.kind}-${it.name}`}
+                        href={it.href}
+                        onClick={close}
+                        onMouseEnter={() => setActive(idx)}
+                        className={rowClass}
+                      >
+                        {row}
                       </Link>
                     );
                   })}
@@ -331,7 +359,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
                 onClick={close}
                 className="text-[13px] font-bold text-[var(--color-primary-deep)] no-underline"
               >
-                כל 312 בתי העסק
+                לרשימת בתי העסק המלאה
               </Link>
             </div>
           </div>

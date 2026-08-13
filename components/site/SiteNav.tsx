@@ -55,8 +55,8 @@ export function SiteNav() {
     };
   }, [open]);
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+  const isActive = (href: string, external?: boolean) =>
+    external ? false : href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const goActivate = () => {
     setOpen(false);
@@ -79,20 +79,32 @@ export function SiteNav() {
 
           <nav className="flex flex-1 items-center gap-[var(--space-xl)]">
             {NAV_LINKS.map((l) => {
-              const on = isActive(l.href);
+              const on = isActive(l.href, l.external);
+              const className = cn(
+                "whitespace-nowrap border-b-2 pb-0.5 text-[length:var(--text-body-sm)] font-semibold no-underline",
+                "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+                on
+                  ? "border-[var(--color-primary-deep)] text-[var(--color-ink)]"
+                  : "border-transparent text-[var(--color-body)] hover:text-[var(--color-ink)]",
+              );
+
+              if (l.external) {
+                return (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(className, "inline-flex items-center gap-1.5")}
+                  >
+                    {l.label}
+                    <Icon name="external-link" size={14} color="var(--color-mute)" />
+                  </a>
+                );
+              }
+
               return (
-                <Link
-                  key={l.label}
-                  href={l.href}
-                  aria-current={on ? "page" : undefined}
-                  className={cn(
-                    "whitespace-nowrap border-b-2 pb-0.5 text-[length:var(--text-body-sm)] font-semibold no-underline",
-                    "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)]",
-                    on
-                      ? "border-[var(--color-primary-deep)] text-[var(--color-ink)]"
-                      : "border-transparent text-[var(--color-body)] hover:text-[var(--color-ink)]",
-                  )}
-                >
+                <Link key={l.label} href={l.href} aria-current={on ? "page" : undefined} className={className}>
                   {l.label}
                 </Link>
               );
@@ -165,26 +177,52 @@ export function SiteNav() {
 
             <nav className="flex-1 overflow-y-auto py-2">
               {NAV_LINKS.map((l) => {
-                const on = isActive(l.href);
+                const on = isActive(l.href, l.external);
+                const className = cn(
+                  "flex min-h-14 items-center gap-3.5 border-s-[3px] px-[18px] py-2",
+                  "text-lg text-[var(--color-ink)] no-underline",
+                  on
+                    ? "border-s-[var(--color-primary)] bg-[var(--color-canvas-soft)] font-bold"
+                    : "border-s-transparent bg-transparent font-medium",
+                );
+                const body = (
+                  <>
+                    <span className="grid size-9 flex-none place-items-center rounded-full bg-[var(--color-canvas-soft)] text-[var(--color-primary-deep)]">
+                      <Icon name={l.icon} size={20} />
+                    </span>
+                    <span className="flex-1">{l.label}</span>
+                    <Icon
+                      name={l.external ? "external-link" : "chevron-left"}
+                      size={18}
+                      color="var(--color-mute)"
+                    />
+                  </>
+                );
+
+                if (l.external) {
+                  return (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setOpen(false)}
+                      className={className}
+                    >
+                      {body}
+                    </a>
+                  );
+                }
+
                 return (
                   <Link
                     key={l.label}
                     href={l.href}
                     onClick={() => setOpen(false)}
                     aria-current={on ? "page" : undefined}
-                    className={cn(
-                      "flex min-h-14 items-center gap-3.5 border-s-[3px] px-[18px] py-2",
-                      "text-lg text-[var(--color-ink)] no-underline",
-                      on
-                        ? "border-s-[var(--color-primary)] bg-[var(--color-canvas-soft)] font-bold"
-                        : "border-s-transparent bg-transparent font-medium",
-                    )}
+                    className={className}
                   >
-                    <span className="grid size-9 flex-none place-items-center rounded-full bg-[var(--color-canvas-soft)] text-[var(--color-primary-deep)]">
-                      <Icon name={l.icon} size={20} />
-                    </span>
-                    <span className="flex-1">{l.label}</span>
-                    <Icon name="chevron-left" size={18} color="var(--color-mute)" />
+                    {body}
                   </Link>
                 );
               })}

@@ -33,11 +33,15 @@
 | `/` | **דף הבית** | Hero עם הדרן קארד + BorderBeam · רצועת ארבעה נתוני-מפתח (StatBlock עם NumberTicker) · שלושה שלבי הצטרפות · מחשבון חיסכון אינטראקטיבי · סל קניות שבועי לפני/אחרי · ארבע קטגוריות שותפים · שלוש קהלי-יעד · ציטוט לקוח · CTA סוגר |
 | `/benefits` | **בתי העסק השותפים** | רשימת שותפים (16 ערכים ב-`lib/data/partners.ts`) עם סינון לפי קטגוריה ועיר |
 | `/activate` | **הפעלת הדרן קארד** | טופס הפעלת כרטיס פיזי + מסלול להזמנת כרטיס חדש |
-| `/balance` | **בדיקת יתרה** | טופס — מספר כרטיס + 4 ספרות ת״ז — מציג יתרה, חיסכון שנצבר וקניות אחרונות |
+| `/balance` | **בדיקת יתרה** | הזנת מספר כרטיס מציגה יתרה זמינה וסטטוס מה-API הציבורי, ומאפשרת טעינה בכרטיס אשראי |
 | `/merchants` | **הצטרפות בתי עסק** | Landing לבעלי עסקים: קהל ממוקד, ללא עלות הקמה, אינטגרציה בקופה |
 | `/faq` | **שאלות ותשובות** | Accordion עם 5 קבוצות (ההנחה · הכרטיס · בתי עסק · החברות · הכל) — ב-`lib/data/faq.ts` |
-| `/member` | **אזור אישי** | חברות המשפחה, כרטיסים פעילים, היסטוריית קניות לפי חודשים עבריים, סך החיסכון |
 | `/search` | **חיפוש באתר** | חיפוש רוחבי בבתי עסק, עמודים ותשובות נפוצות; זמין גם כ-Dialog גלובלי (`SearchDialog`) |
+
+**האזור האישי אינו חלק מהאתר.** הוא מתופעל על ידי **קהילות קארד** במערכת שלהם, וכל הפניה אליו
+באתר — בתפריט, ב-footer, בדף הבית, בסיום ההפעלה ובתוצאת בדיקת היתרה — היא קישור יוצא הנפתח
+בלשונית חדשה. הכתובת נקבעת ב-`MEMBER_AREA_URL` (`lib/data/site.ts`) ונשלטת דרך משתנה הסביבה
+`NEXT_PUBLIC_MEMBER_AREA_URL`, כך שהמפעיל מעדכן אותה בלי שינוי קוד.
 
 ---
 
@@ -45,6 +49,7 @@
 
 ```
 app/                    ← App Router routes (כל תיקייה = route, page.tsx בלבד)
+  api/card/             ← Route handlers שמתווכים ל-API הציבורי של קהילות קארד
 components/
   brand/                ← אבני-הבניין המותגיות: Button, Card, Badge, MemberCard,
                           StatBlock, Figure, SavingsMeter, BenefitRow, PartnerTile,
@@ -55,8 +60,10 @@ components/
   magic/                ← Magic UI ports: BorderBeam, AnimatedShinyText, NumberTicker
   ui/                   ← Radix wrappers (accordion, tabs) בסגנון shadcn
 lib/
+  api/                  ← שכבת השירות מול קהילות קארד: kehilot.ts (שרת) + client.ts (דפדפן)
+  card.ts               ← ולידציה ופורמט של מספר כרטיס, טלפון, דוא״ל, סכומים וסטטוס
   data/                 ← Static content שמופיע ב-page.tsx: NAV_LINKS, FOOTER_COLS,
-                          PARTNERS, MEMBER_ACTIVITY, FAQ, SEARCH_INDEX
+                          PARTNERS, FAQ, SEARCH_INDEX, MEMBER_AREA_URL
   fonts.ts              ← next/font declarations (Afek local, Frank Ruhl Libre)
   motion.ts             ← easings + duration presets משותפים
   utils.ts              ← cn() helper (clsx + tailwind-merge)
@@ -84,6 +91,59 @@ project/                ← Claude Design source-of-truth prototypes (HTML/CSS/J
 - **AnimatedShinyText** — shimmer עדין על תגי-הכותרת של ה-Hero.
 - **`<Figure>` + NumberTicker** — ספרות ה-KPI (`312`, `1,240`, `24,800`) עולות מ-0 בזמן הכניסה לתצוגה.
 - ה-Hero **לא** עטוף ב-Reveal — הוא מעל-הקפל וכל השהיה פוגעת ב-LCP.
+
+---
+
+## חיבור ל-API של קהילות קארד
+
+הדרן קלאב הוא ה-White Label; **קהילות קארד** היא הפלטפורמה מאחוריו. שלושת ה-Endpoints הציבוריים
+שלה — אלה שמחזיק כרטיס רשאי לקרוא עבור הכרטיס של עצמו — מוטמעים באתר. **אין מפתח API בקוד**, לא
+בצד שרת ולא בצד לקוח.
+
+### שכבות
+
+| שכבה | קובץ | תפקיד |
+| --- | --- | --- |
+| Server client | `lib/api/kehilot.ts` | `fetch` אל `kehilotcard.co.il`, timeout של 12 שניות, מיפוי כל שגיאה להודעה בעברית |
+| Route handlers | `app/api/card/{balance,activate,topup}/route.ts` | Proxy מצד השרת + ולידציה חוזרת של הקלט |
+| Browser client | `lib/api/client.ts` | הרכיבים קוראים רק לנתיבים המקומיים ומקבלים `ClientResult` |
+| Validation | `lib/card.ts` | `card_code` (8 ספרות אחרונות), טלפון, דוא״ל, סכומי טעינה, מיפוי סטטוס כרטיס |
+
+הקריאות עוברות דרך ה-route handlers ולא ישירות מהדפדפן משלוש סיבות: המארח החיצוני לא צריך לפתוח
+CORS למקור הזה, כתובת ה-API לא נכנסת ל-bundle של הלקוח, ואם בעתיד יידרש מפתח פרטי — הוא ייכנס
+בשכבת השרת בלבד, בלי לגעת באף רכיב.
+
+### Endpoints
+
+| נתיב מקומי | Upstream | שימוש ב-UI |
+| --- | --- | --- |
+| `GET /api/card/balance?card_code=` | `GET /public/balance` | `/balance` — יתרה זמינה, מטבע וסטטוס כרטיס |
+| `POST /api/card/activate` | `POST /public/activate` | `/activate` — שיוך כרטיס פיזי לחבר (שם, טלפון, דוא״ל) |
+| `POST /api/card/topup` | `POST /public/topup` | `TopUpPanel` — הפניה לדף הסליקה המאובטח של המערכת |
+
+### משתני סביבה
+
+```bash
+KEHILOT_API_BASE=https://kehilotcard.co.il/api/v1   # ברירת מחדל; דורסים רק לסביבת בדיקות
+NEXT_PUBLIC_MEMBER_AREA_URL=https://kehilotcard.co.il  # יעד הקישור "אזור אישי"
+```
+
+### טיפול בשגיאות
+
+כל קריאה חוזרת כ-`{ ok: true, data }` או `{ ok: false, status, message }` — הרכיבים לא צריכים
+`try/catch`. ההודעות בעברית ומוצגות ב-`<Alert>` צמוד לפעולה שנכשלה:
+
+| מצב | הודעה |
+| --- | --- |
+| `exists: false` | הכרטיס לא נמצא במערכת, אנא וודאו את המספר |
+| 400 / 422 | נתונים לא תקינים, אנא בדקו את מספר הכרטיס (או הודעה ממוקדת לשדה שנכשל) |
+| 404 | הכרטיס לא נמצא |
+| 408 / timeout | הבקשה ארכה זמן רב מדי, אנא נסו שוב |
+| 429 | בוצעו יותר מדי בקשות. אנא נסו שוב בעוד מספר רגעים. |
+| 5xx | שגיאת שרת, אנא נסו שוב מאוחר יותר |
+| כשל רשת | לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב. |
+
+הודעה שמגיעה מה-upstream מוצגת כלשונה **רק אם היא בעברית**; אחרת נעשה שימוש בטבלה שלמעלה.
 
 ---
 

@@ -111,6 +111,32 @@
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
 
+  /* ── shadcn/ui compatibility aliases ────────────────────────────────────────
+     shadcn components are authored against a fixed set of semantic names
+     (background, foreground, input, ring, muted-foreground …). Every alias below
+     resolves to a token that already exists in styles/tokens/ — none of them
+     introduces a new colour, radius or shadow. Adding them here means a component
+     pulled from the registry lands brand-correct instead of arriving with
+     neutral-500 greys that then have to be hand-edited file by file.
+     ──────────────────────────────────────────────────────────────────────── */
+  --color-background: var(--color-canvas);
+  --color-foreground: var(--color-ink);
+  --color-card: var(--color-canvas);
+  --color-card-foreground: var(--color-ink);
+  --color-popover: var(--color-canvas);
+  --color-popover-foreground: var(--color-ink);
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary: var(--color-canvas-soft);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: var(--color-canvas-soft);
+  --color-muted-foreground: var(--color-mute);
+  --color-accent: var(--color-canvas-soft);
+  --color-accent-foreground: var(--color-ink);
+  --color-destructive: var(--color-negative);
+  --color-destructive-foreground: var(--color-canvas);
+  --color-input: var(--color-border);
+  --color-ring: var(--color-focus);
+
   --container-max: var(--container-max);
   --container-narrow: var(--container-narrow);
   /* Accordion open/close — 200ms, the token easing, no bounce. Radix supplies the

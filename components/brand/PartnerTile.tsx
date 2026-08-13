@@ -13,7 +13,9 @@ import { Badge } from "./Badge";
 export type PartnerTileProps = React.ComponentPropsWithoutRef<"div"> & {
   name?: string;
   category?: string;
-  discount?: string;
+  /** The benefit tier label, e.g. "הטבה מורחבת". Never a bare percentage. */
+  benefit?: string;
+  benefitTone?: "neutral" | "gold" | "ink";
   logoSrc?: string;
   initials?: string;
 };
@@ -21,7 +23,8 @@ export type PartnerTileProps = React.ComponentPropsWithoutRef<"div"> & {
 export function PartnerTile({
   name,
   category,
-  discount = "5%",
+  benefit,
+  benefitTone = "gold",
   logoSrc,
   initials,
   className,
@@ -56,7 +59,7 @@ export function PartnerTile({
         </span>
       </span>
 
-      <Badge tone="gold">{discount}</Badge>
+      {benefit ? <Badge tone={benefitTone}>{benefit}</Badge> : null}
     </div>
   );
 }
