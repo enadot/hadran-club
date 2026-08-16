@@ -9,6 +9,7 @@ import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
 import { FilterChip } from "@/components/site/FilterChip";
+import { PartnerLogo } from "@/components/brand/PartnerLogo";
 import { PartnerDetailDialog } from "@/components/site/PartnerDetailDialog";
 import {
   BENEFIT_DISCLAIMER,
@@ -23,7 +24,6 @@ import {
   PARTNER_CATEGORIES,
   SORT_OPTIONS,
   branchLabel,
-  partnerInitials,
   type Partner,
 } from "@/lib/data/partners";
 import { cn } from "@/lib/utils";
@@ -140,26 +140,31 @@ export function PartnerBrowser() {
         (category === DEFAULTS.cat || p.category === category) &&
         (city === "all" || p.city === city) &&
         (tier === "all" || p.tier === tier) &&
-        (!q || p.name.includes(q) || p.category.includes(q) || p.city.includes(q)),
+        (!q ||
+          p.name.includes(q) ||
+          (p.category?.includes(q) ?? false) ||
+          (p.city?.includes(q) ?? false)),
     );
 
     const sorted = [...list];
     if (sort === "name") sorted.sort((a, b) => a.name.localeCompare(b.name, "he"));
-    else if (sort === "branches") sorted.sort((a, b) => b.branches - a.branches);
-    else if (sort === "city") sorted.sort((a, b) => a.city.localeCompare(b.city, "he"));
+    else if (sort === "city")
+      sorted.sort((a, b) => (a.city ?? "").localeCompare(b.city ?? "", "he"));
     // "featured" is the club's own order: exclusive shops first, then depth, then name.
     else
       sorted.sort(
         (a, b) =>
-          TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.name.localeCompare(b.name, "he"),
+          // Partners without a tier sort last rather than first: an unranked
+          // shop is not the club's pick, it is a shop we have no depth for yet.
+          (a.tier ? TIER_RANK[a.tier] : 9) - (b.tier ? TIER_RANK[b.tier] : 9) ||
+          a.name.localeCompare(b.name, "he"),
       );
     return sorted;
   }, [query, city, category, tier, sort]);
 
-  const exclusiveCount = React.useMemo(
-    () => PARTNERS.filter((p) => p.tier === "exclusive").length,
-    [],
-  );
+  // Tier data has not landed for the directory yet; the axis hides itself until
+  // any partner carries one.
+  const anyTiered = React.useMemo(() => PARTNERS.some((p) => p.tier), []);
 
   return (
     <>
@@ -196,29 +201,31 @@ export function PartnerBrowser() {
           {/* One rail, one axis. Tier is the club's own vocabulary and the filter
               a visitor actually browses by, so it stays visible; category and
               city are ordinary pickers and sit in the selects above. */}
-          <div
-            className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
-            role="group"
-            aria-label="סינון לפי סוג ההטבה"
-          >
-            <FilterChip
-              selected={tier === "all"}
-              onClick={() => apply({ tier: "all" })}
-              className="flex-none snap-start"
+          {anyTiered ? (
+            <div
+              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
+              role="group"
+              aria-label="סינון לפי סוג ההטבה"
             >
-              כל ההטבות
-            </FilterChip>
-            {BENEFIT_TIER_ORDER.map((t) => (
               <FilterChip
-                key={t}
-                selected={tier === t}
-                onClick={() => apply({ tier: t })}
+                selected={tier === "all"}
+                onClick={() => apply({ tier: "all" })}
                 className="flex-none snap-start"
               >
-                {BENEFIT_TIERS[t].label}
+                כל ההטבות
               </FilterChip>
-            ))}
-          </div>
+              {BENEFIT_TIER_ORDER.map((t) => (
+                <FilterChip
+                  key={t}
+                  selected={tier === t}
+                  onClick={() => apply({ tier: t })}
+                  className="flex-none snap-start"
+                >
+                  {BENEFIT_TIERS[t].label}
+                </FilterChip>
+              ))}
+            </div>
+          ) : null}
 
           {/* Result count and reset. Announced, because filtering changes the list
               below without moving focus. */}
@@ -256,7 +263,17 @@ export function PartnerBrowser() {
           {shown.length > 0 ? (
             <ul className="m-0 flex list-none flex-col gap-2.5 p-0 min-[900px]:grid min-[900px]:grid-cols-2 min-[900px]:gap-3">
               {shown.map((p) => {
-                const meta = BENEFIT_TIERS[p.tier];
+                const meta = p.tier ? BENEFIT_TIERS[p.tier] : null;
+                // Whatever this partner has, in a fixed order — never an empty
+                // separator where a missing field used to be.
+                const metaLine = [
+                  p.tier && p.tier !== "exclusive" ? BENEFIT_TIERS[p.tier].label : null,
+                  p.category,
+                  p.city,
+                  p.branches ? branchLabel(p.branches) : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ");
                 return (
                   <li key={p.name} className="min-w-0">
                     <button
@@ -266,7 +283,7 @@ export function PartnerBrowser() {
                         setSelected(p);
                         setDetailOpen(true);
                       }}
-                      aria-label={`${p.name} — ${meta.label}. פתיחת פרטי ההטבה`}
+                      aria-label={`${p.name}${meta ? ` — ${meta.label}` : ""}. פתיחת פרטי ההטבה`}
                       className={cn(
                         "flex w-full items-center gap-3.5 rounded-[var(--radius-xl)] border p-3.5 text-start min-[560px]:gap-4 min-[560px]:p-4",
                         "cursor-pointer bg-[var(--color-canvas)]",
@@ -280,9 +297,11 @@ export function PartnerBrowser() {
                           : "border-[var(--color-border)] hover:border-[var(--color-primary-neutral)]",
                       )}
                     >
-                      <span className="grid size-12 flex-none place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-[length:var(--text-body-md)] font-extrabold text-[var(--color-primary-deep)] min-[560px]:size-14 min-[560px]:text-[length:var(--text-body-lg)]">
-                        {partnerInitials(p.name)}
-                      </span>
+                      <PartnerLogo
+                        name={p.name}
+                        src={p.logo}
+                        className="size-12 flex-none text-[length:var(--text-body-md)] min-[560px]:size-14 min-[560px]:text-[length:var(--text-body-lg)]"
+                      />
 
                       <span className="flex min-w-0 flex-1 flex-col gap-1">
                         <span className="flex items-center gap-2">
@@ -293,7 +312,7 @@ export function PartnerBrowser() {
                               long label wrapped under the name and left every row
                               a different height, which is what a scannable list
                               cannot afford. */}
-                          {p.tier === "exclusive" ? (
+                          {p.tier === "exclusive" && meta ? (
                             <Badge
                               tone={meta.tone}
                               icon={meta.icon}
@@ -304,15 +323,11 @@ export function PartnerBrowser() {
                             </Badge>
                           ) : null}
                         </span>
-                        <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                          {p.tier === "exclusive" ? p.category : meta.label}
-                          {" · "}
-                          {p.city}
-                          <span className="hidden min-[560px]:inline">
-                            {" · "}
-                            {branchLabel(p.branches)}
+                        {metaLine ? (
+                          <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
+                            {metaLine}
                           </span>
-                        </span>
+                        ) : null}
                       </span>
 
                       <Icon
@@ -350,8 +365,9 @@ export function PartnerBrowser() {
             <div className="flex flex-col gap-1.5">
               <b className="text-[clamp(17px,2.6vw,20px)]">{EXACT_BENEFIT_CTA}</b>
               <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
-                הרשימה כאן מציגה את סוג ההטבה. עם מספר הכרטיס רואים את ההטבה המדויקת בכל שותף,
-                כולל {exclusiveCount === 1 ? "החנות הבלעדית" : "החנויות הבלעדיות"} למועדון.
+                {anyTiered
+                  ? "הרשימה כאן מציגה את סוג ההטבה. עם מספר הכרטיס רואים את ההטבה המדויקת בכל שותף, כולל החנויות הבלעדיות למועדון."
+                  : "עם מספר הכרטיס רואים את ההטבה המדויקת בכל אחד מבתי העסק ברשימה."}
               </span>
             </div>
             <div className="flex flex-col gap-2.5 min-[420px]:flex-row min-[720px]:flex-none">

@@ -10,7 +10,8 @@ import { Figure } from "@/components/brand/Figure";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
-import { PARTNERS, partnerInitials } from "@/lib/data/partners";
+import { PARTNERS } from "@/lib/data/partners";
+import { PartnerLogo } from "@/components/brand/PartnerLogo";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
 
 /** The three how-it-works steps. */
@@ -67,7 +68,7 @@ const SHOWCASE = [...PARTNERS]
 
 export default function HomePage() {
   const exclusiveCount = PARTNERS.filter((p) => p.tier === "exclusive").length;
-  const cityCount = new Set(PARTNERS.map((p) => p.city)).size;
+  const cityCount = new Set(PARTNERS.map((p) => p.city).filter(Boolean)).size;
 
   return (
     <>
@@ -238,7 +239,7 @@ export default function HomePage() {
                     >
                       {meta.description}
                     </span>
-                    {isExclusive ? (
+                    {isExclusive && exclusiveCount > 0 ? (
                       <Link
                         href="/benefits?tier=exclusive"
                         className="flex items-center gap-1.5 font-bold text-[var(--color-primary)] no-underline hover:underline hover:underline-offset-[3px]"
@@ -286,7 +287,7 @@ export default function HomePage() {
             className="grid grid-cols-2 gap-3 min-[720px]:grid-cols-3 min-[720px]:gap-4"
           >
             {SHOWCASE.map((p) => {
-              const meta = BENEFIT_TIERS[p.tier];
+              const meta = p.tier ? BENEFIT_TIERS[p.tier] : null;
               return (
                 <Link key={p.name} href={`/benefits?q=${encodeURIComponent(p.name)}`} className="no-underline">
                   <Card
@@ -296,21 +297,25 @@ export default function HomePage() {
                     className="h-full"
                   >
                     <div className="flex h-full flex-col gap-3">
-                      {/* No partner logos shipped with the handoff. Until they do,
-                          the plate carries the shop's own initials rather than a
-                          category icon repeated across the row. */}
-                      <div className="grid h-[clamp(56px,15vw,70px)] place-items-center rounded-[var(--radius-md)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-[clamp(18px,4vw,22px)] font-extrabold text-[var(--color-primary-deep)]">
-                        {partnerInitials(p.name)}
-                      </div>
+                      {/* The partner's own logo on a neutral plate — the club's
+                          argument is that these are shops the family already
+                          walks into, and the mark is how they recognise one. */}
+                      <PartnerLogo
+                        name={p.name}
+                        src={p.logo}
+                        className="h-[clamp(56px,15vw,70px)] w-full rounded-[var(--radius-md)] text-[clamp(18px,4vw,22px)]"
+                      />
                       <div className="flex flex-1 flex-col gap-1">
                         <b className="text-[length:var(--text-body-sm)] leading-[1.3] text-[var(--color-ink)]">
                           {p.name}
                         </b>
-                        <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
-                          {p.city}
-                        </span>
+                        {p.category || p.city ? (
+                          <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
+                            {[p.category, p.city].filter(Boolean).join(" · ")}
+                          </span>
+                        ) : null}
                       </div>
-                      {p.tier === "exclusive" ? (
+                      {p.tier === "exclusive" && meta ? (
                         <Badge tone="ink" icon={meta.icon} className="self-start text-[length:var(--text-caption)]">
                           בלעדי
                         </Badge>
