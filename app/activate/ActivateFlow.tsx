@@ -460,8 +460,8 @@ export function ActivateFlow() {
                   <Checkbox
                     label="אני מאשר/ת את תקנון המועדון ואת קבלת עדכונים על בתי עסק חדשים"
                     checked={f.terms}
-                    onChange={(e) => {
-                      set("terms")(e.target.checked);
+                    onCheckedChange={(state) => {
+                      set("terms")(state === true);
                       setTermsError(false);
                     }}
                   />

@@ -193,8 +193,8 @@ export function MerchantJoinForm() {
           <Checkbox
             label="אני מאשר/ת שנציג המועדון יחזור אליי בטלפון או בדואר אלקטרוני"
             checked={f.terms}
-            onChange={(e) => {
-              set("terms")(e.target.checked);
+            onCheckedChange={(state) => {
+              set("terms")(state === true);
               setTermsError(false);
             }}
           />
