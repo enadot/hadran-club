@@ -213,8 +213,13 @@ input[type="range"] {
   cursor: pointer;
 }
 
-/* Focus: 2px ink outline offset 2px, per the design-system motion rules. */
-:focus-visible {
+/* Focus: 2px gold outline offset 2px, per the design-system motion rules.
+   This rule sits outside every layer, so a Tailwind `outline-none` utility cannot
+   turn it off. Text fields are therefore excluded here: Input, Textarea and Select
+   already paint the ink border plus the soft gold ring on their own shell, and a
+   second outline inside that shell reads as a double frame. The range slider keeps
+   the outline — it draws no focus state of its own. */
+:focus-visible:not(:is(input:not([type="range"]), textarea, select)) {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
