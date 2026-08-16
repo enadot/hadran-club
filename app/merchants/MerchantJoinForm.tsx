@@ -155,13 +155,13 @@ export function MerchantJoinForm() {
               label="תחום"
               options={CATEGORY_OPTIONS}
               value={f.category}
-              onChange={(e) => set("category")(e.target.value)}
+              onValueChange={set("category")}
             />
             <Select
               label="מספר סניפים"
               options={BRANCH_OPTIONS}
               value={f.branches}
-              onChange={(e) => set("branches")(e.target.value)}
+              onValueChange={set("branches")}
             />
           </div>
 

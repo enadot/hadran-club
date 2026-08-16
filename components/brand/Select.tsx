@@ -2,29 +2,53 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Icon } from "./Icon";
+import {
+  Select as SelectRoot,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 /**
- * Mirrors components/forms/Select.jsx.
+ * Brand shell around the shadcn/ui (Radix) select — same border, radius and focus
+ * treatment as Input, so a picker sits in a form without a seam. RtlProvider feeds
+ * the direction in, so the panel and the check mark land on the right side in
+ * Hebrew.
  *
- * Kept as a native <select> — it matches the prototype pixel for pixel, and on
- * mobile it gives the platform picker, which beats a custom listbox for this
- * audience. The chevron sits at inset-inline-end so it lands on the left in RTL.
+ * The API stays what the pages already pass: a list of options and a value. The
+ * change handler is Radix's `onValueChange`, which hands over the value itself.
  */
 export type SelectOption = { value: string; label: string } | string;
 
-export type SelectProps = Omit<React.ComponentPropsWithoutRef<"select">, "children" | "style"> & {
+export type SelectProps = {
   label?: React.ReactNode;
   hint?: React.ReactNode;
   options?: SelectOption[];
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  name?: string;
+  id?: string;
+  className?: string;
   wrapperClassName?: string;
   style?: React.CSSProperties;
+  "aria-label"?: string;
 };
 
 export function Select({
   label,
   hint,
   options = [],
+  value,
+  defaultValue,
+  onValueChange,
+  placeholder,
+  disabled,
+  name,
   id,
   className,
   wrapperClassName,
@@ -33,6 +57,7 @@ export function Select({
 }: SelectProps) {
   const reactId = React.useId();
   const selectId = id ?? `sel-${reactId}`;
+  const describedBy = hint ? `${selectId}-desc` : undefined;
 
   return (
     <div
@@ -43,44 +68,62 @@ export function Select({
       style={style}
     >
       {label ? (
-        <label htmlFor={selectId} className="text-[length:var(--text-body-sm)] font-semibold">
+        <Label
+          htmlFor={selectId}
+          className="text-[length:var(--text-body-sm)] font-semibold text-[var(--color-ink)]"
+        >
           {label}
-        </label>
+        </Label>
       ) : null}
 
-      <div className="relative flex items-center">
-        <select
+      <SelectRoot
+        value={value}
+        defaultValue={defaultValue}
+        onValueChange={onValueChange}
+        disabled={disabled}
+        name={name}
+      >
+        <SelectTrigger
           id={selectId}
+          aria-describedby={describedBy}
           className={cn(
-            "w-full appearance-none rounded-[var(--radius-md)] border px-4 py-3",
-            "border-[var(--color-border)] bg-[var(--color-canvas)] font-inherit outline-none",
+            "h-auto w-full rounded-[var(--radius-md)] border px-4 py-3 shadow-none",
+            "border-[var(--color-border)] bg-[var(--color-canvas)]",
             "text-[length:var(--text-body-md)] text-[var(--color-ink)]",
             "transition-[border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out)]",
-            "focus:border-[var(--color-ink)] focus:shadow-[var(--focus-ring)]",
+            "focus-visible:border-[var(--color-ink)] focus-visible:ring-0 focus-visible:shadow-[var(--focus-ring)]",
+            "[&_svg:not([class*='text-'])]:text-[var(--color-mute)]",
             className,
           )}
           {...rest}
         >
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+
+        <SelectContent className="border-[var(--color-border)] bg-[var(--color-canvas)]">
           {options.map((o) => {
-            const value = typeof o === "string" ? o : o.value;
+            const optionValue = typeof o === "string" ? o : o.value;
             const text = typeof o === "string" ? o : o.label;
             return (
-              <option key={value} value={value}>
+              <SelectItem
+                key={optionValue}
+                value={optionValue}
+                className="text-[length:var(--text-body-md)] text-[var(--color-ink)]"
+              >
                 {text}
-              </option>
+              </SelectItem>
             );
           })}
-        </select>
-        <Icon
-          name="chevron-down"
-          size={18}
-          color="var(--color-mute)"
-          style={{ position: "absolute", insetInlineEnd: 16, pointerEvents: "none" }}
-        />
-      </div>
+        </SelectContent>
+      </SelectRoot>
 
       {hint ? (
-        <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">{hint}</span>
+        <span
+          id={describedBy}
+          className="text-[length:var(--text-caption)] text-[var(--color-mute)]"
+        >
+          {hint}
+        </span>
       ) : null}
     </div>
   );

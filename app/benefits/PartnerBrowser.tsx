@@ -177,13 +177,13 @@ export function PartnerBrowser() {
               options={CITY_OPTIONS}
               value={city}
               aria-label="סינון לפי עיר"
-              onChange={(e) => apply({ city: e.target.value })}
+              onValueChange={(v) => apply({ city: v })}
             />
             <Select
               options={SORT_OPTIONS}
               value={sort}
               aria-label="מיון הרשימה"
-              onChange={(e) => apply({ sort: e.target.value })}
+              onValueChange={(v) => apply({ sort: v })}
               wrapperClassName="min-[560px]:col-span-2 min-[1060px]:col-span-1"
             />
           </div>
