@@ -43,15 +43,17 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
     label: "הטבה מורחבת",
     short: "מורחבת",
     description:
-      "הטבה עמוקה משמעותית, בקטגוריות שבהן לכוח הקנייה של הקהילה יש משקל — אופנה, אופטיקה ומוצרים ייעודיים.",
+      "הנחה גדולה בהרבה, בקטגוריות שבהן לכוח הקנייה של הקהילה יש משקל — ביגוד, אופטיקה ומוצרים ייעודיים.",
     tone: "gold",
-    icon: "sparkles",
+    // A price tag, not sparkles. The sparkle read as decoration rather than as a
+    // deal, and `percent` was already spoken for by the third how-it-works step.
+    icon: "tag",
   },
   exclusive: {
     label: "בלעדי לחברי המועדון",
     short: "בלעדי",
     description:
-      "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב. כאן הכרטיס אינו מוזיל את הקנייה — הוא מה שפותח אותה.",
+      "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב. כאן הכרטיס לא רק מוזיל את הקנייה — בלעדיו פשוט אין הטבה.",
     tone: "ink",
     icon: "ticket",
   },

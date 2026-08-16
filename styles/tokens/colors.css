@@ -32,6 +32,29 @@
   --gradient-brand:linear-gradient(135deg,var(--gold-700) 0%,var(--gold-300) 100%);
   --gradient-brand-soft:linear-gradient(135deg,var(--gold-200) 0%,var(--gold-50) 100%);
 
+  /* Hero backdrop — the floor beneath the generated gradient raster
+     (public/hero-gradient.jpg), and the whole rendering wherever that raster is
+     absent. Written in the same warm ramp the raster was generated from, so the
+     two stack without a seam: cream at the copy side, gold blooming behind the
+     card. The stops fade to explicit transparent-gold rather than `transparent`
+     so no engine interpolates the tail through grey.
+
+     The composition is laid out for RTL: `background-position` is physical, not
+     logical, so it does not flip with the document. The hero puts the copy in the
+     first column — on the right — and the card in the second, on the left. So the
+     bloom sits left, behind the black card it has to lift, and the calm cream end
+     sits right, under the headline and the paragraph. */
+  --gradient-hero:
+    radial-gradient(78% 60% at 24% 26%,var(--gold-200) 0%,rgba(245,230,189,0) 64%),
+    radial-gradient(56% 46% at 6% 82%,var(--gold-300) 0%,rgba(240,217,150,0) 60%),
+    radial-gradient(64% 72% at 94% 4%,var(--sand-100) 0%,rgba(247,244,238,0) 72%),
+    linear-gradient(225deg,var(--sand-100) 0%,var(--sand-200) 56%,var(--gold-100) 100%);
+  /* Warm bloom set behind the hero artwork. The card ships as a transparent PNG,
+     so it cannot carry a drop shadow of its own — this is what lifts the black
+     card off the cream backdrop. */
+  --gradient-hero-bloom:
+    radial-gradient(50% 50% at 50% 50%,var(--gold-300) 0%,rgba(240,217,150,0.45) 45%,rgba(240,217,150,0) 78%);
+
   /* Surface */
   --color-canvas:#ffffff;
   --color-canvas-soft:var(--sand-200);

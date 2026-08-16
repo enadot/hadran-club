@@ -80,6 +80,19 @@ project/                ← Claude Design source-of-truth prototypes (HTML/CSS/J
 
 כל הצבעים, הרווחים, ה-typography, ה-radius וה-easing חיים ב-`styles/tokens/*.css` כ-CSS custom properties (`--color-primary-deep`, `--gold-500`, `--font-display`, `--radius-2xl`, וכו׳). הקוד ב-JSX משתמש בהם ישירות דרך `[var(--...)]` של Tailwind arbitrary values — אין hard-coded צבעים ב-components.
 
+### נכסי ה-Hero בעמוד הבית
+
+ה-Hero בעמוד הבית מצפה לשני קבצים ב-`public/`. שניהם דקורטיביים, ושניהם **אינם** ב-git — צריך להניח אותם ידנית:
+
+| קובץ | תפקיד | מה קורה בלעדיו |
+| --- | --- | --- |
+| `public/hero-card.webp` | צילום המוצר של הכרטיס — עם רקע שקוף | ה-`<img>` נכשל בטעינה. `alt=""` מונע אייקון תמונה שבורה, אבל נשאר חלל ריק בעמודה |
+| `public/hero-gradient.jpg` | הגרדיאנט שנוצר ב-Higgsfield, ברזולוציה רחבה (16:9) | השכבה היא `background-image`, ולכן קובץ חסר פשוט לא מצויר. `--gradient-hero` מתחתיו מרנדר את כל הרקע לבדו |
+
+הרקע בנוי משתי שכבות: `--gradient-hero` (רשת CSS, ב-`styles/tokens/colors.css`) היא הרצפה שנצבעת מיד, והראסטר יושב מעליה ב-`opacity-80`. שתיהן מסודרות ל-RTL — `background-position` הוא פיזי ולא לוגי, ולכן זוהר הזהב ממוקם שמאלה מאחורי הכרטיס, והקצה הקרמי הרגוע מימין מתחת לכותרת.
+
+הראסטר נדרש להיות בהיר בחציו הימני: הכותרת והפסקה יושבות שם, והניגודיות שלהן נמדדת מול הרקע הזה.
+
 ### RTL
 
 האתר עברית מלאה: `<html lang="he" dir="rtl">` ב-`app/layout.tsx`, ו-`RtlProvider` (context) מעביר את הכיוון ל-Radix primitives כדי שה-Dialog/Select/Tabs יפתחו לצד הנכון.
@@ -87,7 +100,7 @@ project/                ← Claude Design source-of-truth prototypes (HTML/CSS/J
 ### תנועה (Motion)
 
 - **`<Reveal>`** (`components/site/Reveal.tsx`) — עוטף בלוקים ומחיל fade-in-up כשה-viewport מגיע אליהם. עם `stagger` הילדים נחשפים בהדרגה. נבנה על `motion` (Framer Motion).
-- **BorderBeam** — קרן זהב חלקה שסובבת סביב כרטיס החבר ב-Hero. מוגבל לרגע מיתוגי אחד בעמוד.
+- **BorderBeam** — קרן זהב חלקה סביב `MemberCard`. ה-Hero כבר לא משתמש בה: הוא מציג צילום מוצר של הכרטיס, ולקרן אין מלבן לעקוב אחריו. הרגע המיתוגי בעמוד הבית הוא כעת זוהר הזהב מתחת לצילום (`--gradient-hero-bloom`), שלא עולה אנימציה מעל ה-LCP.
 - **AnimatedShinyText** — shimmer עדין על תגי-הכותרת של ה-Hero.
 - **`<Figure>` + NumberTicker** — ספרות ה-KPI (`312`, `1,240`, `24,800`) עולות מ-0 בזמן הכניסה לתצוגה.
 - ה-Hero **לא** עטוף ב-Reveal — הוא מעל-הקפל וכל השהיה פוגעת ב-LCP.

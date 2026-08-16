@@ -240,7 +240,7 @@ export const CATEGORY_ICON: Record<string, string> = {
   "ספרי קודש ויודאיקה": "book",
   "כלי בית וריהוט": "package",
   "צעצועים ומתנות": "gift",
-  "פארמה וטיפוח": "sparkles",
+  "פארמה וטיפוח": "plus",
   אופטיקה: "search",
   "צרכי כתיבה ומשרד": "pencil",
 };

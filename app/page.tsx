@@ -5,10 +5,8 @@ import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
-import { MemberCard } from "@/components/brand/MemberCard";
 import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
-import { BorderBeam } from "@/components/magic/border-beam";
 import { AnimatedShinyText } from "@/components/magic/animated-shiny-text";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { PlanChooser } from "@/components/site/PlanChooser";
@@ -21,19 +19,19 @@ const STEPS = [
   {
     n: "1",
     title: "מזמינים את הכרטיס",
-    body: "ממלאים פרטים בסיסיים באתר. הכרטיס הפיזי נשלח עד הבית תוך חמישה ימי עסקים, ללא עלות משלוח.",
+    body: "ממלאים פרטים בסיסיים באתר. הכרטיס נשלח עד הבית תוך חמישה ימי עסקים, ללא עלות משלוח.",
     icon: "truck",
   },
   {
     n: "2",
     title: "מפעילים בדקה",
-    body: "מזינים את מספר הכרטיס ואת הפרטים האישיים באתר, והכרטיס פעיל ומשויך אליכם.",
+    body: "מזינים את מספר הכרטיס ואת הפרטים האישיים באתר, והוא פעיל ורשום על שמכם.",
     icon: "credit-card",
   },
   {
     n: "3",
     title: "מציגים בקופה",
-    body: "לפני התשלום מציגים את הכרטיס. ההנחה יורדת מהחשבון מיד — בלי טפסים, בלי קופונים ובלי בקשות.",
+    body: "לפני התשלום מציגים את הכרטיס. ההנחה יורדת מהחשבון מיד — בלי טפסים, בלי קופונים ובלי לשלוח קבלות.",
     icon: "badge-percent",
   },
 ] as const;
@@ -77,7 +75,24 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────────────────
           Rendered without a scroll reveal: it is above the fold, so animating it
           in would only delay the LCP. */}
-      <section className="bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,8vw,72px)] pb-[clamp(40px,8vw,80px)]">
+      <section className="relative isolate overflow-hidden bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,8vw,72px)] pb-[clamp(40px,8vw,80px)]">
+        {/* Backdrop in two layers, both decorative — they carry nothing the copy
+            does not already say, so neither is an <img>.
+
+            The CSS mesh is the floor: it paints immediately, and it is the whole
+            backdrop until the raster above it decodes. The raster is the
+            generated gradient; as a background-image a missing file degrades to
+            nothing rather than to a broken-image icon, which keeps the hero
+            intact if the asset has not landed yet. Neither layer animates — this
+            block sits over the LCP element. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-20 bg-[image:var(--gradient-hero)]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-[url('/hero-gradient.jpg')] bg-cover bg-[position:30%_center] opacity-80"
+        />
         <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[clamp(32px,6vw,56px)]">
           <div className="flex flex-col items-start gap-6">
             <Badge tone="gold" icon="ticket">
@@ -96,9 +111,9 @@ export default function HomePage() {
             </h1>
 
             <p className="m-0 max-w-[480px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
-              הדרן קארד הוא כרטיס פיזי אחד שפותח רשת רחבה של הטבות — מהנחות קבועות בקנייה
-              השבועית ועד לחנויות שההטבה בהן שמורה לחברי המועדון בלבד. מציגים בקופה, וההנחה
-              כבר בחשבון.
+              הדרן קארד הוא כרטיס אחד שפותח לכם דלת להטבות במאות בתי עסק — מהנחה שוטפת על
+              הקנייה השבועית ועד לחנויות שההטבה בהן שמורה לחברי המועדון בלבד. מציגים בקופה —
+              ומשלמים פחות.
             </p>
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
@@ -114,50 +129,52 @@ export default function HomePage() {
               <span className="mt-0.5 flex-none">
                 <Icon name="shield-check" size={18} color="var(--color-primary-deep)" />
               </span>
-              הכרטיס מגיע עד הבית · ההנחה תקפה מהרגע הראשון · ללא התחייבות
+              משלוח חינם עד הבית · ההנחה מיידית בקופה · מסלול חודשי ללא התחייבות
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-6">
-            {/* The one brand moment on this page: a soft gold beam around the card.
-                The tilt is dropped below 480px — there the card already fills the
-                column, and a rotated 400px box would stick out past the gutter.
-                The width stays explicit at every size: MemberCard is min(400px,100%),
-                so an `w-auto` wrapper leaves it no containing width to resolve
-                against and the artwork collapses to its content. */}
-            <div className="order-2 w-full max-w-[400px] rotate-0 min-[480px]:rotate-[-3deg]">
-              <div className="relative rounded-[var(--radius-2xl)]">
-                <MemberCard holder="משפחת כהן" tier="חבר מועדון · הדרן קארד" />
-                <BorderBeam
-                  size={110}
-                  duration={9}
-                  borderWidth={2}
-                  colorFrom="var(--gold-100)"
-                  colorTo="var(--gold-300)"
-                  className="rounded-[var(--radius-2xl)]"
-                />
-              </div>
-            </div>
+          {/* The club's own product shot of the card. It replaces the CSS
+              MemberCard that stood in for it here — and with it the BorderBeam,
+              which traced that div's rectangle and has nothing to trace on a
+              tilted card wrapped in a ribbon. The page keeps its one brand
+              moment; it is now the gold bloom behind the artwork, which costs no
+              animation over the LCP element.
 
-            {/* Replaces the hero's giant "5%". The benefit is a range set per
-                merchant, so the honest headline figure is the shape of the range,
-                not a number the club would have to defend at every till. */}
-            <ul className="order-1 m-0 flex w-full max-w-[400px] list-none flex-col gap-1.5 p-0 min-[480px]:order-3">
-              {BENEFIT_TIER_ORDER.map((t) => {
-                const meta = BENEFIT_TIERS[t];
-                return (
-                  <li
-                    key={t}
-                    className="flex items-center gap-2.5 rounded-[var(--radius-md)] bg-[var(--color-canvas)] px-3.5 py-2.5"
-                  >
-                    <Icon name={meta.icon} size={18} color="var(--color-primary-deep)" />
-                    <span className="text-[length:var(--text-body-sm)] font-semibold">
-                      {meta.label}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+              No tilt either: the artwork is photographed on an angle already,
+              and rotating it a second time reads as a mistake.
+
+              A list of the three benefit tiers used to sit under the card. It
+              said the same thing as the three cards in "עומק ההטבות" further
+              down the page, and it made the hero argue its case before the
+              visitor had read the headline. The section below is where that
+              argument belongs; the hero just shows the card.
+
+              MemberCard itself stays in the codebase — /activate renders it
+              live as the holder types their name and card number.
+
+              `isolate` scopes the bloom's negative z-index to this wrapper. The
+              section is the nearest stacking context otherwise, and the bloom
+              would resolve against the backdrop layers instead of the card. */}
+          {/* 520px, not the 440px the CSS card used. The artwork frames the card in
+              a ribbon that eats roughly a quarter of the box on every side, so at
+              440px the card itself read smaller than the headline it sits beside. */}
+          <div className="relative isolate mx-auto w-full max-w-[520px]">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-[6%] -z-10 rounded-[50%] bg-[image:var(--gradient-hero-bloom)] blur-[44px]"
+            />
+            {/* Decorative: the headline and paragraph beside it already carry
+                every claim the picture makes. Sized eagerly and given explicit
+                intrinsic dimensions so the column does not reflow around it. */}
+            <img
+              src="/hero-card.webp"
+              alt=""
+              width={2000}
+              height={1185}
+              fetchPriority="high"
+              decoding="async"
+              className="block h-auto w-full"
+            />
           </div>
         </Container>
       </section>
@@ -178,7 +195,7 @@ export default function HomePage() {
             <StatBlock
               value={<Figure value={312} />}
               label="בתי עסק שותפים"
-              sublabel="ומצטרפים חדשים כל חודש"
+              sublabel="ונוספים חדשים מדי חודש"
               icon="store"
             />
             <StatBlock
@@ -190,7 +207,7 @@ export default function HomePage() {
             <StatBlock
               value={<Figure value={cityCount} />}
               label="יישובים"
-              sublabel="ובכל אחד מהם הנבחרת שלנו"
+              sublabel="עם שותפים בכל אחד מהם"
               icon="map-pin"
             />
           </Reveal>
@@ -208,10 +225,10 @@ export default function HomePage() {
         <Container className="flex flex-col gap-8">
           <Reveal className="flex max-w-[720px] flex-col gap-3">
             <Eyebrow>עומק וטווח ההטבות</Eyebrow>
-            <SectionTitle>לא הנחה אחת. טווח שלם</SectionTitle>
+            <SectionTitle>מהנחה שוטפת ועד עשרות אחוזים</SectionTitle>
             <SectionLead>
-              ההטבה נקבעת מול כל שותף בנפרד. יש חנויות עם הנחה קבועה שמלווה את הקנייה השבועית,
-              ויש קטגוריות שבהן כוח הקנייה של הקהילה מביא הטבות עמוקות משמעותית.
+              ההטבה נקבעת מול כל שותף בנפרד. יש חנויות עם הנחה שוטפת שמלווה את הקנייה השבועית,
+              ויש קטגוריות שבהן כוח הקנייה של הקהילה משיג לנו הרבה יותר.
             </SectionLead>
           </Reveal>
 
@@ -294,8 +311,8 @@ export default function HomePage() {
               <Eyebrow>הנבחרת שלנו</Eyebrow>
               <SectionTitle>איפה הכרטיס עובד</SectionTitle>
               <SectionLead>
-                רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית — בשכונות ובערים שבהן הקהילה
-                קונה ממילא.
+                רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית — בדיוק בשכונות ובערים שבהן
+                הקהילה שלנו קונה.
               </SectionLead>
             </div>
             <Button
@@ -360,9 +377,9 @@ export default function HomePage() {
         <Container className="flex flex-col gap-8">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>איך זה עובד</Eyebrow>
-            <SectionTitle>שלושה צעדים, פעם אחת</SectionTitle>
+            <SectionTitle>שלושה צעדים, וזהו</SectionTitle>
             <SectionLead className="max-w-[620px]">
-              ההצטרפות לוקחת שתי דקות. אחר כך הכרטיס פשוט עובד — בלי לזכור מבצעים ובלי לאסוף
+              ההצטרפות לוקחת דקה. מכאן הכרטיס פשוט עובד — בלי לרדוף אחרי מבצעים ובלי לאסוף
               קופונים.
             </SectionLead>
           </Reveal>
@@ -396,8 +413,8 @@ export default function HomePage() {
             <Eyebrow>החברות במועדון</Eyebrow>
             <SectionTitle>שני מסלולים, אותן הטבות</SectionTitle>
             <SectionLead>
-              שני המסלולים פותחים בדיוק את אותם שותפים, כולל החנויות הבלעדיות. ההבדל היחיד הוא
-              איך משלמים.
+              בשני המסלולים מקבלים גישה בדיוק לאותם בתי עסק, כולל החנויות הבלעדיות. ההבדל
+              היחיד הוא איך משלמים.
             </SectionLead>
           </Reveal>
           <Reveal>
@@ -410,8 +427,12 @@ export default function HomePage() {
       <Band tone="white">
         <Container className="flex flex-col gap-8">
           <Reveal className="flex flex-col gap-3">
-            <Eyebrow>למי זה מיועד</Eyebrow>
-            <SectionTitle>בחרו את המסלול שלכם</SectionTitle>
+            {/* The title used to read "בחרו את המסלול שלכם" — but this section is
+                about audiences, not tracks, and "מסלול" is the word the pricing
+                section directly above already owns. Two different meanings of the
+                same word, one screen apart. */}
+            <Eyebrow>הקהילה שלנו</Eyebrow>
+            <SectionTitle>למי הכרטיס מתאים</SectionTitle>
           </Reveal>
 
           <Reveal
@@ -466,7 +487,7 @@ export default function HomePage() {
             <Icon name="quote" size={32} color="var(--gold-500)" />
             <span className="font-[family-name:var(--font-serif)] text-[clamp(23px,4.5vw,32px)] leading-[1.4] font-bold">
               ״קונים בדיוק אותו דבר ומשלמים פחות. מה שהפתיע אותי זה דווקא החנויות שאי אפשר לקבל
-              בהן הטבה בלי הכרטיס — לשם אנחנו הולכים עכשיו קודם.״
+              בהן הטבה בלי הכרטיס — היום אנחנו מתחילים את הקניות דווקא שם.״
             </span>
             <span className="text-[15px] text-[var(--color-body)]">
               משפחת פרידמן · בני ברק · חברי מועדון מאז תשפ״ד
