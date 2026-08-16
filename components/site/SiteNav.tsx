@@ -114,7 +114,7 @@ export function SiteNav() {
           <div className="flex items-center gap-[var(--space-md)]">
             <IconButton icon="search" label="חיפוש" variant="ghost" size="sm" onClick={search.open} />
             <Button size="sm" onClick={goActivate}>
-              קבלת כרטיס
+              הצטרפות
             </Button>
           </div>
         </div>
@@ -230,7 +230,7 @@ export function SiteNav() {
 
             <div className="flex flex-col gap-3 border-t border-[var(--color-border)] bg-[var(--color-canvas-soft)] p-[18px]">
               <Button size="lg" fullWidth onClick={goActivate}>
-                קבלת כרטיס
+                הצטרפות
               </Button>
               <a
                 href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}

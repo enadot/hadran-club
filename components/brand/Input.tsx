@@ -2,11 +2,14 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Input as InputPrimitive } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Icon, type IconName } from "./Icon";
 
 /**
- * Mirrors components/forms/Input.jsx — 12px radius, hairline border, ink border on
- * focus plus the soft gold ring, negative border and helper text on error.
+ * Brand shell around the shadcn/ui input — 12px radius, hairline border, ink border
+ * on focus plus the soft gold ring, negative border and helper text on error. The
+ * primitive keeps the field DOM and a11y wiring; the tokens keep the look.
  */
 export type InputProps = Omit<React.ComponentPropsWithoutRef<"input">, "style"> & {
   label?: React.ReactNode;
@@ -43,12 +46,12 @@ export function Input({
       style={style}
     >
       {label ? (
-        <label
+        <Label
           htmlFor={inputId}
           className="text-[length:var(--text-body-sm)] font-semibold text-[var(--color-ink)]"
         >
           {label}
-        </label>
+        </Label>
       ) : null}
 
       <div
@@ -63,14 +66,15 @@ export function Input({
         )}
       >
         {icon ? <Icon name={icon} size={18} color="var(--color-mute)" /> : null}
-        <input
+        <InputPrimitive
           id={inputId}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={cn(
-            "min-w-0 flex-1 border-none bg-transparent font-inherit outline-none",
-            "text-[length:var(--text-body-md)] text-[var(--color-ink)]",
+            "h-auto min-w-0 flex-1 rounded-none border-none bg-transparent p-0 font-inherit shadow-none outline-none",
+            "text-[length:var(--text-body-md)] md:text-[length:var(--text-body-md)] text-[var(--color-ink)]",
             "placeholder:text-[var(--color-mute)]",
+            "focus-visible:border-none focus-visible:ring-0 aria-invalid:border-none aria-invalid:ring-0",
             className,
           )}
           {...rest}

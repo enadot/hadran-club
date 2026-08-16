@@ -155,13 +155,13 @@ export function MerchantJoinForm() {
               label="תחום"
               options={CATEGORY_OPTIONS}
               value={f.category}
-              onChange={(e) => set("category")(e.target.value)}
+              onValueChange={set("category")}
             />
             <Select
               label="מספר סניפים"
               options={BRANCH_OPTIONS}
               value={f.branches}
-              onChange={(e) => set("branches")(e.target.value)}
+              onValueChange={set("branches")}
             />
           </div>
 
@@ -193,8 +193,8 @@ export function MerchantJoinForm() {
           <Checkbox
             label="אני מאשר/ת שנציג המועדון יחזור אליי בטלפון או בדואר אלקטרוני"
             checked={f.terms}
-            onChange={(e) => {
-              set("terms")(e.target.checked);
+            onCheckedChange={(state) => {
+              set("terms")(state === true);
               setTermsError(false);
             }}
           />

@@ -9,7 +9,7 @@ import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
 import { AnimatedShinyText } from "@/components/magic/animated-shiny-text";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
-import { PlanChooser } from "@/components/site/PlanChooser";
+import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS, partnerInitials } from "@/lib/data/partners";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
@@ -41,7 +41,7 @@ const AUDIENCES = [
     icon: "users",
     title: "משפחה שרוצה לחסוך",
     body: "כל אחד יכול להצטרף למועדון ולקבל הדרן קארד — גם ללא קשר קודם להדרן.",
-    cta: "קבלת כרטיס",
+    cta: "הצטרפות",
     href: "/activate",
   },
   {
@@ -118,7 +118,7 @@ export default function HomePage() {
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
               <Button as="a" href="/activate" size="lg">
-                קבלת הדרן קארד
+                להזמנת כרטיס
               </Button>
               <Button as="a" href="/benefits" size="lg" variant="tertiary">
                 לרשימת בתי העסק
@@ -129,7 +129,7 @@ export default function HomePage() {
               <span className="mt-0.5 flex-none">
                 <Icon name="shield-check" size={18} color="var(--color-primary-deep)" />
               </span>
-              משלוח חינם עד הבית · ההנחה מיידית בקופה · מסלול חודשי ללא התחייבות
+              משלוח חינם עד הבית · ההנחה מיידית בקופה · חברות ללא עלות
             </div>
           </div>
 
@@ -411,14 +411,14 @@ export default function HomePage() {
         <Container className="flex flex-col gap-8">
           <Reveal className="flex max-w-[640px] flex-col gap-3">
             <Eyebrow>החברות במועדון</Eyebrow>
-            <SectionTitle>שני מסלולים, אותן הטבות</SectionTitle>
+            <SectionTitle>החברות במועדון ללא עלות</SectionTitle>
             <SectionLead>
-              בשני המסלולים מקבלים גישה בדיוק לאותם בתי עסק, כולל החנויות הבלעדיות. ההבדל
-              היחיד הוא איך משלמים.
+              אין דמי הצטרפות ואין דמי חידוש. מזמינים כרטיס, מקבלים אותו הביתה, ומקבלים גישה
+              לכל בתי העסק השותפים — כולל החנויות הבלעדיות.
             </SectionLead>
           </Reveal>
           <Reveal>
-            <PlanChooser />
+            <MembershipCard withCta />
           </Reveal>
         </Container>
       </Band>
@@ -516,7 +516,7 @@ export default function HomePage() {
                   size="lg"
                   className="w-full justify-center min-[480px]:w-auto"
                 >
-                  קבלת הדרן קארד
+                  להזמנת כרטיס
                 </Button>
               </div>
             </Card>

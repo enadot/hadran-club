@@ -81,7 +81,7 @@ export function FaqBrowser() {
                 href="/activate"
                 className="w-full justify-center min-[480px]:w-auto"
               >
-                קבלת הדרן קארד
+                להזמנת כרטיס
               </Button>
             </div>
           </Card>
