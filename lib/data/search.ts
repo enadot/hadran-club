@@ -18,6 +18,8 @@ export type SearchResult = {
   meta: string;
   href: string;
   initials: string;
+  /** Partner logo, where the partner supplied one. */
+  logo?: string;
   /** The benefit tier label, shown on partner rows. Absent on pages and questions. */
   benefitLabel?: string;
   /** Leaves the site — the operator's member area is the only such destination. */
@@ -119,20 +121,22 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
   const partners: SearchResult[] = PARTNERS.filter(
     (p) =>
       hit(p.name) ||
-      hit(p.category) ||
-      hit(p.city) ||
+      hit(p.category ?? "") ||
+      hit(p.trade ?? "") ||
+      hit(p.city ?? "") ||
       // So the "בלעדי" chip and a typed "בלעדי" both reach the exclusive shops.
-      hit(BENEFIT_TIERS[p.tier].label) ||
-      hit(p.benefit),
+      hit(p.tier ? BENEFIT_TIERS[p.tier].label : "") ||
+      hit(p.benefit ?? ""),
   ).map((p) => ({
     kind: "partner",
     name: p.name,
-    meta: `${p.category} · ${p.city}`,
+    meta: [p.trade ?? p.category, p.city].filter(Boolean).join(" · ") || "בית עסק שותף",
     // Deep-links the directory straight to the shop, so the result lands on the
     // row it promised rather than on an unfiltered list of everything.
     href: `/benefits?q=${encodeURIComponent(p.name)}`,
     initials: partnerInitials(p.name),
-    benefitLabel: BENEFIT_TIERS[p.tier].label,
+    logo: p.logo,
+    benefitLabel: p.tier ? BENEFIT_TIERS[p.tier].label : undefined,
   }));
 
   const pages: SearchResult[] = SEARCH_PAGES.filter(

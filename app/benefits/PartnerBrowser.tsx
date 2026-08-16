@@ -2,13 +2,12 @@
 
 import * as React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { EmptyState } from "@/components/brand/EmptyState";
-import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
 import { FilterChip } from "@/components/site/FilterChip";
+import { PartnerCard } from "@/components/site/PartnerCard";
 import { PartnerDetailDialog } from "@/components/site/PartnerDetailDialog";
 import {
   BENEFIT_DISCLAIMER,
@@ -22,11 +21,8 @@ import {
   PARTNERS,
   PARTNER_CATEGORIES,
   SORT_OPTIONS,
-  branchLabel,
-  partnerInitials,
   type Partner,
 } from "@/lib/data/partners";
-import { cn } from "@/lib/utils";
 
 const TIER_RANK: Record<BenefitTier, number> = { exclusive: 0, deep: 1, basic: 2 };
 
@@ -140,32 +136,38 @@ export function PartnerBrowser() {
         (category === DEFAULTS.cat || p.category === category) &&
         (city === "all" || p.city === city) &&
         (tier === "all" || p.tier === tier) &&
-        (!q || p.name.includes(q) || p.category.includes(q) || p.city.includes(q)),
+        (!q ||
+          p.name.includes(q) ||
+          (p.category?.includes(q) ?? false) ||
+          (p.trade?.includes(q) ?? false) ||
+          (p.city?.includes(q) ?? false)),
     );
 
     const sorted = [...list];
     if (sort === "name") sorted.sort((a, b) => a.name.localeCompare(b.name, "he"));
-    else if (sort === "branches") sorted.sort((a, b) => b.branches - a.branches);
-    else if (sort === "city") sorted.sort((a, b) => a.city.localeCompare(b.city, "he"));
+    else if (sort === "city")
+      sorted.sort((a, b) => (a.city ?? "").localeCompare(b.city ?? "", "he"));
     // "featured" is the club's own order: exclusive shops first, then depth, then name.
     else
       sorted.sort(
         (a, b) =>
-          TIER_RANK[a.tier] - TIER_RANK[b.tier] || a.name.localeCompare(b.name, "he"),
+          // Partners without a tier sort last rather than first: an unranked
+          // shop is not the club's pick, it is a shop we have no depth for yet.
+          (a.tier ? TIER_RANK[a.tier] : 9) - (b.tier ? TIER_RANK[b.tier] : 9) ||
+          a.name.localeCompare(b.name, "he"),
       );
     return sorted;
   }, [query, city, category, tier, sort]);
 
-  const exclusiveCount = React.useMemo(
-    () => PARTNERS.filter((p) => p.tier === "exclusive").length,
-    [],
-  );
+  // Tier data has not landed for the directory yet; the axis hides itself until
+  // any partner carries one.
+  const anyTiered = React.useMemo(() => PARTNERS.some((p) => p.tier), []);
 
   return (
     <>
       <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,20px)] min-[1060px]:top-[86px]">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3">
-          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[2fr_1fr_1fr]">
+          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[1.6fr_1fr_1fr_1fr]">
             <Input
               icon="search"
               placeholder="שם בית עסק, קטגוריה או עיר"
@@ -180,30 +182,28 @@ export function PartnerBrowser() {
               onValueChange={(v) => apply({ city: v })}
             />
             <Select
+              options={PARTNER_CATEGORIES}
+              value={category}
+              aria-label="סינון לפי קטגוריה"
+              onValueChange={(v) => apply({ cat: v })}
+            />
+            <Select
               options={SORT_OPTIONS}
               value={sort}
               aria-label="מיון הרשימה"
               onValueChange={(v) => apply({ sort: v })}
-              wrapperClassName="min-[560px]:col-span-2 min-[1060px]:col-span-1"
             />
           </div>
 
-          {/* Two axes, two rows. Run as one strip they read as a single group of
-              filters with two chips lit at once, which is exactly the wrong thing
-              to say about tier and category — they combine, they do not compete. */}
-          <div className="flex flex-col gap-2">
+          {/* One rail, one axis. Tier is the club's own vocabulary and the filter
+              a visitor actually browses by, so it stays visible; category and
+              city are ordinary pickers and sit in the selects above. */}
+          {anyTiered ? (
             <div
               className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
               role="group"
               aria-label="סינון לפי סוג ההטבה"
             >
-              {/* The label is desktop-only: on a phone it costs a chip's width of
-                  a rail that is already scrolling. The reset chips carry distinct
-                  wording instead, so two lit chips never read as one contradictory
-                  pair of "הכל"s. */}
-              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
-                ההטבה
-              </span>
               <FilterChip
                 selected={tier === "all"}
                 onClick={() => apply({ tier: "all" })}
@@ -222,27 +222,7 @@ export function PartnerBrowser() {
                 </FilterChip>
               ))}
             </div>
-
-            <div
-              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
-              role="group"
-              aria-label="סינון לפי קטגוריה"
-            >
-              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
-                קטגוריה
-              </span>
-              {PARTNER_CATEGORIES.map((c) => (
-                <FilterChip
-                  key={c}
-                  selected={category === c}
-                  onClick={() => apply({ cat: c })}
-                  className="flex-none snap-start"
-                >
-                  {c}
-                </FilterChip>
-              ))}
-            </div>
-          </div>
+          ) : null}
 
           {/* Result count and reset. Announced, because filtering changes the list
               below without moving focus. */}
@@ -277,74 +257,29 @@ export function PartnerBrowser() {
 
       <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,32px)] pb-16">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-5">
+          {/* The logo is the card. Two columns on a phone, up to five on a wide
+              screen — a directory of marks a family recognises, not a list of
+              names with a stamp beside each. */}
           {shown.length > 0 ? (
-            <ul className="m-0 flex list-none flex-col gap-2.5 p-0 min-[900px]:grid min-[900px]:grid-cols-2 min-[900px]:gap-3">
-              {shown.map((p) => {
-                const meta = BENEFIT_TIERS[p.tier];
-                return (
-                  <li key={p.name} className="min-w-0">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        lastTrigger.current = e.currentTarget;
-                        setSelected(p);
-                        setDetailOpen(true);
-                      }}
-                      aria-label={`${p.name} — ${meta.label}. פתיחת פרטי ההטבה`}
-                      className={cn(
-                        "flex w-full items-center gap-3.5 rounded-[var(--radius-xl)] border p-3.5 text-start min-[560px]:gap-4 min-[560px]:p-4",
-                        "cursor-pointer bg-[var(--color-canvas)]",
-                        "transition-[border-color,box-shadow,transform] duration-[var(--duration-base)] ease-[var(--ease-out)]",
-                        "hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)]",
-                        // Exclusive shops carry an ink hairline so they read as a
-                        // different class of thing while scrolling past, not only
-                        // once the badge is read.
-                        p.tier === "exclusive"
-                          ? "border-[var(--color-ink)]"
-                          : "border-[var(--color-border)] hover:border-[var(--color-primary-neutral)]",
-                      )}
-                    >
-                      <span className="grid size-12 flex-none place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] font-[family-name:var(--font-display)] text-[length:var(--text-body-md)] font-extrabold text-[var(--color-primary-deep)] min-[560px]:size-14 min-[560px]:text-[length:var(--text-body-lg)]">
-                        {partnerInitials(p.name)}
-                      </span>
-
-                      <span className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="flex items-center gap-2">
-                          <b className="min-w-0 truncate text-[clamp(15px,2.3vw,17px)] leading-[1.3] text-[var(--color-ink)]">
-                            {p.name}
-                          </b>
-                          {/* One word on a phone, the full label from 560px. The
-                              long label wrapped under the name and left every row
-                              a different height, which is what a scannable list
-                              cannot afford. */}
-                          <Badge
-                            tone={meta.tone}
-                            icon={meta.icon}
-                            className="flex-none text-[length:var(--text-caption)] min-[560px]:text-[length:var(--text-body-sm)]"
-                          >
-                            <span className="min-[560px]:hidden">{meta.short}</span>
-                            <span className="hidden min-[560px]:inline">{meta.label}</span>
-                          </Badge>
-                        </span>
-                        <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                          {p.category} · {p.city}
-                          <span className="hidden min-[560px]:inline">
-                            {" · "}
-                            {branchLabel(p.branches)}
-                          </span>
-                        </span>
-                      </span>
-
-                      <Icon
-                        name="chevron-left"
-                        size={20}
-                        color="var(--color-mute)"
-                        className="flex-none"
-                      />
-                    </button>
-                  </li>
-                );
-              })}
+            <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 min-[560px]:grid-cols-3 min-[900px]:grid-cols-4 min-[1200px]:grid-cols-5 min-[560px]:gap-4">
+              {shown.map((p) => (
+                <li key={p.name} className="min-w-0">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      lastTrigger.current = e.currentTarget;
+                      setSelected(p);
+                      setDetailOpen(true);
+                    }}
+                    aria-label={`${p.name}${
+                      p.tier ? ` — ${BENEFIT_TIERS[p.tier].label}` : ""
+                    }. פתיחת פרטי ההטבה`}
+                    className="group h-full w-full cursor-pointer text-start"
+                  >
+                    <PartnerCard partner={p} />
+                  </button>
+                </li>
+              ))}
             </ul>
           ) : (
             <EmptyState
@@ -370,8 +305,9 @@ export function PartnerBrowser() {
             <div className="flex flex-col gap-1.5">
               <b className="text-[clamp(17px,2.6vw,20px)]">{EXACT_BENEFIT_CTA}</b>
               <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
-                הרשימה כאן מציגה את סוג ההטבה. עם מספר הכרטיס רואים את ההטבה המדויקת בכל שותף,
-                כולל {exclusiveCount === 1 ? "החנות הבלעדית" : "החנויות הבלעדיות"} למועדון.
+                {anyTiered
+                  ? "הרשימה כאן מציגה את סוג ההטבה. עם מספר הכרטיס רואים את ההטבה המדויקת בכל שותף, כולל החנויות הבלעדיות למועדון."
+                  : "עם מספר הכרטיס רואים את ההטבה המדויקת בכל אחד מבתי העסק ברשימה."}
               </span>
             </div>
             <div className="flex flex-col gap-2.5 min-[420px]:flex-row min-[720px]:flex-none">

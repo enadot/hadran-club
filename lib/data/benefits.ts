@@ -35,7 +35,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
     label: "הטבה קבועה",
     short: "קבועה",
     description:
-      "הנחה שוטפת על הסל כולו, בעיקר במוצרי יסוד וברשתות הגדולות. זו ההטבה שמלווה את הקנייה השבועית.",
+      "הנחה שוטפת על הסל, במוצרי היסוד וברשתות הגדולות.",
     tone: "neutral",
     icon: "shopping-cart",
   },
@@ -43,7 +43,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
     label: "הטבה מורחבת",
     short: "מורחבת",
     description:
-      "הנחה גדולה בהרבה, בקטגוריות שבהן לכוח הקנייה של הקהילה יש משקל — ביגוד, אופטיקה ומוצרים ייעודיים.",
+      "הנחה גדולה בהרבה — ביגוד, אופטיקה ומוצרים ייעודיים.",
     tone: "gold",
     // A price tag, not sparkles. The sparkle read as decoration rather than as a
     // deal, and `percent` was already spoken for by the third how-it-works step.
@@ -53,7 +53,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
     label: "בלעדי לחברי המועדון",
     short: "בלעדי",
     description:
-      "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב. כאן הכרטיס לא רק מוזיל את הקנייה — בלעדיו פשוט אין הטבה.",
+      "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב.",
     tone: "ink",
     icon: "ticket",
   },
