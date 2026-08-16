@@ -379,7 +379,7 @@ export function PartnerBrowser() {
                 כניסה עם מספר כרטיס
               </Button>
               <Button as="a" href="/activate" variant="tertiary" className="justify-center">
-                קבלת הדרן קארד
+                להזמנת כרטיס
               </Button>
             </div>
           </div>

@@ -104,7 +104,7 @@ export function PlanChooser({ value, onChange, className }: PlanChooserProps) {
             fullWidth
             className="justify-center"
           >
-            קבלת הדרן קארד
+            להזמנת כרטיס
           </Button>
         ) : null}
       </label>

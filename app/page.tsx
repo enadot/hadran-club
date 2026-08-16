@@ -41,7 +41,7 @@ const AUDIENCES = [
     icon: "users",
     title: "משפחה שרוצה לחסוך",
     body: "כל אחד יכול להצטרף למועדון ולקבל הדרן קארד — גם ללא קשר קודם להדרן.",
-    cta: "קבלת כרטיס",
+    cta: "הצטרפות",
     href: "/activate",
   },
   {
@@ -118,7 +118,7 @@ export default function HomePage() {
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
               <Button as="a" href="/activate" size="lg">
-                קבלת הדרן קארד
+                להזמנת כרטיס
               </Button>
               <Button as="a" href="/benefits" size="lg" variant="tertiary">
                 לרשימת בתי העסק
@@ -516,7 +516,7 @@ export default function HomePage() {
                   size="lg"
                   className="w-full justify-center min-[480px]:w-auto"
                 >
-                  קבלת הדרן קארד
+                  להזמנת כרטיס
                 </Button>
               </div>
             </Card>
