@@ -87,7 +87,11 @@ export function Select({
           id={selectId}
           aria-describedby={describedBy}
           className={cn(
-            "h-auto w-full rounded-[var(--radius-md)] border px-4 py-3 shadow-none",
+            // data-[size=default] is how the shadcn trigger sets its 36px height,
+            // and a bare h-auto loses to it — the picker ended up shorter than the
+            // Input beside it. Overriding on the same variant matches the field.
+            "w-full rounded-[var(--radius-md)] border px-4 py-3 shadow-none",
+            "h-auto data-[size=default]:h-auto data-[size=default]:min-h-[52px]",
             "border-[var(--color-border)] bg-[var(--color-canvas)]",
             "text-[length:var(--text-body-md)] text-[var(--color-ink)]",
             "transition-[border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out)]",

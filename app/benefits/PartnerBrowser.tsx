@@ -165,7 +165,7 @@ export function PartnerBrowser() {
     <>
       <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,20px)] min-[1060px]:top-[86px]">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3">
-          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[2fr_1fr_1fr]">
+          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[1.6fr_1fr_1fr_1fr]">
             <Input
               icon="search"
               placeholder="שם בית עסק, קטגוריה או עיר"
@@ -180,68 +180,44 @@ export function PartnerBrowser() {
               onValueChange={(v) => apply({ city: v })}
             />
             <Select
+              options={PARTNER_CATEGORIES}
+              value={category}
+              aria-label="סינון לפי קטגוריה"
+              onValueChange={(v) => apply({ cat: v })}
+            />
+            <Select
               options={SORT_OPTIONS}
               value={sort}
               aria-label="מיון הרשימה"
               onValueChange={(v) => apply({ sort: v })}
-              wrapperClassName="min-[560px]:col-span-2 min-[1060px]:col-span-1"
             />
           </div>
 
-          {/* Two axes, two rows. Run as one strip they read as a single group of
-              filters with two chips lit at once, which is exactly the wrong thing
-              to say about tier and category — they combine, they do not compete. */}
-          <div className="flex flex-col gap-2">
-            <div
-              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
-              role="group"
-              aria-label="סינון לפי סוג ההטבה"
+          {/* One rail, one axis. Tier is the club's own vocabulary and the filter
+              a visitor actually browses by, so it stays visible; category and
+              city are ordinary pickers and sit in the selects above. */}
+          <div
+            className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
+            role="group"
+            aria-label="סינון לפי סוג ההטבה"
+          >
+            <FilterChip
+              selected={tier === "all"}
+              onClick={() => apply({ tier: "all" })}
+              className="flex-none snap-start"
             >
-              {/* The label is desktop-only: on a phone it costs a chip's width of
-                  a rail that is already scrolling. The reset chips carry distinct
-                  wording instead, so two lit chips never read as one contradictory
-                  pair of "הכל"s. */}
-              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
-                ההטבה
-              </span>
+              כל ההטבות
+            </FilterChip>
+            {BENEFIT_TIER_ORDER.map((t) => (
               <FilterChip
-                selected={tier === "all"}
-                onClick={() => apply({ tier: "all" })}
+                key={t}
+                selected={tier === t}
+                onClick={() => apply({ tier: t })}
                 className="flex-none snap-start"
               >
-                כל ההטבות
+                {BENEFIT_TIERS[t].label}
               </FilterChip>
-              {BENEFIT_TIER_ORDER.map((t) => (
-                <FilterChip
-                  key={t}
-                  selected={tier === t}
-                  onClick={() => apply({ tier: t })}
-                  className="flex-none snap-start"
-                >
-                  {BENEFIT_TIERS[t].label}
-                </FilterChip>
-              ))}
-            </div>
-
-            <div
-              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
-              role="group"
-              aria-label="סינון לפי קטגוריה"
-            >
-              <span className="hidden flex-none self-center pe-1 text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)] min-[1060px]:inline">
-                קטגוריה
-              </span>
-              {PARTNER_CATEGORIES.map((c) => (
-                <FilterChip
-                  key={c}
-                  selected={category === c}
-                  onClick={() => apply({ cat: c })}
-                  className="flex-none snap-start"
-                >
-                  {c}
-                </FilterChip>
-              ))}
-            </div>
+            ))}
           </div>
 
           {/* Result count and reset. Announced, because filtering changes the list
@@ -317,17 +293,21 @@ export function PartnerBrowser() {
                               long label wrapped under the name and left every row
                               a different height, which is what a scannable list
                               cannot afford. */}
-                          <Badge
-                            tone={meta.tone}
-                            icon={meta.icon}
-                            className="flex-none text-[length:var(--text-caption)] min-[560px]:text-[length:var(--text-body-sm)]"
-                          >
-                            <span className="min-[560px]:hidden">{meta.short}</span>
-                            <span className="hidden min-[560px]:inline">{meta.label}</span>
-                          </Badge>
+                          {p.tier === "exclusive" ? (
+                            <Badge
+                              tone={meta.tone}
+                              icon={meta.icon}
+                              className="flex-none text-[length:var(--text-caption)] min-[560px]:text-[length:var(--text-body-sm)]"
+                            >
+                              <span className="min-[560px]:hidden">{meta.short}</span>
+                              <span className="hidden min-[560px]:inline">{meta.label}</span>
+                            </Badge>
+                          ) : null}
                         </span>
                         <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                          {p.category} · {p.city}
+                          {p.tier === "exclusive" ? p.category : meta.label}
+                          {" · "}
+                          {p.city}
                           <span className="hidden min-[560px]:inline">
                             {" · "}
                             {branchLabel(p.branches)}

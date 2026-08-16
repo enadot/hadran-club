@@ -194,6 +194,22 @@
 html {
   overflow-x: hidden;
   overflow-x: clip;
+  /* Keep the scrollbar's track reserved at all times. Opening a Radix overlay
+     locks the body scroll, and without a reserved gutter the scrollbar's width
+     is handed back to the page — every element on the site shifts sideways for
+     as long as the menu is open. */
+  scrollbar-gutter: stable;
+}
+
+/* The same lock also compensates for the scrollbar it removed by padding the
+   body. With the gutter above already reserving that width, the padding is a
+   second correction for a shift that no longer happens — and in RTL it lands on
+   the wrong side, pushing the page out under the clip. */
+body[data-scroll-locked] {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
 }
 
 body {

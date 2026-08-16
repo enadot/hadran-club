@@ -23,7 +23,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: "דף הבית", href: "/", icon: "home" },
   { label: "בתי העסק", href: "/benefits", icon: "store" },
   { label: "הפעלת כרטיס", href: "/activate", icon: "credit-card" },
-  { label: "בדיקת חיסכון", href: "/balance", icon: "wallet" },
+  { label: "בדיקת יתרה", href: "/balance", icon: "wallet" },
   { label: "לבתי עסק", href: "/merchants", icon: "store" },
   { label: "שאלות ותשובות", href: "/faq", icon: "help-circle" },
   { label: "אזור אישי", href: MEMBER_AREA_URL, icon: "user", external: true },
@@ -51,7 +51,7 @@ export const FOOTER_COLUMNS: {
     title: "הכרטיס",
     links: [
       { label: "הפעלת כרטיס", href: "/activate" },
-      { label: "בדיקת חיסכון", href: "/balance" },
+      { label: "בדיקת יתרה", href: "/balance" },
       { label: "אזור אישי", href: MEMBER_AREA_URL, external: true },
       { label: "אובדן או גניבה", href: "/faq" },
     ],

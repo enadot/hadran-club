@@ -7,7 +7,6 @@ import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
 import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
-import { AnimatedShinyText } from "@/components/magic/animated-shiny-text";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
@@ -88,23 +87,15 @@ export default function HomePage() {
         />
         <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[clamp(32px,6vw,56px)]">
           <div className="flex flex-col items-start gap-6">
-            <Badge tone="gold" icon="ticket">
-              <AnimatedShinyText
-                shimmerWidth={90}
-                className="mx-0 max-w-none text-[var(--color-ink-deep)] via-[var(--color-ink-deep)]"
-              >
-                מועדון ההטבות של הדרן
-              </AnimatedShinyText>
-            </Badge>
-
             <h1 className="m-0 font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-[1.04] font-extrabold tracking-[-0.015em]">
-              חיסכון מהודר
+              החיסכון שמרגישים
               <br />
-              לבית שלכם
+              בסוף החודש
             </h1>
 
-            <p className="m-0 max-w-[480px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
-              כרטיס אחד, מאות בתי עסק. מציגים בקופה — ומשלמים פחות.
+            <p className="m-0 max-w-[540px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
+              הצטרפו למועדון שמשיג לכם תנאים שלא תמצאו לבד עם מאות בתי עסק, חלקם בהטבה
+              בלעדית לחברי המועדון
             </p>
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
