@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Band, Container, Eyebrow, SectionLead, SectionTitle } from "@/components/site/Band";
 import { Reveal } from "@/components/site/Reveal";
-import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
@@ -11,7 +10,7 @@ import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
-import { PartnerLogo } from "@/components/brand/PartnerLogo";
+import { PartnerCard } from "@/components/site/PartnerCard";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
 
 /** The three how-it-works steps. */
@@ -61,10 +60,10 @@ const AUDIENCES = [
   },
 ] as const;
 
-/** Six partners for the shop-window strip, exclusive shops first. */
+/** Eight partners for the shop window, exclusive shops first. */
 const SHOWCASE = [...PARTNERS]
   .sort((a, b) => (a.tier === "exclusive" ? -1 : 0) - (b.tier === "exclusive" ? -1 : 0))
-  .slice(0, 6);
+  .slice(0, 8);
 
 export default function HomePage() {
   const exclusiveCount = PARTNERS.filter((p) => p.tier === "exclusive").length;
@@ -279,52 +278,22 @@ export default function HomePage() {
             </Button>
           </Reveal>
 
-          {/* Named shops, not category placeholders. A row of four identical
-              "רשת מזון" plates said nothing a member could recognise; the club's
-              argument is that these are the shops they already walk into. */}
+          {/* The same card the directory uses, so a shop looks the same wherever
+              it appears — and the logo, not a plate of initials, is what a
+              family recognises at a glance. */}
           <Reveal
             stagger
-            className="grid grid-cols-2 gap-3 min-[720px]:grid-cols-3 min-[720px]:gap-4"
+            className="grid grid-cols-2 gap-3 min-[560px]:grid-cols-3 min-[900px]:grid-cols-4 min-[900px]:gap-4"
           >
-            {SHOWCASE.map((p) => {
-              const meta = p.tier ? BENEFIT_TIERS[p.tier] : null;
-              return (
-                <Link key={p.name} href={`/benefits?q=${encodeURIComponent(p.name)}`} className="no-underline">
-                  <Card
-                    tone="plain"
-                    padding="clamp(14px,3.5vw,18px)"
-                    interactive
-                    className="h-full"
-                  >
-                    <div className="flex h-full flex-col gap-3">
-                      {/* The partner's own logo on a neutral plate — the club's
-                          argument is that these are shops the family already
-                          walks into, and the mark is how they recognise one. */}
-                      <PartnerLogo
-                        name={p.name}
-                        src={p.logo}
-                        className="h-[clamp(56px,15vw,70px)] w-full rounded-[var(--radius-md)] text-[clamp(18px,4vw,22px)]"
-                      />
-                      <div className="flex flex-1 flex-col gap-1">
-                        <b className="text-[length:var(--text-body-sm)] leading-[1.3] text-[var(--color-ink)]">
-                          {p.name}
-                        </b>
-                        {p.category || p.city ? (
-                          <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
-                            {[p.category, p.city].filter(Boolean).join(" · ")}
-                          </span>
-                        ) : null}
-                      </div>
-                      {p.tier === "exclusive" && meta ? (
-                        <Badge tone="ink" icon={meta.icon} className="self-start text-[length:var(--text-caption)]">
-                          בלעדי
-                        </Badge>
-                      ) : null}
-                    </div>
-                  </Card>
-                </Link>
-              );
-            })}
+            {SHOWCASE.map((p) => (
+              <Link
+                key={p.name}
+                href={`/benefits?q=${encodeURIComponent(p.name)}`}
+                className="group no-underline"
+              >
+                <PartnerCard partner={p} />
+              </Link>
+            ))}
           </Reveal>
         </Container>
       </Band>

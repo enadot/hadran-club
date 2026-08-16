@@ -2,14 +2,12 @@
 
 import * as React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { EmptyState } from "@/components/brand/EmptyState";
-import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
 import { FilterChip } from "@/components/site/FilterChip";
-import { PartnerLogo } from "@/components/brand/PartnerLogo";
+import { PartnerCard } from "@/components/site/PartnerCard";
 import { PartnerDetailDialog } from "@/components/site/PartnerDetailDialog";
 import {
   BENEFIT_DISCLAIMER,
@@ -23,10 +21,8 @@ import {
   PARTNERS,
   PARTNER_CATEGORIES,
   SORT_OPTIONS,
-  branchLabel,
   type Partner,
 } from "@/lib/data/partners";
-import { cn } from "@/lib/utils";
 
 const TIER_RANK: Record<BenefitTier, number> = { exclusive: 0, deep: 1, basic: 2 };
 
@@ -260,86 +256,29 @@ export function PartnerBrowser() {
 
       <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,32px)] pb-16">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-5">
+          {/* The logo is the card. Two columns on a phone, up to five on a wide
+              screen — a directory of marks a family recognises, not a list of
+              names with a stamp beside each. */}
           {shown.length > 0 ? (
-            <ul className="m-0 flex list-none flex-col gap-2.5 p-0 min-[900px]:grid min-[900px]:grid-cols-2 min-[900px]:gap-3">
-              {shown.map((p) => {
-                const meta = p.tier ? BENEFIT_TIERS[p.tier] : null;
-                // Whatever this partner has, in a fixed order — never an empty
-                // separator where a missing field used to be.
-                const metaLine = [
-                  p.tier && p.tier !== "exclusive" ? BENEFIT_TIERS[p.tier].label : null,
-                  p.category,
-                  p.city,
-                  p.branches ? branchLabel(p.branches) : null,
-                ]
-                  .filter(Boolean)
-                  .join(" · ");
-                return (
-                  <li key={p.name} className="min-w-0">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        lastTrigger.current = e.currentTarget;
-                        setSelected(p);
-                        setDetailOpen(true);
-                      }}
-                      aria-label={`${p.name}${meta ? ` — ${meta.label}` : ""}. פתיחת פרטי ההטבה`}
-                      className={cn(
-                        "flex w-full items-center gap-3.5 rounded-[var(--radius-xl)] border p-3.5 text-start min-[560px]:gap-4 min-[560px]:p-4",
-                        "cursor-pointer bg-[var(--color-canvas)]",
-                        "transition-[border-color,box-shadow,transform] duration-[var(--duration-base)] ease-[var(--ease-out)]",
-                        "hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)]",
-                        // Exclusive shops carry an ink hairline so they read as a
-                        // different class of thing while scrolling past, not only
-                        // once the badge is read.
-                        p.tier === "exclusive"
-                          ? "border-[var(--color-ink)]"
-                          : "border-[var(--color-border)] hover:border-[var(--color-primary-neutral)]",
-                      )}
-                    >
-                      <PartnerLogo
-                        name={p.name}
-                        src={p.logo}
-                        className="size-12 flex-none text-[length:var(--text-body-md)] min-[560px]:size-14 min-[560px]:text-[length:var(--text-body-lg)]"
-                      />
-
-                      <span className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="flex items-center gap-2">
-                          <b className="min-w-0 truncate text-[clamp(15px,2.3vw,17px)] leading-[1.3] text-[var(--color-ink)]">
-                            {p.name}
-                          </b>
-                          {/* One word on a phone, the full label from 560px. The
-                              long label wrapped under the name and left every row
-                              a different height, which is what a scannable list
-                              cannot afford. */}
-                          {p.tier === "exclusive" && meta ? (
-                            <Badge
-                              tone={meta.tone}
-                              icon={meta.icon}
-                              className="flex-none text-[length:var(--text-caption)] min-[560px]:text-[length:var(--text-body-sm)]"
-                            >
-                              <span className="min-[560px]:hidden">{meta.short}</span>
-                              <span className="hidden min-[560px]:inline">{meta.label}</span>
-                            </Badge>
-                          ) : null}
-                        </span>
-                        {metaLine ? (
-                          <span className="truncate text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                            {metaLine}
-                          </span>
-                        ) : null}
-                      </span>
-
-                      <Icon
-                        name="chevron-left"
-                        size={20}
-                        color="var(--color-mute)"
-                        className="flex-none"
-                      />
-                    </button>
-                  </li>
-                );
-              })}
+            <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 min-[560px]:grid-cols-3 min-[900px]:grid-cols-4 min-[1200px]:grid-cols-5 min-[560px]:gap-4">
+              {shown.map((p) => (
+                <li key={p.name} className="min-w-0">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      lastTrigger.current = e.currentTarget;
+                      setSelected(p);
+                      setDetailOpen(true);
+                    }}
+                    aria-label={`${p.name}${
+                      p.tier ? ` — ${BENEFIT_TIERS[p.tier].label}` : ""
+                    }. פתיחת פרטי ההטבה`}
+                    className="group h-full w-full cursor-pointer text-start"
+                  >
+                    <PartnerCard partner={p} />
+                  </button>
+                </li>
+              ))}
             </ul>
           ) : (
             <EmptyState

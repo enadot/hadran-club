@@ -18,26 +18,45 @@ import { partnerInitials } from "@/lib/data/partners";
 export type PartnerLogoProps = {
   name: string;
   src?: string;
+  /** Inset around the artwork. Larger plates want more of it. */
+  padding?: string;
+  /** "soft" is the sand plate for small marks; "plain" is white, which is what
+   *  a large panel needs — most of these logos carry their own white ground,
+   *  and a sand plate framed each one in a visible rectangle. */
+  tone?: "soft" | "plain";
   className?: string;
 };
 
-export function PartnerLogo({ name, src, className }: PartnerLogoProps) {
+export function PartnerLogo({
+  name,
+  src,
+  padding = "p-1.5",
+  tone = "soft",
+  className,
+}: PartnerLogoProps) {
   return (
     <span
       className={cn(
-        "grid place-items-center overflow-hidden rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)]",
+        "relative grid place-items-center overflow-hidden rounded-[var(--radius-lg)]",
+        tone === "plain" ? "bg-[var(--color-canvas)]" : "bg-[var(--color-canvas-soft)]",
         "font-[family-name:var(--font-display)] font-extrabold text-[var(--color-primary-deep)]",
         className,
       )}
     >
       {src ? (
         // Decorative: the shop's name is always rendered as text beside it.
+        //
+        // Positioned, not laid out: a percentage height against a parent sized
+        // by aspect-ratio resolves to auto in Chrome, so a tall logo rendered
+        // at its full width and had its bottom clipped off. inset-0 is a
+        // definite box in both axes; the padding is on the image, so
+        // object-contain fits inside it.
         <img
           src={src}
           alt=""
           loading="lazy"
           decoding="async"
-          className="size-full object-contain p-1.5"
+          className={cn("absolute inset-0 size-full object-contain", padding)}
         />
       ) : (
         partnerInitials(name)
