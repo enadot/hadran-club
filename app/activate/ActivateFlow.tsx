@@ -11,10 +11,8 @@ import { Input } from "@/components/brand/Input";
 import { MemberCard } from "@/components/brand/MemberCard";
 import { Select } from "@/components/brand/Select";
 import { CardNumberGuide } from "@/components/brand/CardNumberGuide";
-import { PlanChooser } from "@/components/site/PlanChooser";
 import { submitActivation } from "@/lib/api/client";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
-import { planSummaryLine } from "@/lib/data/plans";
 import {
   CARD_ERROR,
   isCardInputValid,
@@ -37,7 +35,6 @@ const FLOWS = {
   ],
   order: [
     { key: "personal", label: "פרטי החבר" },
-    { key: "plan", label: "מסלול" },
     { key: "confirm", label: "אישור" },
     { key: "done", label: "סיום" },
   ],
@@ -53,7 +50,6 @@ type FieldKey =
   | "email"
   | "city"
   | "street"
-  | "plan"
   | "terms";
 
 const EMPTY = {
@@ -65,7 +61,6 @@ const EMPTY = {
   email: "",
   city: "בני ברק",
   street: "",
-  plan: "year" as "year" | "month",
   terms: false,
 };
 
@@ -201,7 +196,6 @@ export function ActivateFlow() {
     { k: "טלפון נייד", v: f.phone || "—" },
     { k: "דוא״ל", v: f.email || "—" },
     { k: "כתובת למשלוח", v: `${f.street ? f.street + ", " : ""}${f.city}` },
-    ...(isOrder ? [{ k: "מסלול", v: planSummaryLine(f.plan) }] : []),
   ];
 
   return (
@@ -218,7 +212,7 @@ export function ActivateFlow() {
             </h1>
             <p className="m-0 text-[clamp(16px,2.3vw,18px)] text-[var(--color-body)]">
               {isOrder
-                ? "ממלאים פרטים, בוחרים מסלול, והכרטיס הפיזי נשלח עד הבית — מוכן לשימוש בקנייה הראשונה."
+                ? "ממלאים פרטים והכרטיס נשלח עד הבית, ללא עלות — מוכן לשימוש בקנייה הראשונה."
                 : "קיבלתם כרטיס? הזנת מספר הכרטיס והפרטים האישיים תשייך אותו אליכם ותפעיל את ההנחה."}
             </p>
           </div>
@@ -232,7 +226,7 @@ export function ActivateFlow() {
               Two toggle buttons say exactly what this is. */}
           <div
             role="group"
-            aria-label="בחירת מסלול"
+            aria-label="מה תרצו לעשות"
             className="hc-rail flex snap-x gap-[var(--space-lg)] border-b border-[var(--color-border)] min-[640px]:gap-[var(--space-xl)]"
           >
             {(
@@ -414,26 +408,6 @@ export function ActivateFlow() {
                       error={errors.street}
                     />
                   </div>
-                </div>
-              ) : null}
-
-              {/* ── Step: plan ──────────────────────────────────────── */}
-              {stepKey === "plan" ? (
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-1.5">
-                    <b className="text-[clamp(18px,2.8vw,22px)]">בחירת מסלול</b>
-                    <span className="text-[15px] leading-[1.6] text-[var(--color-body)]">
-                      שני המסלולים פותחים בדיוק את אותם שותפים, כולל החנויות הבלעדיות.
-                      ההבדל היחיד הוא איך משלמים.
-                    </span>
-                  </div>
-                  {/* One component with the home page, so the plan a visitor compared
-                      before joining is literally the card they now select. */}
-                  <PlanChooser
-                    value={f.plan}
-                    onChange={(id) => set("plan")(id)}
-                    className="min-[720px]:grid-cols-1 min-[900px]:grid-cols-2"
-                  />
                 </div>
               ) : null}
 

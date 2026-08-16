@@ -9,29 +9,32 @@ import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
 import { AnimatedShinyText } from "@/components/magic/animated-shiny-text";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
-import { PlanChooser } from "@/components/site/PlanChooser";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
+import { MEMBERSHIP_INCLUDES } from "@/lib/data/membership";
 import { PARTNERS, partnerInitials } from "@/lib/data/partners";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
+
+/** The hero's three facts, one phrase each. */
+const HERO_FACTS = ["ללא עלות", "משלוח עד הבית", "הנחה מיידית בקופה"] as const;
 
 /** The three how-it-works steps. */
 const STEPS = [
   {
     n: "1",
     title: "מזמינים את הכרטיס",
-    body: "ממלאים פרטים בסיסיים באתר. הכרטיס נשלח עד הבית תוך חמישה ימי עסקים, ללא עלות משלוח.",
+    body: "ממלאים פרטים באתר. הכרטיס מגיע עד הבית תוך חמישה ימי עסקים.",
     icon: "truck",
   },
   {
     n: "2",
     title: "מפעילים בדקה",
-    body: "מזינים את מספר הכרטיס ואת הפרטים האישיים באתר, והוא פעיל ורשום על שמכם.",
+    body: "מזינים את מספר הכרטיס והפרטים האישיים, והוא פעיל על שמכם.",
     icon: "credit-card",
   },
   {
     n: "3",
     title: "מציגים בקופה",
-    body: "לפני התשלום מציגים את הכרטיס. ההנחה יורדת מהחשבון מיד — בלי טפסים, בלי קופונים ובלי לשלוח קבלות.",
+    body: "מציגים את הכרטיס לפני התשלום. ההנחה יורדת מהחשבון מיד.",
     icon: "badge-percent",
   },
 ] as const;
@@ -40,14 +43,14 @@ const AUDIENCES = [
   {
     icon: "users",
     title: "משפחה שרוצה לחסוך",
-    body: "כל אחד יכול להצטרף למועדון ולקבל הדרן קארד — גם ללא קשר קודם להדרן.",
+    body: "כל משפחה יכולה להצטרף, גם ללא קשר קודם להדרן.",
     cta: "קבלת כרטיס",
     href: "/activate",
   },
   {
     icon: "wallet",
     title: "לקוח הדרן קיים",
-    body: "הכרטיס הוא המשך טבעי של הקשר. נכנסים לאזור האישי ורואים את החיסכון שנצבר.",
+    body: "החיסכון שנצבר מחכה לכם באזור האישי.",
     cta: "לאזור האישי",
     href: MEMBER_AREA_URL,
     external: true,
@@ -55,7 +58,7 @@ const AUDIENCES = [
   {
     icon: "store",
     title: "בעל עסק",
-    body: "חשיפה לקהל ממוקד ואיכותי, תנועת לקוחות קבועה ושותפות עם מותג בעל מוניטין במגזר.",
+    body: "חשיפה לקהל ממוקד ותנועת לקוחות קבועה.",
     cta: "הצטרפות עסקים",
     href: "/merchants",
   },
@@ -75,7 +78,7 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────────────────
           Rendered without a scroll reveal: it is above the fold, so animating it
           in would only delay the LCP. */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,8vw,72px)] pb-[clamp(40px,8vw,80px)]">
+      <section className="relative isolate overflow-hidden bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(40px,8vw,88px)] pb-[clamp(56px,9vw,112px)]">
         {/* Backdrop in two layers, both decorative — they carry nothing the copy
             does not already say, so neither is an <img>.
 
@@ -110,10 +113,13 @@ export default function HomePage() {
               לבית שלכם
             </h1>
 
-            <p className="m-0 max-w-[480px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
-              הדרן קארד הוא כרטיס אחד שפותח לכם דלת להטבות במאות בתי עסק — מהנחה שוטפת על
-              הקנייה השבועית ועד לחנויות שההטבה בהן שמורה לחברי המועדון בלבד. מציגים בקופה —
-              ומשלמים פחות.
+            {/* Two lines. The hero used to carry four, which put the whole
+                benefit model above the fold and left nothing for the sections
+                built to explain it. */}
+            <p className="m-0 max-w-[440px] text-[clamp(18px,2.6vw,21px)] leading-[1.55] text-[var(--color-body)]">
+              כרטיס אחד שפותח הטבות במאות בתי עסק.
+              <br />
+              מציגים בקופה — ומשלמים פחות.
             </p>
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
@@ -125,12 +131,20 @@ export default function HomePage() {
               </Button>
             </div>
 
-            <div className="flex items-start gap-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-mute)]">
-              <span className="mt-0.5 flex-none">
-                <Icon name="shield-check" size={18} color="var(--color-primary-deep)" />
-              </span>
-              משלוח חינם עד הבית · ההנחה מיידית בקופה · מסלול חודשי ללא התחייבות
-            </div>
+            {/* Three facts standing apart, not one sentence joined by dots. A
+                dot-separated run-on is read as prose and skipped; three short
+                items with a mark each are read as a list and scanned. */}
+            <ul className="m-0 flex list-none flex-wrap gap-x-7 gap-y-2.5 p-0">
+              {HERO_FACTS.map((fact) => (
+                <li
+                  key={fact}
+                  className="flex items-center gap-2 text-[length:var(--text-body-sm)] font-semibold text-[var(--color-body)]"
+                >
+                  <Icon name="check" size={16} color="var(--color-primary-deep)" />
+                  {fact}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* The club's own product shot of the card. It replaces the CSS
@@ -195,7 +209,7 @@ export default function HomePage() {
             <StatBlock
               value={<Figure value={312} />}
               label="בתי עסק שותפים"
-              sublabel="ונוספים חדשים מדי חודש"
+              sublabel="ונוספים מדי חודש"
               icon="store"
             />
             <StatBlock
@@ -222,13 +236,13 @@ export default function HomePage() {
           entirely. It replaces a savings calculator that multiplied the basket by
           a flat 5% — a rate the club does not actually offer. */}
       <Band tone="white">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(28px,4vw,48px)]">
           <Reveal className="flex max-w-[720px] flex-col gap-3">
             <Eyebrow>עומק וטווח ההטבות</Eyebrow>
             <SectionTitle>מהנחה שוטפת ועד עשרות אחוזים</SectionTitle>
             <SectionLead>
-              ההטבה נקבעת מול כל שותף בנפרד. יש חנויות עם הנחה שוטפת שמלווה את הקנייה השבועית,
-              ויש קטגוריות שבהן כוח הקנייה של הקהילה משיג לנו הרבה יותר.
+              ההטבה נקבעת מול כל שותף בנפרד — מהנחה שוטפת על הסל ועד עשרות אחוזים
+              בקטגוריות נבחרות.
             </SectionLead>
           </Reveal>
 
@@ -284,10 +298,10 @@ export default function HomePage() {
             <div className="flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] p-[clamp(18px,4vw,28px)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
               <div className="flex flex-col gap-1.5">
                 <b className="text-[clamp(17px,2.6vw,20px)]">
-                  רוצים לדעת מה ההטבה המדויקת אצלכם בשכונה?
+                  רוצים לדעת מה ההטבה המדויקת באזור שלכם?
                 </b>
                 <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
-                  ברשימת בתי העסק מופיע סוג ההטבה והתנאים המלאים של כל שותף.
+                  ברשימה מופיעים סוג ההטבה והתנאים של כל שותף.
                 </span>
               </div>
               <Button
@@ -305,14 +319,13 @@ export default function HomePage() {
 
       {/* ── The shop window ──────────────────────────────────────────────── */}
       <Band tone="sand">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(28px,4vw,48px)]">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div className="flex max-w-[620px] flex-col gap-3">
               <Eyebrow>הנבחרת שלנו</Eyebrow>
               <SectionTitle>איפה הכרטיס עובד</SectionTitle>
               <SectionLead>
-                רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית — בדיוק בשכונות ובערים שבהן
-                הקהילה שלנו קונה.
+                מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית — בערים שבהן הקהילה שלנו קונה.
               </SectionLead>
             </div>
             <Button
@@ -374,13 +387,12 @@ export default function HomePage() {
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <Band id="how" tone="white">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(28px,4vw,48px)]">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>איך זה עובד</Eyebrow>
             <SectionTitle>שלושה צעדים, וזהו</SectionTitle>
             <SectionLead className="max-w-[620px]">
-              ההצטרפות לוקחת דקה. מכאן הכרטיס פשוט עובד — בלי לרדוף אחרי מבצעים ובלי לאסוף
-              קופונים.
+              ההצטרפות לוקחת דקה. מכאן הכרטיס פשוט עובד.
             </SectionLead>
           </Reveal>
 
@@ -406,26 +418,51 @@ export default function HomePage() {
         </Container>
       </Band>
 
-      {/* ── Membership ───────────────────────────────────────────────────── */}
+      {/* ── Membership ───────────────────────────────────────────────────────
+          This section used to compare two paid tracks side by side. The card is
+          free, so there is nothing to compare — and "how much does it cost" is
+          the first question a visitor arrives with, which makes the answer worth
+          a section of its own rather than a line in the FAQ. */}
       <Band tone="sand">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(28px,4vw,48px)]">
           <Reveal className="flex max-w-[640px] flex-col gap-3">
             <Eyebrow>החברות במועדון</Eyebrow>
-            <SectionTitle>שני מסלולים, אותן הטבות</SectionTitle>
+            <SectionTitle>החברות במועדון ללא עלות</SectionTitle>
             <SectionLead>
-              בשני המסלולים מקבלים גישה בדיוק לאותם בתי עסק, כולל החנויות הבלעדיות. ההבדל
-              היחיד הוא איך משלמים.
+              אין דמי חבר, אין תשלום חודשי ואין התחייבות.
             </SectionLead>
           </Reveal>
+
           <Reveal>
-            <PlanChooser />
+            <Card tone="plain" padding="clamp(20px,5vw,32px)">
+              <div className="flex flex-col gap-6 min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between min-[720px]:gap-10">
+                <ul className="m-0 flex flex-1 list-none flex-col gap-3 p-0">
+                  {MEMBERSHIP_INCLUDES.map((item) => (
+                    <li key={item.text} className="flex items-start gap-3">
+                      <span className="mt-0.5 flex-none">
+                        <Icon name={item.icon} size={20} color="var(--color-primary-deep)" />
+                      </span>
+                      <span className="leading-[1.5] text-[var(--color-body)]">{item.text}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  as="a"
+                  href="/activate"
+                  size="lg"
+                  className="w-full justify-center min-[720px]:w-auto min-[720px]:flex-none"
+                >
+                  קבלת הדרן קארד
+                </Button>
+              </div>
+            </Card>
           </Reveal>
         </Container>
       </Band>
 
       {/* ── Who it is for ────────────────────────────────────────────────── */}
       <Band tone="white">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(28px,4vw,48px)]">
           <Reveal className="flex flex-col gap-3">
             {/* The title used to read "בחרו את המסלול שלכם" — but this section is
                 about audiences, not tracks, and "מסלול" is the word the pricing

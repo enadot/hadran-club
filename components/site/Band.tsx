@@ -5,7 +5,11 @@ import { cn } from "@/lib/utils";
  * A full-width horizontal band. Bands alternate sand → white → sand; a single ink
  * band is allowed per page and is reserved for the footer or one promo card.
  *
- * The default padding is the prototypes' `clamp(37px,7.1vw,64px) clamp(16px,4vw,24px)`.
+ * Vertical rhythm is `clamp(56px,9vw,112px)`, up from the prototypes'
+ * `clamp(37px,7.1vw,64px)`. 64px between two full sections reads as a list of
+ * blocks; the air is what separates them into distinct arguments, and it is the
+ * cheapest way to buy the page the room a premium brand is supposed to have.
+ * Horizontal padding is unchanged at `clamp(16px,4vw,24px)`.
  */
 const TONE_CLASS = {
   white: "bg-[var(--color-canvas)]",
@@ -25,7 +29,7 @@ export function Band({ tone = "white", padded = true, className, children, ...re
     <section
       className={cn(
         TONE_CLASS[tone],
-        padded && "px-[clamp(16px,4vw,24px)] py-[clamp(37px,7.1vw,64px)]",
+        padded && "px-[clamp(16px,4vw,24px)] py-[clamp(56px,9vw,112px)]",
         className,
       )}
       {...rest}

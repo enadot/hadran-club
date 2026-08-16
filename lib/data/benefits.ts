@@ -35,7 +35,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
     label: "הטבה קבועה",
     short: "קבועה",
     description:
-      "הנחה שוטפת על הסל כולו, בעיקר במוצרי יסוד וברשתות הגדולות. זו ההטבה שמלווה את הקנייה השבועית.",
+      "הנחה שוטפת על הסל, ברשתות הגדולות ובמוצרי היסוד. זו ההטבה שמלווה את הקנייה השבועית.",
     tone: "neutral",
     icon: "shopping-cart",
   },
@@ -53,7 +53,7 @@ export const BENEFIT_TIERS: Record<BenefitTier, BenefitTierMeta> = {
     label: "בלעדי לחברי המועדון",
     short: "בלעדי",
     description:
-      "בית עסק שההטבה בו זמינה אך ורק דרך הדרן קלאב. כאן הכרטיס לא רק מוזיל את הקנייה — בלעדיו פשוט אין הטבה.",
+      "חנויות שההטבה בהן זמינה אך ורק דרך הדרן קלאב. בלעדיו פשוט אין הנחה.",
     tone: "ink",
     icon: "ticket",
   },
