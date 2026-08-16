@@ -139,6 +139,7 @@ export function PartnerBrowser() {
         (!q ||
           p.name.includes(q) ||
           (p.category?.includes(q) ?? false) ||
+          (p.trade?.includes(q) ?? false) ||
           (p.city?.includes(q) ?? false)),
     );
 

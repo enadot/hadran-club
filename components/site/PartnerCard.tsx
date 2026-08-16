@@ -29,7 +29,9 @@ export function PartnerCard({ partner: p, withMeta = true, className }: PartnerC
   const metaLine = withMeta
     ? [
         p.tier && p.tier !== "exclusive" ? BENEFIT_TIERS[p.tier].label : null,
-        p.category,
+        // The trade, not the filter group: "חליפות ואופנת גברים" tells a
+        // visitor more than "ביגוד והנעלה", which is only there to be filtered on.
+        p.trade ?? p.category,
         p.city,
         p.branches ? branchLabel(p.branches) : null,
       ]

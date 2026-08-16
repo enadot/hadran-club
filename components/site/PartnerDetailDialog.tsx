@@ -73,7 +73,9 @@ export function PartnerDetailDialog({
                     {partner.name}
                   </DialogTitle>
                   <DialogDescription className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]">
-                    {[partner.category, partner.city].filter(Boolean).join(" · ") ||
+                    {[partner.trade ?? partner.category, partner.city]
+                      .filter(Boolean)
+                      .join(" · ") ||
                       "בית עסק שותף"}
                   </DialogDescription>
                 </div>

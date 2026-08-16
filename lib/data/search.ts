@@ -122,6 +122,7 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
     (p) =>
       hit(p.name) ||
       hit(p.category ?? "") ||
+      hit(p.trade ?? "") ||
       hit(p.city ?? "") ||
       // So the "בלעדי" chip and a typed "בלעדי" both reach the exclusive shops.
       hit(p.tier ? BENEFIT_TIERS[p.tier].label : "") ||
@@ -129,7 +130,7 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
   ).map((p) => ({
     kind: "partner",
     name: p.name,
-    meta: [p.category, p.city].filter(Boolean).join(" · ") || "בית עסק שותף",
+    meta: [p.trade ?? p.category, p.city].filter(Boolean).join(" · ") || "בית עסק שותף",
     // Deep-links the directory straight to the shop, so the result lands on the
     // row it promised rather than on an unfiltered list of everything.
     href: `/benefits?q=${encodeURIComponent(p.name)}`,
