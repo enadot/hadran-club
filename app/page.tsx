@@ -19,19 +19,19 @@ const STEPS = [
   {
     n: "1",
     title: "מזמינים את הכרטיס",
-    body: "ממלאים פרטים בסיסיים באתר. הכרטיס נשלח עד הבית תוך חמישה ימי עסקים, ללא עלות משלוח.",
+    body: "נשלח עד הבית תוך חמישה ימי עסקים, ללא עלות.",
     icon: "truck",
   },
   {
     n: "2",
     title: "מפעילים בדקה",
-    body: "מזינים את מספר הכרטיס ואת הפרטים האישיים באתר, והוא פעיל ורשום על שמכם.",
+    body: "מזינים את מספר הכרטיס באתר, והוא רשום על שמכם.",
     icon: "credit-card",
   },
   {
     n: "3",
     title: "מציגים בקופה",
-    body: "לפני התשלום מציגים את הכרטיס. ההנחה יורדת מהחשבון מיד — בלי טפסים, בלי קופונים ובלי לשלוח קבלות.",
+    body: "מציגים לפני התשלום, וההנחה יורדת מהחשבון מיד.",
     icon: "badge-percent",
   },
 ] as const;
@@ -40,14 +40,14 @@ const AUDIENCES = [
   {
     icon: "users",
     title: "משפחה שרוצה לחסוך",
-    body: "כל אחד יכול להצטרף למועדון ולקבל הדרן קארד — גם ללא קשר קודם להדרן.",
+    body: "כל אחד יכול להצטרף, גם ללא קשר קודם להדרן.",
     cta: "הצטרפות",
     href: "/activate",
   },
   {
     icon: "wallet",
     title: "לקוח הדרן קיים",
-    body: "הכרטיס הוא המשך טבעי של הקשר. נכנסים לאזור האישי ורואים את החיסכון שנצבר.",
+    body: "רואים באזור האישי את החיסכון שנצבר.",
     cta: "לאזור האישי",
     href: MEMBER_AREA_URL,
     external: true,
@@ -55,16 +55,16 @@ const AUDIENCES = [
   {
     icon: "store",
     title: "בעל עסק",
-    body: "חשיפה לקהל ממוקד ואיכותי, תנועת לקוחות קבועה ושותפות עם מותג בעל מוניטין במגזר.",
+    body: "חשיפה לתנועת הלקוחות הקבועה של הקהילה.",
     cta: "הצטרפות עסקים",
     href: "/merchants",
   },
 ] as const;
 
-/** Four partners for the shop-window strip, exclusive shops first. */
+/** Six partners for the shop-window strip, exclusive shops first. */
 const SHOWCASE = [...PARTNERS]
   .sort((a, b) => (a.tier === "exclusive" ? -1 : 0) - (b.tier === "exclusive" ? -1 : 0))
-  .slice(0, 8);
+  .slice(0, 6);
 
 export default function HomePage() {
   const exclusiveCount = PARTNERS.filter((p) => p.tier === "exclusive").length;
@@ -75,23 +75,16 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────────────────
           Rendered without a scroll reveal: it is above the fold, so animating it
           in would only delay the LCP. */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,8vw,72px)] pb-[clamp(40px,8vw,80px)]">
-        {/* Backdrop in two layers, both decorative — they carry nothing the copy
-            does not already say, so neither is an <img>.
-
-            The CSS mesh is the floor: it paints immediately, and it is the whole
-            backdrop until the raster above it decodes. The raster is the
-            generated gradient; as a background-image a missing file degrades to
-            nothing rather than to a broken-image icon, which keeps the hero
-            intact if the asset has not landed yet. Neither layer animates — this
-            block sits over the LCP element. */}
+      <section className="relative isolate overflow-hidden bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(40px,9vw,96px)] pb-[clamp(56px,10vw,112px)]">
+        {/* Decorative backdrop — it carries nothing the copy does not already
+            say, so it is not an <img>. A second layer used to sit on top of it
+            pointing at /hero-gradient.jpg, an asset that never shipped: every
+            load fetched it and got a 404. The CSS mesh paints immediately and
+            needs no request. It does not animate — this block sits over the LCP
+            element. */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-20 bg-[image:var(--gradient-hero)]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-[url('/hero-gradient.jpg')] bg-cover bg-[position:30%_center] opacity-80"
         />
         <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[clamp(32px,6vw,56px)]">
           <div className="flex flex-col items-start gap-6">
@@ -111,9 +104,7 @@ export default function HomePage() {
             </h1>
 
             <p className="m-0 max-w-[480px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
-              הדרן קארד הוא כרטיס אחד שפותח לכם דלת להטבות במאות בתי עסק — מהנחה שוטפת על
-              הקנייה השבועית ועד לחנויות שההטבה בהן שמורה לחברי המועדון בלבד. מציגים בקופה —
-              ומשלמים פחות.
+              כרטיס אחד, מאות בתי עסק. מציגים בקופה — ומשלמים פחות.
             </p>
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
@@ -180,34 +171,30 @@ export default function HomePage() {
       </section>
 
       {/* ── Stat strip ───────────────────────────────────────────────────── */}
-      <section className="border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(28px,5.3vw,48px)]">
+      <section className="border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(40px,7vw,72px)]">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4">
           <Reveal
             stagger
-            className="grid grid-cols-2 gap-x-5 gap-y-7 min-[900px]:grid-cols-4 min-[900px]:gap-6"
+            className="grid grid-cols-2 gap-x-6 gap-y-10 min-[900px]:grid-cols-4 min-[900px]:gap-8"
           >
             <StatBlock
               value={<Figure value={24800} />}
               label="משפחות במועדון"
-              sublabel="בבני ברק, ירושלים ובית שמש"
               icon="users"
             />
             <StatBlock
               value={<Figure value={312} />}
               label="בתי עסק שותפים"
-              sublabel="ונוספים חדשים מדי חודש"
               icon="store"
             />
             <StatBlock
               value={<Figure value={1240} prefix="₪" />}
               label="חיסכון חודשי ממוצע"
-              sublabel="למשפחה בת שש נפשות"
               icon="wallet"
             />
             <StatBlock
               value={<Figure value={cityCount} />}
               label="יישובים"
-              sublabel="עם שותפים בכל אחד מהם"
               icon="map-pin"
             />
           </Reveal>
@@ -222,14 +209,11 @@ export default function HomePage() {
           entirely. It replaces a savings calculator that multiplied the basket by
           a flat 5% — a rate the club does not actually offer. */}
       <Band tone="white">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex max-w-[720px] flex-col gap-3">
             <Eyebrow>עומק וטווח ההטבות</Eyebrow>
             <SectionTitle>מהנחה שוטפת ועד עשרות אחוזים</SectionTitle>
-            <SectionLead>
-              ההטבה נקבעת מול כל שותף בנפרד. יש חנויות עם הנחה שוטפת שמלווה את הקנייה השבועית,
-              ויש קטגוריות שבהן כוח הקנייה של הקהילה משיג לנו הרבה יותר.
-            </SectionLead>
+            <SectionLead>ההטבה נקבעת מול כל שותף בנפרד.</SectionLead>
           </Reveal>
 
           <Reveal stagger className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-4">
@@ -280,40 +264,17 @@ export default function HomePage() {
             })}
           </Reveal>
 
-          <Reveal>
-            <div className="flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] p-[clamp(18px,4vw,28px)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
-              <div className="flex flex-col gap-1.5">
-                <b className="text-[clamp(17px,2.6vw,20px)]">
-                  רוצים לדעת מה ההטבה המדויקת אצלכם בשכונה?
-                </b>
-                <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
-                  ברשימת בתי העסק מופיע סוג ההטבה והתנאים המלאים של כל שותף.
-                </span>
-              </div>
-              <Button
-                as="a"
-                href="/benefits"
-                iconAfter="arrow-left"
-                className="w-full justify-center min-[720px]:w-auto min-[720px]:flex-none"
-              >
-                לרשימת בתי העסק
-              </Button>
-            </div>
-          </Reveal>
         </Container>
       </Band>
 
       {/* ── The shop window ──────────────────────────────────────────────── */}
       <Band tone="sand">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div className="flex max-w-[620px] flex-col gap-3">
               <Eyebrow>הנבחרת שלנו</Eyebrow>
               <SectionTitle>איפה הכרטיס עובד</SectionTitle>
-              <SectionLead>
-                רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית — בדיוק בשכונות ובערים שבהן
-                הקהילה שלנו קונה.
-              </SectionLead>
+              <SectionLead>מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית.</SectionLead>
             </div>
             <Button
               as="a"
@@ -331,9 +292,9 @@ export default function HomePage() {
               argument is that these are the shops they already walk into. */}
           <Reveal
             stagger
-            className="grid grid-cols-2 gap-3 min-[720px]:grid-cols-4 min-[720px]:gap-4"
+            className="grid grid-cols-2 gap-3 min-[720px]:grid-cols-3 min-[720px]:gap-4"
           >
-            {SHOWCASE.slice(0, 8).map((p) => {
+            {SHOWCASE.map((p) => {
               const meta = BENEFIT_TIERS[p.tier];
               return (
                 <Link key={p.name} href={`/benefits?q=${encodeURIComponent(p.name)}`} className="no-underline">
@@ -374,33 +335,36 @@ export default function HomePage() {
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <Band id="how" tone="white">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>איך זה עובד</Eyebrow>
             <SectionTitle>שלושה צעדים, וזהו</SectionTitle>
-            <SectionLead className="max-w-[620px]">
-              ההצטרפות לוקחת דקה. מכאן הכרטיס פשוט עובד — בלי לרדוף אחרי מבצעים ובלי לאסוף
-              קופונים.
-            </SectionLead>
+            <SectionLead>ההצטרפות לוקחת דקה. מכאן הכרטיס פשוט עובד.</SectionLead>
           </Reveal>
 
-          <Reveal
-            stagger
-            className="grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-6"
-          >
+          {/* One row per step, separated by a hairline rather than boxed into a
+              card each. Three cards side by side made three short lines look
+              like three dense blocks; a rule and a wide number column let the
+              eye run down the list. */}
+          <Reveal stagger className="flex flex-col">
             {STEPS.map((step) => (
-              <Card key={step.n} tone="sand">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-[family-name:var(--font-display)] text-[clamp(26px,5.5vw,40px)] leading-none font-extrabold text-[var(--color-primary-deep)]">
-                      {step.n}
-                    </span>
-                    <Icon name={step.icon} size={24} color="var(--color-primary-neutral)" />
-                  </div>
-                  <b className="text-[clamp(17px,2.6vw,21px)]">{step.title}</b>
+              <div
+                key={step.n}
+                className="flex items-baseline gap-[clamp(16px,4vw,40px)] border-t border-[var(--color-border)] py-[clamp(20px,4vw,32px)] last:border-b"
+              >
+                <span className="tnum w-[clamp(28px,6vw,56px)] flex-none font-[family-name:var(--font-display)] text-[clamp(20px,4vw,28px)] leading-none font-extrabold text-[var(--color-primary-deep)]">
+                  {step.n}
+                </span>
+                <div className="flex flex-1 flex-col gap-1.5 min-[720px]:flex-row min-[720px]:items-baseline min-[720px]:gap-8">
+                  <b className="text-[clamp(18px,2.8vw,22px)] min-[720px]:w-[240px] min-[720px]:flex-none">
+                    {step.title}
+                  </b>
                   <span className="leading-[1.6] text-[var(--color-body)]">{step.body}</span>
                 </div>
-              </Card>
+                <span className="hidden flex-none min-[720px]:block">
+                  <Icon name={step.icon} size={22} color="var(--color-primary-neutral)" />
+                </span>
+              </div>
             ))}
           </Reveal>
         </Container>
@@ -408,14 +372,11 @@ export default function HomePage() {
 
       {/* ── Membership ───────────────────────────────────────────────────── */}
       <Band tone="sand">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex max-w-[640px] flex-col gap-3">
             <Eyebrow>החברות במועדון</Eyebrow>
-            <SectionTitle>החברות במועדון ללא עלות</SectionTitle>
-            <SectionLead>
-              אין דמי הצטרפות ואין דמי חידוש. מזמינים כרטיס, מקבלים אותו הביתה, ומקבלים גישה
-              לכל בתי העסק השותפים — כולל החנויות הבלעדיות.
-            </SectionLead>
+            <SectionTitle>ללא עלות, ללא התחייבות</SectionTitle>
+            <SectionLead>אין דמי הצטרפות ואין דמי חידוש.</SectionLead>
           </Reveal>
           <Reveal>
             <MembershipCard withCta />
@@ -425,7 +386,7 @@ export default function HomePage() {
 
       {/* ── Who it is for ────────────────────────────────────────────────── */}
       <Band tone="white">
-        <Container className="flex flex-col gap-8">
+        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex flex-col gap-3">
             {/* The title used to read "בחרו את המסלול שלכם" — but this section is
                 about audiences, not tracks, and "מסלול" is the word the pricing
@@ -486,8 +447,7 @@ export default function HomePage() {
           <Container narrow className="flex flex-col items-center gap-5 text-center">
             <Icon name="quote" size={32} color="var(--gold-500)" />
             <span className="font-[family-name:var(--font-serif)] text-[clamp(23px,4.5vw,32px)] leading-[1.4] font-bold">
-              ״קונים בדיוק אותו דבר ומשלמים פחות. מה שהפתיע אותי זה דווקא החנויות שאי אפשר לקבל
-              בהן הטבה בלי הכרטיס — היום אנחנו מתחילים את הקניות דווקא שם.״
+              ״קונים בדיוק אותו דבר ומשלמים פחות.״
             </span>
             <span className="text-[15px] text-[var(--color-body)]">
               משפחת פרידמן · בני ברק · חברי מועדון מאז תשפ״ד

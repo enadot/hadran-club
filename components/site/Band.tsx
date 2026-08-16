@@ -25,7 +25,11 @@ export function Band({ tone = "white", padded = true, className, children, ...re
     <section
       className={cn(
         TONE_CLASS[tone],
-        padded && "px-[clamp(16px,4vw,24px)] py-[clamp(37px,7.1vw,64px)]",
+        // The prototypes' 37–64px read cramped once the sections were stacked:
+        // every band's own gaps compounded into one dense column. Roughly half
+        // again as much air above and below is what separates them into
+        // sections a reader can scan.
+        padded && "px-[clamp(16px,4vw,24px)] py-[clamp(56px,10vw,104px)]",
         className,
       )}
       {...rest}

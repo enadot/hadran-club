@@ -7,11 +7,10 @@ import type { IconName } from "@/components/brand/Icon";
  * order flow.
  */
 export const MEMBERSHIP = {
-  name: "חברות במועדון",
+  name: "מה כלול",
   /** Stands where the price figure used to stand. */
   price: "ללא עלות",
-  summary:
-    "חברות אחת לכל המשפחה, בלי דמי הצטרפות ובלי דמי חידוש. מזמינים כרטיס, מקבלים אותו הביתה, ומציגים אותו בקופה.",
+  summary: "חברות אחת לכל המשפחה, לכל בתי העסק השותפים.",
   includes: [
     { icon: "ticket", text: "גישה מלאה לכל השותפים, כולל החנויות הבלעדיות" },
     { icon: "users", text: "כרטיס נוסף לבן/בת הזוג, ללא תוספת תשלום" },
