@@ -335,14 +335,14 @@ export default function HomePage() {
         </Container>
       </Band>
 
-      {/* ── Membership ───────────────────────────────────────────────────── */}
+      {/* ── Membership ───────────────────────────────────────────────────────
+          No heading block above the panel. The eyebrow said "החברות במועדון",
+          the title said "ללא עלות", the lead said "אין דמי הצטרפות ואין דמי
+          חידוש" and the panel then opened with "מה כלול / ללא עלות" — four
+          lines to state one fact. The panel carries the section heading itself
+          and states it once. */}
       <Band tone="sand">
-        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
-          <Reveal className="flex max-w-[640px] flex-col gap-3">
-            <Eyebrow>החברות במועדון</Eyebrow>
-            <SectionTitle>ללא עלות, ללא התחייבות</SectionTitle>
-            <SectionLead>אין דמי הצטרפות ואין דמי חידוש.</SectionLead>
-          </Reveal>
+        <Container>
           <Reveal>
             <MembershipCard withCta />
           </Reveal>
