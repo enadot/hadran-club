@@ -18,7 +18,11 @@ export type NavLink = {
 };
 
 /** Order and labels are verbatim from the `links` array in every *.dc.html.
- *  Icons come from SiteNav.dc.html's ICONS map. */
+ *  Icons come from SiteNav.dc.html's ICONS map.
+ *
+ *  The member area is not in this list: it is the nav's own button, on both the
+ *  desktop bar and the drawer, because it is where a member of the club actually
+ *  goes — and listing it twice in the same header said it was two destinations. */
 export const NAV_LINKS: NavLink[] = [
   { label: "דף הבית", href: "/", icon: "home" },
   { label: "בתי העסק", href: "/benefits", icon: "store" },
@@ -26,7 +30,6 @@ export const NAV_LINKS: NavLink[] = [
   { label: "בדיקת יתרה", href: "/balance", icon: "wallet" },
   { label: "לבתי עסק", href: "/merchants", icon: "store" },
   { label: "שאלות ותשובות", href: "/faq", icon: "help-circle" },
-  { label: "אזור אישי", href: MEMBER_AREA_URL, icon: "user", external: true },
 ];
 
 /**
@@ -69,7 +72,7 @@ export const FOOTER_COLUMNS: {
 ];
 
 export const FOOTER_NOTE =
-  "מועדון ההטבות של הדרן. כרטיס אחד שפותח רשת רחבה של הטבות אצל השותפים שלנו — ההנחה יורדת בקופה, בלי נקודות, בלי קופונים ובלי טעינה מראש.";
+  "מועדון ההטבות של לקוחות הדרן. כרטיס אחד שפותח רשת רחבה של הטבות אצל השותפים שלנו — ההנחה יורדת בקופה, בלי נקודות ובלי קופונים.";
 
 export const LEGAL_LINE = "© תשפ״ו הדרן קלאב · בכפוף לתקנון המועדון · ט.ל.ח.";
 export const OPERATOR_LINE = "מופעל על ידי קהילות קארד";

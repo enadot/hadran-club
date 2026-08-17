@@ -1,6 +1,6 @@
 /**
- * Card-number and contact-field helpers shared by the activation flow, the balance
- * lookup and the top-up panel.
+ * Card-number and contact-field helpers shared by the activation flow and the
+ * balance lookup.
  *
  * The Kehilot Card public API identifies a card by `card_code` — the last eight
  * digits printed on it. Members read the long number off the plastic, so every entry
@@ -66,18 +66,10 @@ export function formatMoney(amount: number, currency = "ILS") {
   return symbol ? `${symbol}${digits}` : `${digits} ${currency}`;
 }
 
-/** Guard rails for a self-service load, in shekels. Shared by the panel and the route. */
-export const TOPUP_MIN = 20;
-export const TOPUP_MAX = 5000;
-
-export const TOPUP_RANGE_ERROR = `סכום הטעינה חייב להיות בין ${formatMoney(TOPUP_MIN)} ל-${formatMoney(TOPUP_MAX)}`;
-
 export type CardStatusView = {
   label: string;
   /** Matches Badge's tone names. */
   tone: "positive" | "warning" | "negative" | "neutral";
-  /** Only an active card may be loaded. */
-  canTopUp: boolean;
   /** Shown beside a card that cannot be used yet, so the next step is obvious. */
   note?: string;
 };
@@ -86,27 +78,24 @@ export type CardStatusView = {
 export function describeCardStatus(status: string | null | undefined): CardStatusView {
   switch ((status ?? "").toLowerCase()) {
     case "active":
-      return { label: "כרטיס פעיל", tone: "positive", canTopUp: true };
+      return { label: "כרטיס פעיל", tone: "positive" };
     case "inactive":
     case "pending":
       return {
         label: "הכרטיס טרם הופעל",
         tone: "warning",
-        canTopUp: false,
-        note: "הכרטיס עדיין לא משויך לחבר. מפעילים אותו בעמוד הפעלת כרטיס ואז אפשר לטעון אותו.",
+        note: "הכרטיס עדיין לא משויך לחבר. מפעילים אותו בעמוד הפעלת כרטיס.",
       };
     case "blocked":
       return {
         label: "הכרטיס חסום",
         tone: "negative",
-        canTopUp: false,
         note: "הכרטיס חסום לשימוש. מוקד המועדון ינפיק כרטיס חלופי.",
       };
     case "expired":
       return {
         label: "תוקף הכרטיס פג",
         tone: "negative",
-        canTopUp: false,
         note: "תוקף הכרטיס פג. מוקד המועדון ינפיק כרטיס מחודש.",
       };
     case "cancelled":
@@ -114,10 +103,9 @@ export function describeCardStatus(status: string | null | undefined): CardStatu
       return {
         label: "הכרטיס בוטל",
         tone: "negative",
-        canTopUp: false,
         note: "הכרטיס בוטל ואינו פעיל עוד.",
       };
     default:
-      return { label: "סטטוס הכרטיס אינו זמין", tone: "neutral", canTopUp: false };
+      return { label: "סטטוס הכרטיס אינו זמין", tone: "neutral" };
   }
 }

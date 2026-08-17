@@ -4,7 +4,7 @@ import { BalanceChecker } from "./BalanceChecker";
 export const metadata: Metadata = {
   title: "בדיקת יתרה",
   description:
-    "הזנת מספר הדרן קארד מציגה את היתרה הזמינה בכרטיס ואת הסטטוס שלו, ומאפשרת לטעון אותו בכרטיס אשראי.",
+    "הזנת מספר הדרן קארד מציגה את היתרה הזמינה בכרטיס ואת הסטטוס שלו, בלי התחברות ובלי מסירת פרטים אישיים.",
 };
 
 export default function BalancePage() {
@@ -17,8 +17,8 @@ export default function BalancePage() {
           </span>
           <h1 className="m-0 text-[clamp(27px,6vw,44px)] leading-[1.08]">בדיקת יתרה</h1>
           <p className="m-0 text-[clamp(16px,2.3vw,18px)] text-[var(--color-body)]">
-            הזנת מספר הדרן קארד מציגה את היתרה הזמינה בכרטיס ואת הסטטוס שלו, ומאפשרת לטעון אותו
-            בכרטיס אשראי — בלי התחברות ובלי מסירת פרטים אישיים.
+            הזנת מספר הדרן קארד מציגה את היתרה הזמינה בכרטיס ואת הסטטוס שלו — בלי התחברות ובלי
+            מסירת פרטים אישיים.
           </p>
         </div>
 

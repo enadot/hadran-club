@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { ActivateFlow } from "./ActivateFlow";
+import { ActivateForm } from "./ActivateForm";
 
 export const metadata: Metadata = {
   title: "הפעלת הדרן קארד",
   description:
-    "קיבלתם כרטיס? הזנת מספר הכרטיס והפרטים האישיים תשייך אותו אליכם ותפעיל את ההנחה. אפשר גם להזמין כרטיס חדש.",
+    "קיבלתם כרטיס? הזנת המספר שעל הכרטיס ופרטי בעל הכרטיס משייכת אותו אליכם ומפעילה את ההנחה בקופה.",
 };
 
 export default function ActivatePage() {
-  return <ActivateFlow />;
+  return <ActivateForm />;
 }

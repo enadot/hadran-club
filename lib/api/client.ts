@@ -9,7 +9,7 @@
  * renders either data or a Hebrew message, and never has to catch.
  */
 
-import { toCardCode } from "@/lib/card";
+import { onlyDigits, toCardCode } from "@/lib/card";
 
 export type ClientResult<T> = { ok: true; data: T } | { ok: false; status: number; message: string };
 
@@ -21,13 +21,9 @@ export type BalanceResponse = {
 };
 
 export type ActivateResponse = {
-  card_status: string | null;
-  member_id: string | null;
-};
-
-export type TopupResponse = {
-  payment_url: string | null;
-  message: string | null;
+  card_code_masked: string | null;
+  holder_name: string | null;
+  status: string | null;
 };
 
 export const CARD_NOT_FOUND_MESSAGE = "הכרטיס לא נמצא במערכת, אנא וודאו את המספר";
@@ -67,34 +63,39 @@ export function fetchBalance(cardInput: string) {
   return call<BalanceResponse>(`/api/card/balance?${query}`);
 }
 
+/** Everything the activation form can collect. Only the first three are required. */
 export type ActivationDetails = {
   cardInput: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   phone: string;
-  email: string;
+  israeliId?: string;
+  email?: string;
+  birthdate?: string;
+  address?: string;
+  city?: string;
+  gender?: string;
 };
 
-/** Binds a physical card that arrived in the post to the member who received it. */
+/**
+ * Saves the holder's details against the card they were given.
+ *
+ * The card number goes up whole — activation identifies the card by the number
+ * printed on it, where the balance lookup matches only the trailing eight digits.
+ */
 export function submitActivation(details: ActivationDetails) {
   return call<ActivateResponse>("/api/card/activate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      card_code: toCardCode(details.cardInput),
-      first_name: details.firstName.trim(),
-      last_name: details.lastName.trim(),
+      card_code: onlyDigits(details.cardInput),
+      full_name: details.fullName.trim(),
       phone: details.phone,
-      email: details.email.trim(),
+      israeli_id: details.israeliId ?? "",
+      email: details.email?.trim() ?? "",
+      birthdate: details.birthdate ?? "",
+      address: details.address?.trim() ?? "",
+      city: details.city ?? "",
+      gender: details.gender ?? "",
     }),
-  });
-}
-
-/** Opens a hosted credit-card charge; the caller redirects to the returned page. */
-export function requestTopup(cardInput: string, amount: number) {
-  return call<TopupResponse>("/api/card/topup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ card_code: toCardCode(cardInput), amount }),
   });
 }

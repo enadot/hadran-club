@@ -6,8 +6,7 @@ import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
 import { Figure } from "@/components/brand/Figure";
-import { MerchantJoinForm } from "./MerchantJoinForm";
-import { ScrollToFormButton } from "./ScrollToFormButton";
+import { MerchantJoinDialog } from "./MerchantJoinDialog";
 import { SUPPORT_PHONE } from "@/lib/data/site";
 
 export const metadata: Metadata = {
@@ -84,9 +83,9 @@ export default function MerchantsPage() {
               העסק שלכם לרשימה הזו — בלי עלות הקמה ובלי מערכת חדשה בקופה.
             </p>
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
-              <ScrollToFormButton size="lg" className="w-full justify-center min-[480px]:w-auto">
+              <MerchantJoinDialog size="lg" className="w-full justify-center min-[480px]:w-auto">
                 רוצים לשמוע עוד
-              </ScrollToFormButton>
+              </MerchantJoinDialog>
               {/* A borderless ghost on the ink band reads as loose text once it is
                   stacked under the primary, so it carries a hairline here. */}
               <Button
@@ -176,35 +175,40 @@ export default function MerchantsPage() {
         </Container>
       </Band>
 
-      {/* ── Join form ────────────────────────────────────────────────────── */}
+      {/* ── The ask ──────────────────────────────────────────────────────────
+          A band, not a form. The page used to end on a wall of fields that every
+          reader scrolled past whether or not they had decided anything; the fields
+          now live in a dialog behind this button, and the page ends on the
+          invitation and the two ways to reach the club directly. */}
       <Band id="form" tone="white" className="scroll-mt-[90px]">
-        <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(360px,100%),1fr))] items-start gap-12">
-          <div className="flex flex-col gap-[18px]">
-            <Eyebrow>טופס הצטרפות</Eyebrow>
-            <SectionTitle>נשמח לשמוע על העסק</SectionTitle>
-            <p className="m-0 text-[clamp(16px,2.3vw,18px)] text-[var(--color-body)]">
-              משאירים פרטים ונציג המועדון חוזר אליכם בתוך יום עסקים אחד. אין עלות הצטרפות ואין
-              התחייבות לתקופה.
-            </p>
-            <div className="mt-2 flex flex-col gap-3">
-              <a
-                href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
-                className="flex items-center gap-2.5 text-[15px] text-[var(--color-body)] no-underline hover:text-[var(--color-ink)]"
-              >
-                <Icon name="phone" size={20} color="var(--color-primary-deep)" />
-                <span className="tnum ltr">{SUPPORT_PHONE}</span>
-              </a>
-              <a
-                href="mailto:business@hadranclub.co.il"
-                className="flex items-center gap-2.5 text-[15px] text-[var(--color-body)] no-underline hover:text-[var(--color-ink)]"
-              >
-                <Icon name="mail" size={20} color="var(--color-primary-deep)" />
-                <span className="ltr">business@hadranclub.co.il</span>
-              </a>
-            </div>
-          </div>
+        <Container narrow className="flex flex-col items-center gap-[22px] text-center">
+          <Eyebrow>הצטרפות למועדון</Eyebrow>
+          <SectionTitle>נשמח לשמוע על העסק</SectionTitle>
+          <p className="m-0 max-w-[560px] text-[clamp(16px,2.3vw,18px)] leading-[1.6] text-[var(--color-body)]">
+            משאירים פרטים ונציג המועדון חוזר אליכם בתוך יום עסקים אחד. אין עלות הצטרפות ואין
+            התחייבות לתקופה.
+          </p>
 
-          <MerchantJoinForm />
+          <MerchantJoinDialog className="w-full justify-center min-[480px]:w-auto">
+            לטופס ההצטרפות
+          </MerchantJoinDialog>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            <a
+              href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
+              className="flex items-center gap-2.5 text-[15px] text-[var(--color-body)] no-underline hover:text-[var(--color-ink)]"
+            >
+              <Icon name="phone" size={20} color="var(--color-primary-deep)" />
+              <span className="tnum ltr">{SUPPORT_PHONE}</span>
+            </a>
+            <a
+              href="mailto:business@hadranclub.co.il"
+              className="flex items-center gap-2.5 text-[15px] text-[var(--color-body)] no-underline hover:text-[var(--color-ink)]"
+            >
+              <Icon name="mail" size={20} color="var(--color-primary-deep)" />
+              <span className="ltr">business@hadranclub.co.il</span>
+            </a>
+          </div>
         </Container>
       </Band>
     </>

@@ -78,10 +78,11 @@ export function FaqBrowser() {
               </div>
               <Button
                 as="a"
-                href="/activate"
+                href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
+                icon="phone"
                 className="w-full justify-center min-[480px]:w-auto"
               >
-                להזמנת כרטיס
+                חיוג למוקד
               </Button>
             </div>
           </Card>

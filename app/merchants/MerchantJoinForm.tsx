@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
-import { Card } from "@/components/brand/Card";
 import { Checkbox } from "@/components/brand/Checkbox";
 import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
@@ -45,8 +44,11 @@ type Errors = Partial<Record<"business" | "contact" | "phone" | "email", string>
  * Validation mirrors the prototype exactly: business name and contact need 2+
  * characters, the phone needs 9+ digits, the address must look like an email, and the
  * consent box is checked last and reported separately.
+ *
+ * It renders bare — no card of its own. It lives inside a dialog now, and the dialog
+ * is the surface; a card inside a card drew two borders around the same fields.
  */
-export function MerchantJoinForm() {
+export function MerchantJoinForm({ onClose }: { onClose?: () => void }) {
   const [done, setDone] = React.useState(false);
   const [f, setF] = React.useState(EMPTY);
   const [errors, setErrors] = React.useState<Errors>({});
@@ -101,7 +103,7 @@ export function MerchantJoinForm() {
   const contactName = f.contact.trim() || "איש הקשר";
 
   return (
-    <Card tone="plain" padding="clamp(18px,5vw,32px)">
+    <>
       {done ? (
         <div
           ref={doneRef}
@@ -120,6 +122,7 @@ export function MerchantJoinForm() {
             הגדרת ההנחה בקופה.
           </p>
           <div className="flex flex-wrap gap-3">
+            {onClose ? <Button onClick={onClose}>סגירה</Button> : null}
             <Button
               variant="tertiary"
               onClick={() => {
@@ -128,9 +131,6 @@ export function MerchantJoinForm() {
               }}
             >
               שליחת פנייה נוספת
-            </Button>
-            <Button as="a" href="/benefits" variant="ghost">
-              לרשימת בתי העסק
             </Button>
           </div>
         </div>
@@ -236,6 +236,6 @@ export function MerchantJoinForm() {
           </span>
         </form>
       )}
-    </Card>
+    </>
   );
 }
