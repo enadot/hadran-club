@@ -9,7 +9,7 @@ import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { CARD_NOT_FOUND_MESSAGE, fetchBalance, type BalanceResponse } from "@/lib/api/client";
 import { CARD_ERROR, describeCardStatus, formatMoney, isCardInputValid, maskCard } from "@/lib/card";
-import { MEMBER_AREA_URL, SUPPORT_PHONE } from "@/lib/data/site";
+import { MEMBER_AREA_URL } from "@/lib/data/site";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -172,16 +172,6 @@ export function BalanceChecker() {
           </div>
         </div>
       )}
-
-      <Card tone="sand" padding="24px">
-        <div className="flex flex-col gap-2.5">
-          <b className="text-[clamp(15px,2.2vw,17px)]">אבד הכרטיס או שהוא לא עובד בקופה?</b>
-          <span className="text-[15px] leading-[1.6] text-[var(--color-body)]">
-            מוקד המועדון חוסם את הכרטיס ומנפיק חדש. זמינים בימים א׳–ה׳, 9:00–17:00, בטלפון{" "}
-            <span className="tnum ltr inline-block">{SUPPORT_PHONE}</span>.
-          </span>
-        </div>
-      </Card>
     </>
   );
 }

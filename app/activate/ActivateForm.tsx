@@ -11,7 +11,7 @@ import { Input } from "@/components/brand/Input";
 import { MemberCard } from "@/components/brand/MemberCard";
 import { Select } from "@/components/brand/Select";
 import { submitActivation } from "@/lib/api/client";
-import { MEMBER_AREA_URL, SUPPORT_PHONE } from "@/lib/data/site";
+import { CARD_ORDER_CHANNEL, MEMBER_AREA_URL, SUPPORT_CHANNEL } from "@/lib/data/site";
 import {
   CARD_ERROR,
   isCardInputValid,
@@ -43,9 +43,13 @@ type Errors = Partial<Record<FieldKey, string>>;
 const GENDER_OPTIONS = ["זכר", "נקבה"];
 
 const NOTES: { icon: IconName; text: string }[] = [
-  { icon: "badge-percent", text: "ההנחה יורדת בקופה במקום — בלי צבירה, בלי קופון ובלי אפליקציה." },
+  { icon: "badge-percent", text: "ההנחה יורדת בקופה במקום — בלי צבירה ובלי קופון." },
+  {
+    icon: "package",
+    text: `עוד לא קיבלתם כרטיס? הזמנת הכרטיס מתבצעת ב${CARD_ORDER_CHANNEL}.`,
+  },
   { icon: "shield-check", text: "הפרטים נשמרים במאובטח ומשמשים לזיהוי בעל הכרטיס בלבד." },
-  { icon: "phone", text: `צריכים עזרה? מוקד המועדון זמין בימים א׳–ה׳, 9:00–17:00, בטלפון ${SUPPORT_PHONE}.` },
+  { icon: "help-circle", text: `צריכים עזרה? השירות והתמיכה למועדון נמצאים ב${SUPPORT_CHANNEL}.` },
 ];
 
 /**
@@ -169,8 +173,8 @@ export function ActivateForm() {
 
             {done.status && done.status !== "active" ? (
               <Alert tone="warning">
-                הפרטים נשמרו, אך הכרטיס עדיין אינו פעיל במערכת. מוקד המועדון ישלים את ההפעלה בטלפון{" "}
-                <span className="tnum ltr inline-block">{SUPPORT_PHONE}</span>.
+                הפרטים נשמרו, אך הכרטיס עדיין אינו פעיל במערכת. אפשר להשלים את ההפעלה דרך{" "}
+                {SUPPORT_CHANNEL}.
               </Alert>
             ) : null}
 

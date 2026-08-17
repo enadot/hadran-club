@@ -7,6 +7,7 @@ import { Icon } from "@/components/brand/Icon";
 import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
+import { HeroLogoWall } from "@/components/site/HeroLogoWall";
 import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
@@ -20,7 +21,7 @@ const STEPS = [
   {
     n: "1",
     title: "מקבלים את הכרטיס",
-    body: "הכרטיס מגיע ללקוחות הדרן, ללא עלות וללא הרשמה.",
+    body: "לקוחות הדרן מזמינים את הכרטיס באפליקציית שירות ותמיכה שבמכשיר, ללא עלות.",
     icon: "credit-card",
   },
   {
@@ -116,13 +117,6 @@ export default function HomePage() {
                 הפעלת כרטיס
               </Button>
             </div>
-
-            <div className="flex items-start gap-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-mute)]">
-              <span className="mt-0.5 flex-none">
-                <Icon name="shield-check" size={18} color="var(--color-primary-deep)" />
-              </span>
-              כלול ללקוחות הדרן · ההנחה מיידית בקופה · חברות ללא עלות
-            </div>
           </div>
 
           {/* The club's own product shot of the card. It replaces the CSS
@@ -152,6 +146,18 @@ export default function HomePage() {
               a ribbon that eats roughly a quarter of the box on every side, so at
               440px the card itself read smaller than the headline it sits beside. */}
           <div className="relative isolate mx-auto w-full max-w-[520px]">
+            {/* The partner logos, drifting in perspective behind the card. It bleeds
+                past the card's box on every side — that is the effect — and the
+                section's overflow-hidden clips it at the band edge. Its own mask
+                dissolves the edges before that, so it never ends on a hard line.
+
+                Under the bloom, which keeps the card readable against it. */}
+            {/* Logical insets, not a symmetric one: the card column sits beside the
+                copy, so the wall bleeds wide on its outer side and barely at all on
+                the side the headline is on. */}
+            <div className="pointer-events-none absolute -top-[20%] -bottom-[20%] start-[-6%] end-[-30%] -z-20 hidden min-[560px]:block">
+              <HeroLogoWall />
+            </div>
             <div
               aria-hidden
               className="pointer-events-none absolute inset-[6%] -z-10 rounded-[50%] bg-[image:var(--gradient-hero-bloom)] blur-[44px]"

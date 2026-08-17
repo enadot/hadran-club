@@ -90,13 +90,13 @@ export function describeCardStatus(status: string | null | undefined): CardStatu
       return {
         label: "הכרטיס חסום",
         tone: "negative",
-        note: "הכרטיס חסום לשימוש. מוקד המועדון ינפיק כרטיס חלופי.",
+        note: "הכרטיס חסום לשימוש. אפשר לבקש כרטיס חלופי דרך אפליקציית שירות ותמיכה.",
       };
     case "expired":
       return {
         label: "תוקף הכרטיס פג",
         tone: "negative",
-        note: "תוקף הכרטיס פג. מוקד המועדון ינפיק כרטיס מחודש.",
+        note: "תוקף הכרטיס פג. אפשר לבקש כרטיס מחודש דרך אפליקציית שירות ותמיכה.",
       };
     case "cancelled":
     case "canceled":

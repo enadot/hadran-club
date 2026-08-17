@@ -7,7 +7,7 @@ import { Icon } from "@/components/brand/Icon";
 import { IconButton } from "@/components/brand/IconButton";
 import { Button } from "@/components/brand/Button";
 import { useSearch } from "./SearchDialog";
-import { MEMBER_AREA_URL, NAV_LINKS, SUPPORT_HOURS, SUPPORT_PHONE } from "@/lib/data/site";
+import { MEMBER_AREA_URL, NAV_LINKS, SUPPORT_CHANNEL } from "@/lib/data/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -242,15 +242,8 @@ export function SiteNav() {
               >
                 אזור אישי
               </Button>
-              <a
-                href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
-                className="flex min-h-11 items-center justify-center gap-2 text-[15px] font-semibold text-[var(--color-primary-deep)] no-underline"
-              >
-                <Icon name="phone" size={18} />
-                <span className="tnum ltr">{SUPPORT_PHONE}</span>
-              </a>
-              <span className="text-center text-[length:var(--text-caption)] text-[var(--color-mute)]">
-                {SUPPORT_HOURS}
+              <span className="text-center text-[length:var(--text-caption)] leading-[1.6] text-[var(--color-mute)]">
+                לשירות ותמיכה — {SUPPORT_CHANNEL}
               </span>
             </div>
           </aside>

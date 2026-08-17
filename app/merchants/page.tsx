@@ -7,7 +7,6 @@ import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
 import { Figure } from "@/components/brand/Figure";
 import { MerchantJoinDialog } from "./MerchantJoinDialog";
-import { SUPPORT_PHONE } from "@/lib/data/site";
 
 export const metadata: Metadata = {
   title: "הצטרפות בתי עסק",
@@ -192,23 +191,6 @@ export default function MerchantsPage() {
           <MerchantJoinDialog className="w-full justify-center min-[480px]:w-auto">
             לטופס ההצטרפות
           </MerchantJoinDialog>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            <a
-              href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
-              className="flex items-center gap-2.5 text-[15px] text-[var(--color-body)] no-underline hover:text-[var(--color-ink)]"
-            >
-              <Icon name="phone" size={20} color="var(--color-primary-deep)" />
-              <span className="tnum ltr">{SUPPORT_PHONE}</span>
-            </a>
-            <a
-              href="mailto:business@hadranclub.co.il"
-              className="flex items-center gap-2.5 text-[15px] text-[var(--color-body)] no-underline hover:text-[var(--color-ink)]"
-            >
-              <Icon name="mail" size={20} color="var(--color-primary-deep)" />
-              <span className="ltr">business@hadranclub.co.il</span>
-            </a>
-          </div>
         </Container>
       </Band>
     </>

@@ -12,7 +12,7 @@ import { Card } from "@/components/brand/Card";
 import { FilterChip } from "@/components/site/FilterChip";
 import { Reveal } from "@/components/site/Reveal";
 import { FAQ, FAQ_GROUPS } from "@/lib/data/faq";
-import { SUPPORT_PHONE } from "@/lib/data/site";
+import { SUPPORT_CHANNEL } from "@/lib/data/site";
 
 /**
  * Group chips over a single-open accordion. The prototype opens the first item of the
@@ -72,17 +72,16 @@ export function FaqBrowser() {
                   לא מצאתם תשובה?
                 </b>
                 <span className="leading-[1.6] text-[var(--color-body)]">
-                  מוקד המועדון זמין בימים א׳–ה׳ בין 9:00 ל-17:00, בטלפון{" "}
-                  <span className="tnum ltr inline-block">{SUPPORT_PHONE}</span>.
+                  השירות והתמיכה למועדון נמצאים ב{SUPPORT_CHANNEL}.
                 </span>
               </div>
               <Button
                 as="a"
-                href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
-                icon="phone"
+                href="/benefits"
+                variant="tertiary"
                 className="w-full justify-center min-[480px]:w-auto"
               >
-                חיוג למוקד
+                לרשימת בתי העסק
               </Button>
             </div>
           </Card>
