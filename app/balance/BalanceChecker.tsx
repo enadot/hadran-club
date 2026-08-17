@@ -86,7 +86,6 @@ export function BalanceChecker() {
           <form className="flex flex-col gap-5" onSubmit={check} noValidate>
             <Input
               label="מספר הדרן קארד"
-              placeholder="0000 0000 0000 0000"
               icon="credit-card"
               inputMode="numeric"
               autoComplete="off"

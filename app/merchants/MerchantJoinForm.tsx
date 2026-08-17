@@ -174,7 +174,6 @@ export function MerchantJoinForm({ onClose }: { onClose?: () => void }) {
             />
             <Input
               label="טלפון"
-              placeholder="050-0000000"
               inputMode="tel"
               value={f.phone}
               onChange={(e) => set("phone")(e.target.value)}

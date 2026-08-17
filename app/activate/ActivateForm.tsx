@@ -209,7 +209,6 @@ export function ActivateForm() {
               <form className="flex flex-col gap-6" onSubmit={submit} noValidate>
                 <Input
                   label="מספר הכרטיס"
-                  placeholder="0000 0000 0000 0000"
                   icon="credit-card"
                   inputMode="numeric"
                   autoComplete="off"
@@ -231,7 +230,6 @@ export function ActivateForm() {
                   />
                   <Input
                     label="טלפון נייד"
-                    placeholder="050-0000000"
                     inputMode="tel"
                     autoComplete="tel"
                     dir="ltr"
