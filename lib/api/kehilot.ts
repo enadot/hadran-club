@@ -12,19 +12,18 @@
  * back as a typed failure with a Hebrew message rather than a thrown error.
  */
 
-const BASE_URL = (process.env.KEHILOT_API_BASE ?? "https://kehilotcard.co.il/api/v1").replace(
+const BASE_URL = (process.env.KEHILOT_API_BASE ?? "https://kehilotcard.co.il/api").replace(
   /\/+$/,
   "",
 );
 
 /**
- * The platform's public endpoints answered 401 to every unauthenticated call, so the
- * "no key at all" reading of them was wrong: the calls are public to a *card holder*,
- * not to an anonymous caller. The key is read from the environment and never reaches
- * the browser — the route handlers under app/api/card/* are the only callers.
+ * The balance lookup is documented as public and takes no key. The hook stays for the
+ * endpoints that are not — set KEHILOT_API_KEY and the header goes out with every
+ * call; leave it unset, as production does today, and nothing is sent.
  *
- * The header is configurable because the platform's own wording for it is not settled
- * here: KEHILOT_API_KEY_HEADER names the header (default `Authorization`) and
+ * The header is configurable because the platform words it differently per endpoint
+ * family: KEHILOT_API_KEY_HEADER names the header (default `Authorization`) and
  * KEHILOT_API_KEY_SCHEME the prefix inside it (default `Bearer`, blank for a raw key,
  * as `X-API-KEY` style headers expect).
  */
@@ -39,7 +38,7 @@ function authHeaders(): Record<string, string> {
 
 /** A card number in a logged path is still a card number. */
 function redact(path: string) {
-  return path.replace(/(card_code=)\d+/g, "$1********");
+  return path.replace(/\d{4,}/g, "********");
 }
 
 /** Upstream is a payment platform; a slow call must not hold a route handler open. */
@@ -47,11 +46,10 @@ const TIMEOUT_MS = 12_000;
 
 export type CardStatus = "active" | "inactive" | "pending" | "blocked" | "expired" | "cancelled";
 
+/** The documented 200 body of GET /public/card-balance/:card_code, and nothing more. */
 export type PublicBalance = {
-  exists: boolean;
   card_status?: CardStatus | string;
-  available_balance?: number;
-  currency?: string;
+  total_balance?: number;
 };
 
 export type ActivateInput = {
@@ -110,9 +108,14 @@ export function messageForStatus(status: number): string {
 function upstreamMessage(body: unknown): string | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
-  for (const key of ["message", "error", "detail", "error_message"]) {
-    const v = b[key];
-    if (typeof v === "string" && /[\u0590-\u05FF]/.test(v)) return v.trim();
+  // The platform nests its own errors as { error: { code, message } }; look one level in.
+  const nested = b.error;
+  const sources = [b, nested && typeof nested === "object" ? (nested as Record<string, unknown>) : {}];
+  for (const source of sources) {
+    for (const key of ["message", "error", "detail", "error_message"]) {
+      const v = source[key];
+      if (typeof v === "string" && /[\u0590-\u05FF]/.test(v)) return v.trim();
+    }
   }
   return null;
 }
@@ -164,10 +167,18 @@ async function request<T>(path: string, init: RequestInit): Promise<ApiResult<T>
   return { ok: true, data: (body ?? {}) as T };
 }
 
-/** GET /public/balance — exists, status and available balance for one card. */
+/**
+ * GET /public/card-balance/:card_code — status and balance for one card, no key.
+ *
+ * The card code is a path segment, not a query parameter, and the platform matches it
+ * on the last eight digits. A card it does not know answers 404 with
+ * `{ error: { code: "CARD_NOT_FOUND" } }`, which the route handler turns into
+ * `exists: false` rather than an error the member has to read twice.
+ */
 export function getPublicBalance(cardCode: string) {
-  const query = new URLSearchParams({ card_code: cardCode });
-  return request<PublicBalance>(`/public/balance?${query}`, { method: "GET" });
+  return request<PublicBalance>(`/public/card-balance/${encodeURIComponent(cardCode)}`, {
+    method: "GET",
+  });
 }
 
 /** POST /public/activate — binds a physical card to the member who received it. */

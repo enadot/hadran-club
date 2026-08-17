@@ -8,9 +8,9 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/card/balance?card_code=88888888
  *
- * Proxies the public balance lookup. The response carries only what the upstream
- * public endpoint exposes — existence, card status, available balance and currency —
- * and no personal detail of the holder.
+ * Proxies the platform's public card-balance lookup. The response carries only what
+ * that endpoint exposes — card status and total balance — and no personal detail of
+ * the holder.
  */
 export async function GET(request: Request) {
   const raw = new URL(request.url).searchParams.get("card_code") ?? "";
@@ -21,6 +21,18 @@ export async function GET(request: Request) {
   }
 
   const result = await getPublicBalance(cardCode);
+
+  // A card the platform does not know is a normal outcome of a lookup, not a failure
+  // of the lookup: the checker has its own copy for it, and reads `exists` to show it.
+  if (!result.ok && result.status === 404) {
+    return NextResponse.json({
+      exists: false,
+      card_status: null,
+      available_balance: null,
+      currency: "ILS",
+    });
+  }
+
   if (!result.ok) {
     return NextResponse.json(
       { message: result.message },
@@ -28,11 +40,12 @@ export async function GET(request: Request) {
     );
   }
 
-  const { exists, card_status, available_balance, currency } = result.data;
+  const { card_status, total_balance } = result.data;
   return NextResponse.json({
-    exists: exists !== false,
+    exists: true,
     card_status: card_status ?? null,
-    available_balance: typeof available_balance === "number" ? available_balance : null,
-    currency: currency ?? "ILS",
+    available_balance: typeof total_balance === "number" ? total_balance : null,
+    // The platform states the balance in shekels and returns no currency of its own.
+    currency: "ILS",
   });
 }

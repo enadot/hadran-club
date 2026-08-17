@@ -114,7 +114,11 @@ project/                ← Claude Design source-of-truth prototypes (HTML/CSS/J
 
 ### שכבות
 
-המפתח יושב בצד השרת בלבד (`KEHILOT_API_KEY`), ולא נכנס ל-bundle של הלקוח.
+בדיקת היתרה ציבורית ואינה דורשת מפתח. אם endpoint אחר ידרוש מפתח, הוא נכנס ב-`KEHILOT_API_KEY` בצד השרת
+בלבד ואינו נכנס ל-bundle של הלקוח.
+
+> `activate` ו-`topup` עדיין ממתינים לתיעוד — הנתיבים שלהם בקוד הם `POST /public/activate` ו-`POST /public/topup`
+> ולא אומתו מול הפלטפורמה.
 
 | שכבה | קובץ | תפקיד |
 | --- | --- | --- |
@@ -131,15 +135,15 @@ CORS למקור הזה, כתובת ה-API לא נכנסת ל-bundle של הלק�
 
 | נתיב מקומי | Upstream | שימוש ב-UI |
 | --- | --- | --- |
-| `GET /api/card/balance?card_code=` | `GET /public/balance` | `/balance` — יתרה זמינה, מטבע וסטטוס כרטיס |
+| `GET /api/card/balance?card_code=` | `GET /public/card-balance/:card_code` | `/balance` — יתרה וסטטוס כרטיס. ציבורי, ללא מפתח; הזיהוי לפי 8 הספרות האחרונות, והתשובה היא `card_status` + `total_balance` בלבד |
 | `POST /api/card/activate` | `POST /public/activate` | `/activate` — שיוך כרטיס פיזי לחבר (שם, טלפון, דוא״ל) |
 | `POST /api/card/topup` | `POST /public/topup` | `TopUpPanel` — הפניה לדף הסליקה המאובטח של המערכת |
 
 ### משתני סביבה
 
 ```bash
-KEHILOT_API_BASE=https://kehilotcard.co.il/api/v1   # ברירת מחדל; דורסים רק לסביבת בדיקות
-KEHILOT_API_KEY=...                                 # מפתח הפלטפורמה. בלעדיו כל קריאה חוזרת 401
+KEHILOT_API_BASE=https://kehilotcard.co.il/api      # ברירת מחדל; דורסים רק לסביבת בדיקות
+KEHILOT_API_KEY=...                                 # אופציונלי. בדיקת היתרה ציבורית ואינה דורשת מפתח
 KEHILOT_API_KEY_HEADER=Authorization                # ברירת מחדל; למשל X-API-KEY
 KEHILOT_API_KEY_SCHEME=Bearer                       # הקידומת בתוך ההדר; ריק = המפתח לבדו
 NEXT_PUBLIC_MEMBER_AREA_URL=https://kehilotcard.co.il  # יעד הקישור "אזור אישי"
@@ -152,7 +156,7 @@ NEXT_PUBLIC_MEMBER_AREA_URL=https://kehilotcard.co.il  # יעד הקישור "א
 
 | מצב | הודעה |
 | --- | --- |
-| `exists: false` | הכרטיס לא נמצא במערכת, אנא וודאו את המספר |
+| 404 מהפלטפורמה (`CARD_NOT_FOUND`) | מתורגם ל-`exists: false`, והמסך מציג "הכרטיס לא נמצא במערכת, אנא וודאו את המספר" |
 | 401 | השירות אינו זמין כרגע, אנא נסו שוב מאוחר יותר (כשל אימות של האינטגרציה, לא של הכרטיס) |
 | 403 | הפעולה אינה מורשית עבור כרטיס זה |
 | 400 / 422 | נתונים לא תקינים, אנא בדקו את מספר הכרטיס (או הודעה ממוקדת לשדה שנכשל) |
