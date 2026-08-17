@@ -7,25 +7,28 @@ import { Icon } from "@/components/brand/Icon";
 import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
+import { HeroLogoWall } from "@/components/site/HeroLogoWall";
 import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
 import { PartnerCard } from "@/components/site/PartnerCard";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
 
-/** The three how-it-works steps. */
+/** The three how-it-works steps. Receiving the card is not one of them: it comes
+ *  with being a Hadran customer, so the first thing a member does here is activate
+ *  the card already in their hand. */
 const STEPS = [
   {
     n: "1",
-    title: "מזמינים את הכרטיס",
-    body: "נשלח עד הבית תוך חמישה ימי עסקים, ללא עלות.",
-    icon: "truck",
+    title: "מקבלים את הכרטיס",
+    body: "לקוחות הדרן מזמינים את הכרטיס באפליקציית שירות ותמיכה שבמכשיר, ללא עלות.",
+    icon: "credit-card",
   },
   {
     n: "2",
     title: "מפעילים בדקה",
     body: "מזינים את מספר הכרטיס באתר, והוא רשום על שמכם.",
-    icon: "credit-card",
+    icon: "circle-check",
   },
   {
     n: "3",
@@ -35,27 +38,35 @@ const STEPS = [
   },
 ] as const;
 
-const AUDIENCES = [
+/** What this site does, in the order a member needs it. */
+const SERVICES = [
   {
-    icon: "users",
-    title: "משפחה שרוצה לחסוך",
-    body: "כל אחד יכול להצטרף, גם ללא קשר קודם להדרן.",
-    cta: "הצטרפות",
-    href: "/activate",
+    icon: "store",
+    title: "רשימת בתי העסק",
+    body: "איפה הכרטיס עובד, מה ההטבה בכל שותף ואילו חנויות בלעדיות למועדון.",
+    cta: "לרשימה",
+    href: "/benefits",
   },
   {
     icon: "wallet",
-    title: "לקוח הדרן קיים",
-    body: "רואים באזור האישי את החיסכון שנצבר.",
+    title: "בדיקת יתרה",
+    body: "מספר הכרטיס מספיק כדי לראות את היתרה הזמינה ואת סטטוס הכרטיס.",
+    cta: "לבדיקת יתרה",
+    href: "/balance",
+  },
+  {
+    icon: "user",
+    title: "האזור האישי",
+    body: "החיסכון שנצבר, הקניות שבהן מומשה ההנחה וניהול הכרטיסים במשפחה.",
     cta: "לאזור האישי",
     href: MEMBER_AREA_URL,
     external: true,
   },
   {
-    icon: "store",
-    title: "בעל עסק",
-    body: "חשיפה לתנועת הלקוחות הקבועה של הקהילה.",
-    cta: "הצטרפות עסקים",
+    icon: "handshake",
+    title: "בעלי עסקים",
+    body: "בית עסק שרוצה להיחשף לתנועת הלקוחות הקבועה של הקהילה.",
+    cta: "לאזור בעלי העסקים",
     href: "/merchants",
   },
 ] as const;
@@ -94,24 +105,17 @@ export default function HomePage() {
             </h1>
 
             <p className="m-0 max-w-[540px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
-              הצטרפו למועדון שמשיג לכם תנאים שלא תמצאו לבד עם מאות בתי עסק, חלקם בהטבה
-              בלעדית לחברי המועדון
+              מועדון ההטבות של לקוחות הדרן — מאות בתי עסק, חלקם בהטבה בלעדית לחברי המועדון,
+              בתנאים שלא תמצאו לבד
             </p>
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
-              <Button as="a" href="/activate" size="lg">
-                להזמנת כרטיס
-              </Button>
-              <Button as="a" href="/benefits" size="lg" variant="tertiary">
+              <Button as="a" href="/benefits" size="lg">
                 לרשימת בתי העסק
               </Button>
-            </div>
-
-            <div className="flex items-start gap-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-mute)]">
-              <span className="mt-0.5 flex-none">
-                <Icon name="shield-check" size={18} color="var(--color-primary-deep)" />
-              </span>
-              משלוח חינם עד הבית · ההנחה מיידית בקופה · חברות ללא עלות
+              <Button as="a" href="/activate" size="lg" variant="tertiary">
+                הפעלת כרטיס
+              </Button>
             </div>
           </div>
 
@@ -131,8 +135,9 @@ export default function HomePage() {
               visitor had read the headline. The section below is where that
               argument belongs; the hero just shows the card.
 
-              MemberCard itself stays in the codebase — /activate renders it
-              live as the holder types their name and card number.
+              MemberCard itself stays in the codebase — /activate renders it in
+              its success state, carrying the holder name and masked number the
+              platform saved.
 
               `isolate` scopes the bloom's negative z-index to this wrapper. The
               section is the nearest stacking context otherwise, and the bloom
@@ -141,6 +146,18 @@ export default function HomePage() {
               a ribbon that eats roughly a quarter of the box on every side, so at
               440px the card itself read smaller than the headline it sits beside. */}
           <div className="relative isolate mx-auto w-full max-w-[520px]">
+            {/* The partner logos, drifting in perspective behind the card. It bleeds
+                past the card's box on every side — that is the effect — and the
+                section's overflow-hidden clips it at the band edge. Its own mask
+                dissolves the edges before that, so it never ends on a hard line.
+
+                Under the bloom, which keeps the card readable against it. */}
+            {/* Logical insets, not a symmetric one: the card column sits beside the
+                copy, so the wall bleeds wide on its outer side and barely at all on
+                the side the headline is on. */}
+            <div className="pointer-events-none absolute -top-[20%] -bottom-[20%] start-[-6%] end-[-30%] -z-20 hidden min-[560px]:block">
+              <HeroLogoWall />
+            </div>
             <div
               aria-hidden
               className="pointer-events-none absolute inset-[6%] -z-10 rounded-[50%] bg-[image:var(--gradient-hero-bloom)] blur-[44px]"
@@ -304,7 +321,7 @@ export default function HomePage() {
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>איך זה עובד</Eyebrow>
             <SectionTitle>שלושה צעדים, וזהו</SectionTitle>
-            <SectionLead>ההצטרפות לוקחת דקה. מכאן הכרטיס פשוט עובד.</SectionLead>
+            <SectionLead>ההפעלה לוקחת דקה. מכאן הכרטיס פשוט עובד.</SectionLead>
           </Reveal>
 
           {/* One row per step, separated by a hairline rather than boxed into a
@@ -336,36 +353,34 @@ export default function HomePage() {
       </Band>
 
       {/* ── Membership ───────────────────────────────────────────────────────
-          No heading block above the panel. The eyebrow said "החברות במועדון",
-          the title said "ללא עלות", the lead said "אין דמי הצטרפות ואין דמי
-          חידוש" and the panel then opened with "מה כלול / ללא עלות" — four
-          lines to state one fact. The panel carries the section heading itself
-          and states it once. */}
+          No heading block above the panel, and no button inside it: membership
+          comes with being a Hadran customer, so there is nothing to order and
+          nobody to sign up. The panel states what the membership is and stops. */}
       <Band tone="sand">
         <Container>
           <Reveal>
-            <MembershipCard withCta />
+            <MembershipCard />
           </Reveal>
         </Container>
       </Band>
 
-      {/* ── Who it is for ────────────────────────────────────────────────── */}
+      {/* ── What this site does ──────────────────────────────────────────────
+          This was "למי הכרטיס מתאים", three audience cards whose first was a
+          family with no connection to Hadran — an audience the club does not
+          have. The club's members already hold a card, so the useful question is
+          not who it is for but what there is to do here. */}
       <Band tone="white">
         <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex flex-col gap-3">
-            {/* The title used to read "בחרו את המסלול שלכם" — but this section is
-                about audiences, not tracks, and "מסלול" is the word the pricing
-                section directly above already owns. Two different meanings of the
-                same word, one screen apart. */}
             <Eyebrow>הקהילה שלנו</Eyebrow>
-            <SectionTitle>למי הכרטיס מתאים</SectionTitle>
+            <SectionTitle>מה אפשר לעשות כאן</SectionTitle>
           </Reveal>
 
           <Reveal
             stagger
             className="grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-6"
           >
-            {AUDIENCES.map((a) => {
+            {SERVICES.map((a) => {
               const external = "external" in a && a.external;
               const card = (
                 <SpotlightCard
@@ -432,16 +447,19 @@ export default function HomePage() {
                     קונים בהדרן, חוסכים בהידור
                   </h3>
                   <p className="m-0 max-w-[520px] text-[clamp(16px,2.3vw,18px)] leading-[1.6] text-[var(--sand-300)]">
-                    מזמינים את הדרן קארד עוד היום, ומתחילים לחסוך כבר בקנייה הראשונה.
+                    הכרטיס כבר אצלכם. באזור האישי רואים את החיסכון שנצבר ואת ההטבות שלכם.
                   </p>
                 </div>
                 <Button
                   as="a"
-                  href="/activate"
+                  href={MEMBER_AREA_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   size="lg"
+                  iconAfter="external-link"
                   className="w-full justify-center min-[480px]:w-auto"
                 >
-                  להזמנת כרטיס
+                  לאזור האישי
                 </Button>
               </div>
             </Card>

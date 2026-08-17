@@ -7,10 +7,9 @@ import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
-import { TopUpPanel } from "@/components/site/TopUpPanel";
 import { CARD_NOT_FOUND_MESSAGE, fetchBalance, type BalanceResponse } from "@/lib/api/client";
 import { CARD_ERROR, describeCardStatus, formatMoney, isCardInputValid, maskCard } from "@/lib/card";
-import { MEMBER_AREA_URL, SUPPORT_PHONE } from "@/lib/data/site";
+import { MEMBER_AREA_URL } from "@/lib/data/site";
 import { prefersReducedMotion } from "@/lib/motion";
 
 /**
@@ -22,6 +21,10 @@ import { prefersReducedMotion } from "@/lib/motion";
  *
  * The result replaces the form. Everything on screen after a successful lookup comes
  * from the response; there are no illustrative figures mixed in with real money.
+ *
+ * Looking is all this page does. A self-service load used to sit under the result,
+ * which turned a two-second check into a payment surface; loading a card is not part
+ * of what the club offers its members here.
  */
 export function BalanceChecker() {
   const [card, setCard] = React.useState("");
@@ -153,8 +156,6 @@ export function BalanceChecker() {
 
           {status.note ? <Alert tone="warning">{status.note}</Alert> : null}
 
-          <TopUpPanel cardInput={card} disabled={!status.canTopUp} />
-
           <div className="flex flex-wrap gap-3">
             <Button
               as="a"
@@ -171,16 +172,6 @@ export function BalanceChecker() {
           </div>
         </div>
       )}
-
-      <Card tone="sand" padding="24px">
-        <div className="flex flex-col gap-2.5">
-          <b className="text-[clamp(15px,2.2vw,17px)]">אבד הכרטיס או שהוא לא עובד בקופה?</b>
-          <span className="text-[15px] leading-[1.6] text-[var(--color-body)]">
-            מוקד המועדון חוסם את הכרטיס ומנפיק חדש. זמינים בימים א׳–ה׳, 9:00–17:00, בטלפון{" "}
-            <span className="tnum ltr inline-block">{SUPPORT_PHONE}</span>.
-          </span>
-        </div>
-      </Card>
     </>
   );
 }

@@ -310,6 +310,17 @@ input[type="range"] {
    overflowing content is its own affordance — so it is hidden, and momentum
    scrolling is kept on iOS.
    ────────────────────────────────────────────────────────────────────────── */
+/* The logo wall behind the hero card. The library masks with two gradients and
+   `mask-composite`, which on a light ground left the wall's own box edge visible as
+   a vertical seam beside the headline. One ellipse, fading to nothing well inside
+   the box, ends it on air instead. */
+.hc-hero-wall {
+  -webkit-mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, #000 18%, transparent 76%);
+  mask-image: radial-gradient(ellipse 62% 62% at 50% 50%, #000 18%, transparent 76%);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
+
 .hc-rail {
   overflow-x: auto;
   overscroll-behavior-x: contain;

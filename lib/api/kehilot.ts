@@ -52,29 +52,29 @@ export type PublicBalance = {
   total_balance?: number;
 };
 
+/**
+ * The documented body of POST /public/card-activate. `card_code` is the number
+ * printed on the card, not the trailing eight the balance lookup matches on;
+ * everything past `phone` is optional and is only sent when the member filled it in.
+ */
 export type ActivateInput = {
   card_code: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   phone: string;
-  email: string;
+  israeli_id?: string;
+  email?: string;
+  /** YYYY-MM-DD. */
+  birthdate?: string;
+  address?: string;
+  city?: string;
+  gender?: "זכר" | "נקבה";
 };
 
+/** The documented 200 body: what the platform saved, echoed back. */
 export type ActivateResult = {
-  /** Upstream returns a member or card identifier on some deployments; optional here. */
-  card_status?: string;
-  member_id?: string;
-  message?: string;
-};
-
-export type TopupInput = {
-  card_code: string;
-  amount: number;
-};
-
-export type TopupResult = {
-  /** Present when the platform hands back a hosted checkout page to redirect to. */
-  payment_url?: string;
+  card_code_masked?: string;
+  holder_name?: string;
+  status?: "active" | "inactive" | string;
   message?: string;
 };
 
@@ -181,20 +181,21 @@ export function getPublicBalance(cardCode: string) {
   });
 }
 
-/** POST /public/activate — binds a physical card to the member who received it. */
+/**
+ * POST /public/card-activate — saves the holder's details against the card they
+ * were given and answers with the masked number, the name that was stored and the
+ * card's status. No key: the card number in hand is the credential.
+ *
+ * Optional fields are dropped rather than sent empty — the platform validates what
+ * it receives, and an empty `israeli_id` is a 422 where an absent one is fine.
+ */
 export function activateCard(input: ActivateInput) {
-  return request<ActivateResult>("/public/activate", {
+  const body = Object.fromEntries(
+    Object.entries(input).filter(([, v]) => typeof v === "string" && v.trim() !== ""),
+  );
+  return request<ActivateResult>("/public/card-activate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-}
-
-/** POST /public/topup — opens a hosted credit-card charge for a self-service load. */
-export function topupCard(input: TopupInput) {
-  return request<TopupResult>("/public/topup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
+    body: JSON.stringify(body),
   });
 }

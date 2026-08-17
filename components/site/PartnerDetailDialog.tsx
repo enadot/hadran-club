@@ -153,7 +153,7 @@ export function PartnerDetailDialog({
                     variant="tertiary"
                     className="justify-center"
                   >
-                    אין לי כרטיס עדיין
+                    הפעלת כרטיס
                   </Button>
                 </div>
               </div>

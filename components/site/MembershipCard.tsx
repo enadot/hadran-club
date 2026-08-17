@@ -1,11 +1,13 @@
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
-import { Button } from "@/components/brand/Button";
 import { MEMBERSHIP } from "@/lib/data/membership";
 import { cn } from "@/lib/utils";
 
 /**
- * The membership panel, used twice: on the home page with a call to action, and
- * inside /activate as the summary above the order form.
+ * The membership panel on the home page.
+ *
+ * It has no call to action any more. The club is a benefit of being a Hadran
+ * customer, so there is nothing here to order and nobody to sign up — the panel
+ * states what the membership is and stops.
  *
  * It carries its own section heading now. It used to sit under an eyebrow, a
  * title and a lead that between them said "no fee" three times before the card
@@ -19,12 +21,10 @@ import { cn } from "@/lib/utils";
  * page's one brand moment is the bloom behind the hero artwork.
  */
 export type MembershipCardProps = {
-  /** Hides the call to action where the surrounding flow already has one. */
-  withCta?: boolean;
   className?: string;
 };
 
-export function MembershipCard({ withCta = false, className }: MembershipCardProps) {
+export function MembershipCard({ className }: MembershipCardProps) {
   return (
     // Pointer-only warmth on the surface a visitor is deciding on. Nothing moves
     // until a cursor is on the panel, and nothing at all on a phone or under
@@ -99,20 +99,8 @@ export function MembershipCard({ withCta = false, className }: MembershipCardPro
           ))}
         </ul>
 
-        {/* ── The decision ──────────────────────────────────────────────── */}
+        {/* ── The fine print ────────────────────────────────────────────── */}
         <div className="flex flex-col items-start gap-3 @min-[820px]:col-start-1 @min-[820px]:row-start-2">
-          {withCta ? (
-            <Button
-              as="a"
-              href="/activate"
-              size="lg"
-              iconAfter="arrow-left"
-              className="w-full justify-center @min-[420px]:w-auto"
-            >
-              {MEMBERSHIP.cta}
-            </Button>
-          ) : null}
-
           {/* Everything the old eyebrow, lead and two of the bullets were saying,
               in one line. Each term holds together on its own line so a narrow
               screen breaks between them rather than mid-phrase. */}

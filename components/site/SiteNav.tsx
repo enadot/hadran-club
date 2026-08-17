@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Icon } from "@/components/brand/Icon";
 import { IconButton } from "@/components/brand/IconButton";
 import { Button } from "@/components/brand/Button";
 import { useSearch } from "./SearchDialog";
-import { NAV_LINKS, SUPPORT_HOURS, SUPPORT_PHONE } from "@/lib/data/site";
+import { MEMBER_AREA_URL, NAV_LINKS, SUPPORT_CHANNEL } from "@/lib/data/site";
 import { cn } from "@/lib/utils";
 
 /**
@@ -22,7 +22,6 @@ const DESKTOP_QUERY = "(min-width: 1060px)";
 
 export function SiteNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const search = useSearch();
 
   // Start undefined so neither tree renders until the query is known, which avoids
@@ -57,11 +56,6 @@ export function SiteNav() {
 
   const isActive = (href: string, external?: boolean) =>
     external ? false : href === "/" ? pathname === "/" : pathname.startsWith(href);
-
-  const goActivate = () => {
-    setOpen(false);
-    router.push("/activate");
-  };
 
   // Reserve the nav's height before the media query resolves so the page below does
   // not jump. Desktop is 86px, mobile 65px; 86px is the safe reservation.
@@ -113,8 +107,15 @@ export function SiteNav() {
 
           <div className="flex items-center gap-[var(--space-md)]">
             <IconButton icon="search" label="חיפוש" variant="ghost" size="sm" onClick={search.open} />
-            <Button size="sm" onClick={goActivate}>
-              הצטרפות
+            <Button
+              as="a"
+              href={MEMBER_AREA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              size="sm"
+              iconAfter="external-link"
+            >
+              אזור אישי
             </Button>
           </div>
         </div>
@@ -229,18 +230,20 @@ export function SiteNav() {
             </nav>
 
             <div className="flex flex-col gap-3 border-t border-[var(--color-border)] bg-[var(--color-canvas-soft)] p-[18px]">
-              <Button size="lg" fullWidth onClick={goActivate}>
-                הצטרפות
-              </Button>
-              <a
-                href={`tel:${SUPPORT_PHONE.replace(/-/g, "")}`}
-                className="flex min-h-11 items-center justify-center gap-2 text-[15px] font-semibold text-[var(--color-primary-deep)] no-underline"
+              <Button
+                as="a"
+                href={MEMBER_AREA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="lg"
+                fullWidth
+                iconAfter="external-link"
+                onClick={() => setOpen(false)}
               >
-                <Icon name="phone" size={18} />
-                <span className="tnum ltr">{SUPPORT_PHONE}</span>
-              </a>
-              <span className="text-center text-[length:var(--text-caption)] text-[var(--color-mute)]">
-                {SUPPORT_HOURS}
+                אזור אישי
+              </Button>
+              <span className="text-center text-[length:var(--text-caption)] leading-[1.6] text-[var(--color-mute)]">
+                לשירות ותמיכה — {SUPPORT_CHANNEL}
               </span>
             </div>
           </aside>
