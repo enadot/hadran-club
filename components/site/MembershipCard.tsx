@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { Button } from "@/components/brand/Button";
 import { MEMBERSHIP } from "@/lib/data/membership";
@@ -42,20 +41,15 @@ export function MembershipCard({ withCta = false, className }: MembershipCardPro
           card on the page wears — this is the one surface asking for a decision,
           and it should look like the card it is selling. */}
       <div
-        // The panel's own padding, named: the photograph bleeds to the panel edge
-        // by cancelling it, and repeating the clamp in four more places would mean
-        // four more places to keep in step.
-        style={{ "--pad": "clamp(24px,4.6cqi,52px)" } as CSSProperties}
         className={cn(
           "relative isolate grid gap-[clamp(24px,4cqi,44px)] overflow-hidden rounded-[var(--radius-2xl)]",
           "border border-[var(--gold-300)] bg-[var(--color-canvas)] shadow-[var(--shadow-gold)]",
-          "p-[var(--pad)]",
-          // Three columns once the panel is 820px wide: the claim and its button
-          // stacked in the first, the list in the second, the photograph bleeding
-          // off the third. Narrower than that the source order takes over —
-          // photograph, claim, list, then the button, so a phone opens on the
-          // picture and reads what is included before it is asked to decide.
-          "@min-[820px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)_minmax(0,0.72fr)] @min-[820px]:grid-rows-[auto_auto]",
+          "p-[clamp(24px,4.6cqi,52px)]",
+          // Two columns once the panel is 820px wide: the claim and its button
+          // stacked in the first column, the list spanning both rows beside them.
+          // Narrower than that the source order takes over — claim, list, then the
+          // button, so a phone reads what is included before it is asked to decide.
+          "@min-[820px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] @min-[820px]:grid-rows-[auto_auto]",
         )}
       >
         {/* A warm bloom behind the one word this section is about — the same
@@ -66,48 +60,6 @@ export function MembershipCard({ withCta = false, className }: MembershipCardPro
           aria-hidden
           className="pointer-events-none absolute -top-[34%] -z-10 h-[min(105%,540px)] w-[min(72%,600px)] bg-[radial-gradient(closest-side,var(--gold-200),transparent)] blur-[40px] ltr:-left-[14%] rtl:-right-[14%]"
         />
-
-        {/* ── The picture ───────────────────────────────────────────────────
-            Decorative: the heading and the list carry every claim, and a still
-            life of a full grocery bag adds no fact of its own — it sets the
-            temperature. Bled to the panel edge by cancelling the padding, and
-            clipped by the panel's own radius rather than carrying one of its own.
-
-            Sized eagerly with intrinsic dimensions so the panel does not reflow
-            around it, and lazy: this sits well below the fold on both pages that
-            render it.
-
-            public/membership-still.webp is a placeholder gradient, not the
-            photograph: this session's network policy blocks the CDN the generated
-            image lives on, so the file could not be fetched. Dropping the real
-            still life in at that path is the whole of the swap. */}
-        <div
-          className={cn(
-            // A height off the panel's own width, not an aspect ratio: inside the
-            // ~600px column on /activate a 16:10 band stood 375px tall and pushed
-            // the order form off the screen.
-            "relative -mx-[var(--pad)] -mt-[var(--pad)] h-[clamp(160px,40cqi,240px)] overflow-hidden",
-            "@min-[820px]:col-start-3 @min-[820px]:row-span-2 @min-[820px]:row-start-1",
-            "@min-[820px]:-mb-[var(--pad)] @min-[820px]:ms-0 @min-[820px]:h-auto",
-          )}
-        >
-          <img
-            src="/membership-still.webp"
-            alt=""
-            width={1792}
-            height={2432}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover"
-          />
-          {/* The photograph is warm at the edges and the panel is white; a short
-              wash of canvas along the inner edge keeps the seam from reading as a
-              pasted-in rectangle. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(to_left,var(--color-canvas),transparent_28%)] @min-[820px]:block rtl:bg-[linear-gradient(to_right,var(--color-canvas),transparent_28%)]"
-          />
-        </div>
 
         {/* ── The claim ─────────────────────────────────────────────────── */}
         <div className="flex flex-col items-start gap-[clamp(10px,1.6cqi,14px)] @min-[820px]:col-start-1 @min-[820px]:row-start-1 @min-[820px]:self-end">
