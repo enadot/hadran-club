@@ -71,4 +71,4 @@ export const EXACT_BENEFIT_CTA = "הזינו מספר כרטיס לצפייה ב
 
 /** The standing disclaimer under any benefit figure or list. */
 export const BENEFIT_DISCLAIMER =
-  "ההטבה משתנה לפי בית העסק ובכפוף לתקנון המועדון ולתנאי בית העסק. ט.ל.ח.";
+  "ההטבה משתנה לפי בית העסק ובכפוף לתקנון המועדון ולתנאי בית העסק.";
