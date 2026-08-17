@@ -5,7 +5,6 @@ import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
-import { Figure } from "@/components/brand/Figure";
 import { MerchantJoinDialog } from "./MerchantJoinDialog";
 
 export const metadata: Metadata = {
@@ -14,11 +13,14 @@ export const metadata: Metadata = {
     "חברי הדרן קלאב מחפשים איפה הכרטיס עובד לפני שהם יוצאים לקנות. הצטרפות למועדון מכניסה את העסק שלכם לרשימה — בלי עלות הקמה ובלי מערכת חדשה בקופה.",
 };
 
+/* Qualitative for the same reason the home page's strip is: the club does not
+   publish a live head-count, and a precise figure it cannot stand behind reads
+   as marketing to a business owner weighing the offer. */
 const HERO_STATS = [
-  { value: 24800, label: "משפחות במועדון" },
-  { value: 312, label: "בתי עסק שותפים" },
-  { value: 1240, prefix: "₪", label: "קנייה חודשית ממוצעת למשפחה" },
-  { value: 0, label: "עלות הקמה והצטרפות" },
+  { value: "אלפי משפחות", label: "מחזיקות כרטיס פעיל" },
+  { value: "מאות בתי עסק", label: "כבר שותפים למועדון" },
+  { value: <>מעל <bdi dir="ltr">₪1,000</bdi></>, label: "חיסכון חודשי ממוצע למשפחה" },
+  { value: "ללא עלות", label: "הקמה והצטרפות" },
 ] as const;
 
 const BENEFITS = [
@@ -99,14 +101,16 @@ export default function MerchantsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(150px,100%),1fr))] gap-5">
+          {/* Two up, not four: the stats read as words now, and a 150px track broke
+              phrases like "מאות בתי עסק" across three lines. */}
+          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2">
             {HERO_STATS.map((s) => (
               <div
                 key={s.label}
-                className="flex flex-col gap-1.5 rounded-[var(--radius-xl)] bg-[rgba(241,236,227,.06)] p-6"
+                className="flex flex-col gap-2 rounded-[var(--radius-xl)] bg-[rgba(241,236,227,.06)] p-6"
               >
-                <span className="tnum font-[family-name:var(--font-display)] text-[clamp(27px,6vw,44px)] leading-none font-extrabold text-[var(--color-primary)]">
-                  <Figure value={s.value} prefix={"prefix" in s ? s.prefix : undefined} />
+                <span className="tnum font-[family-name:var(--font-display)] text-[clamp(24px,3.2vw,32px)] leading-[1.2] font-extrabold text-[var(--color-primary)]">
+                  {s.value}
                 </span>
                 <b className="text-[15px] text-[var(--sand-200)]">{s.label}</b>
               </div>

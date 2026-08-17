@@ -232,7 +232,7 @@ export function MerchantJoinForm({ onClose }: { onClose?: () => void }) {
           </Button>
 
           <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
-            הפרטים משמשים ליצירת קשר בנוגע להצטרפות בלבד. בכפוף לתקנון המועדון. ט.ל.ח.
+            הפרטים משמשים ליצירת קשר בנוגע להצטרפות בלבד. בכפוף לתקנון המועדון.
           </span>
         </form>
       )}

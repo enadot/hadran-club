@@ -1,11 +1,10 @@
+import * as React from "react";
 import Link from "next/link";
 import { Band, Container, Eyebrow, SectionLead, SectionTitle } from "@/components/site/Band";
 import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
-import { Icon } from "@/components/brand/Icon";
-import { StatBlock } from "@/components/brand/StatBlock";
-import { Figure } from "@/components/brand/Figure";
+import { Icon, type IconName } from "@/components/brand/Icon";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { HeroLogoWall } from "@/components/site/HeroLogoWall";
 import { MembershipCard } from "@/components/site/MembershipCard";
@@ -76,9 +75,26 @@ const SHOWCASE = [...PARTNERS]
   .sort((a, b) => (a.tier === "exclusive" ? -1 : 0) - (b.tier === "exclusive" ? -1 : 0))
   .slice(0, 8);
 
+/* Deliberately not counters: see the strip's own note. Kept here rather than in
+   lib/data so it stays beside the only section that renders it. */
+const PROOF_POINTS = [
+  { icon: "users", value: "אלפי משפחות", label: "מחזיקות כרטיס וחוסכות בקנייה השוטפת" },
+  { icon: "store", value: "מאות בתי עסק", label: "שותפים למועדון, חלקם בהטבה בלעדית לחברים" },
+  {
+    icon: "wallet",
+    // Isolated LTR so bidi cannot move the sign behind the digits: the house rule
+    // is ₪ against the front of the number, in Hebrew copy as everywhere else.
+    value: (
+      <>
+        מעל <bdi dir="ltr">₪1,000</bdi>
+      </>
+    ),
+    label: "חיסכון חודשי ממוצע למשפחה",
+  },
+] as const satisfies readonly { icon: IconName; value: React.ReactNode; label: string }[];
+
 export default function HomePage() {
   const exclusiveCount = PARTNERS.filter((p) => p.tier === "exclusive").length;
-  const cityCount = new Set(PARTNERS.map((p) => p.city).filter(Boolean)).size;
 
   return (
     <>
@@ -178,38 +194,38 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ── Stat strip ───────────────────────────────────────────────────── */}
+      {/* ── Proof strip ──────────────────────────────────────────────────
+          Qualitative on purpose. The exact head-counts the club can publish move
+          week to week, and a precise-looking figure the site cannot stand behind
+          reads as marketing rather than proof — the brief's "no false promises"
+          rule. Orders of magnitude are the honest claim, so they are what the
+          strip states, with the savings figure kept as a floor ("מעל"). The
+          ט.ל.ח line lives once, in the footer. */}
       <section className="border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(40px,7vw,72px)]">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4">
-          <Reveal
-            stagger
-            className="grid grid-cols-2 gap-x-6 gap-y-10 min-[900px]:grid-cols-4 min-[900px]:gap-8"
-          >
-            <StatBlock
-              value={<Figure value={24800} />}
-              label="משפחות במועדון"
-              icon="users"
-            />
-            <StatBlock
-              value={<Figure value={312} />}
-              label="בתי עסק שותפים"
-              icon="store"
-            />
-            <StatBlock
-              value={<Figure value={1240} prefix="₪" />}
-              label="חיסכון חודשי ממוצע"
-              icon="wallet"
-            />
-            <StatBlock
-              value={<Figure value={cityCount} />}
-              label="יישובים"
-              icon="map-pin"
-            />
-          </Reveal>
-          <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
-            הנתונים להמחשה. בכפוף לתקנון המועדון. ט.ל.ח.
-          </span>
-        </div>
+        <Reveal
+          stagger
+          className="mx-auto grid max-w-[var(--container-max)] grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))] gap-4"
+        >
+          {PROOF_POINTS.map((p) => (
+            <div
+              key={p.label}
+              className="flex flex-col items-start gap-[var(--space-sm)] rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-canvas-soft)] p-[var(--card-padding)]"
+            >
+              <span
+                aria-hidden
+                className="flex size-11 items-center justify-center rounded-full bg-[var(--color-primary-pale)]"
+              >
+                <Icon name={p.icon} size={22} color="var(--color-primary-deep)" />
+              </span>
+              <span className="tnum font-[family-name:var(--font-display)] text-[clamp(var(--text-display-sm),5.5vw,var(--text-display-md))] leading-[var(--lh-display-md)] font-extrabold tracking-[var(--tracking-display)] text-[var(--color-ink)]">
+                {p.value}
+              </span>
+              <span className="text-[length:var(--text-body-md)] leading-[1.5] text-[var(--color-body)]">
+                {p.label}
+              </span>
+            </div>
+          ))}
+        </Reveal>
       </section>
 
       {/* ── The depth of the benefit ─────────────────────────────────────────
