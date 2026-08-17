@@ -7,7 +7,9 @@ import { Icon } from "@/components/brand/Icon";
 import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
-import { MembershipCard } from "@/components/site/MembershipCard";
+import { ContactForm } from "@/components/site/ContactForm";
+import { CONTACT } from "@/lib/data/contact";
+import { MEMBERSHIP } from "@/lib/data/membership";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
 import { PartnerCard } from "@/components/site/PartnerCard";
@@ -335,16 +337,38 @@ export default function HomePage() {
         </Container>
       </Band>
 
-      {/* ── Membership ───────────────────────────────────────────────────────
-          No heading block above the panel. The eyebrow said "החברות במועדון",
-          the title said "ללא עלות", the lead said "אין דמי הצטרפות ואין דמי
-          חידוש" and the panel then opened with "מה כלול / ללא עלות" — four
-          lines to state one fact. The panel carries the section heading itself
-          and states it once. */}
-      <Band tone="sand">
-        <Container>
+      {/* ── Contact ──────────────────────────────────────────────────────────
+          In place of the membership panel, which stated a fact — the club is
+          free — that the hero's trust line already carries and that /activate
+          still shows in full above its order form. This section asks for
+          something instead: a way to reach the family that got this far without
+          ordering a card.
+
+          The fee-free terms follow the heading rather than disappearing with the
+          panel; they are the last thing a visitor weighs before leaving a phone
+          number. */}
+      <Band id="contact" tone="sand">
+        <Container className="grid grid-cols-1 items-start gap-[clamp(28px,5vw,56px)] min-[900px]:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)]">
+          <Reveal className="flex flex-col gap-3">
+            <Eyebrow>{CONTACT.eyebrow}</Eyebrow>
+            <SectionTitle>{CONTACT.title}</SectionTitle>
+            <SectionLead>{CONTACT.lead}</SectionLead>
+            <span className="flex flex-wrap items-baseline gap-x-2 text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-mute)]">
+              {MEMBERSHIP.terms.map((term, i) => (
+                <span key={term} className="whitespace-nowrap">
+                  {term}
+                  {i < MEMBERSHIP.terms.length - 1 ? (
+                    <span aria-hidden className="ms-2 text-[var(--sand-400)]">
+                      ·
+                    </span>
+                  ) : null}
+                </span>
+              ))}
+            </span>
+          </Reveal>
+
           <Reveal>
-            <MembershipCard withCta />
+            <ContactForm />
           </Reveal>
         </Container>
       </Band>
