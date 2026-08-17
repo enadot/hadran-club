@@ -219,9 +219,9 @@ export default function HomePage() {
       <Band tone="white">
         <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
           <Reveal className="flex max-w-[720px] flex-col gap-3">
-            <Eyebrow>עומק וטווח ההטבות</Eyebrow>
-            <SectionTitle>מהנחה שוטפת ועד עשרות אחוזים</SectionTitle>
-            <SectionLead>ההטבה נקבעת מול כל שותף בנפרד.</SectionLead>
+            <Eyebrow>כמה שווה להיות לקוח הדרן</Eyebrow>
+            <SectionTitle>עד עשרות אחוזי הנחה!</SectionTitle>
+            <SectionLead>גלו כעת מה ההטבות שיש לכם בכרטיס המועדון שלכם</SectionLead>
           </Reveal>
 
           <Reveal stagger className="grid grid-cols-[repeat(auto-fit,minmax(min(280px,100%),1fr))] gap-4">
