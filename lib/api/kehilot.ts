@@ -2,11 +2,11 @@
  * Server-side client for the Kehilot Card public API.
  *
  * Hadran Club is the white-label front; Kehilot Card is the platform behind it. Only
- * the public endpoints are used here — the ones a card holder may call for their own
- * card — so no API key is involved. The calls still run on the server, behind the
- * route handlers in app/api/card/*, for three reasons: the upstream host never has to
- * allow this origin through CORS, the upstream URL stays out of the client bundle,
- * and a private key can be added here later without touching any component.
+ * the public endpoints are used here — the ones that answer for a single card and
+ * disclose nothing about its holder. Every call runs on the server, behind the route
+ * handlers in app/api/card/*: the upstream host never has to allow this origin through
+ * CORS, the upstream URL stays out of the client bundle, and the API key below stays
+ * where a browser cannot read it.
  *
  * Every function resolves to an ApiResult; network faults and non-2xx responses come
  * back as a typed failure with a Hebrew message rather than a thrown error.
@@ -16,6 +16,31 @@ const BASE_URL = (process.env.KEHILOT_API_BASE ?? "https://kehilotcard.co.il/api
   /\/+$/,
   "",
 );
+
+/**
+ * The platform's public endpoints answered 401 to every unauthenticated call, so the
+ * "no key at all" reading of them was wrong: the calls are public to a *card holder*,
+ * not to an anonymous caller. The key is read from the environment and never reaches
+ * the browser — the route handlers under app/api/card/* are the only callers.
+ *
+ * The header is configurable because the platform's own wording for it is not settled
+ * here: KEHILOT_API_KEY_HEADER names the header (default `Authorization`) and
+ * KEHILOT_API_KEY_SCHEME the prefix inside it (default `Bearer`, blank for a raw key,
+ * as `X-API-KEY` style headers expect).
+ */
+const API_KEY = process.env.KEHILOT_API_KEY?.trim();
+const API_KEY_HEADER = process.env.KEHILOT_API_KEY_HEADER?.trim() || "Authorization";
+const API_KEY_SCHEME = process.env.KEHILOT_API_KEY_SCHEME?.trim() ?? "Bearer";
+
+function authHeaders(): Record<string, string> {
+  if (!API_KEY) return {};
+  return { [API_KEY_HEADER]: API_KEY_SCHEME ? `${API_KEY_SCHEME} ${API_KEY}` : API_KEY };
+}
+
+/** A card number in a logged path is still a card number. */
+function redact(path: string) {
+  return path.replace(/(card_code=)\d+/g, "$1********");
+}
 
 /** Upstream is a payment platform; a slow call must not hold a route handler open. */
 const TIMEOUT_MS = 12_000;
@@ -63,7 +88,11 @@ export type ApiResult<T> =
 export function messageForStatus(status: number): string {
   if (status === 0) return "לא הצלחנו להתחבר לשרת. אנא בדקו את החיבור לאינטרנט ונסו שוב.";
   if (status === 400 || status === 422) return "נתונים לא תקינים, אנא בדקו את מספר הכרטיס";
-  if (status === 401 || status === 403) return "הפעולה אינה מורשית עבור כרטיס זה";
+  // 401 is the integration's own credentials failing, not anything about the card in
+  // hand — telling a member their card is unauthorised sends them to support over a
+  // missing environment variable.
+  if (status === 401) return "השירות אינו זמין כרגע, אנא נסו שוב מאוחר יותר";
+  if (status === 403) return "הפעולה אינה מורשית עבור כרטיס זה";
   if (status === 404) return "הכרטיס לא נמצא";
   if (status === 408 || status === 504) return "הבקשה ארכה זמן רב מדי, אנא נסו שוב";
   if (status === 409) return "הבקשה כבר טופלה במערכת";
@@ -93,7 +122,7 @@ async function request<T>(path: string, init: RequestInit): Promise<ApiResult<T>
   try {
     response = await fetch(`${BASE_URL}${path}`, {
       ...init,
-      headers: { Accept: "application/json", ...init.headers },
+      headers: { Accept: "application/json", ...authHeaders(), ...init.headers },
       // Card data is per-member and time-sensitive; nothing here may be cached.
       cache: "no-store",
       signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -118,6 +147,12 @@ async function request<T>(path: string, init: RequestInit): Promise<ApiResult<T>
   }
 
   if (!response.ok) {
+    // The member sees mapped Hebrew copy; the platform's own words only exist in this
+    // line, and without it a 401 is indistinguishable from a wrong path or a WAF.
+    console.error(
+      `[kehilot] ${init.method ?? "GET"} ${redact(path)} -> ${response.status} ` +
+        `${response.headers.get("content-type") ?? "?"} ${text.slice(0, 200)}`,
+    );
     return {
       ok: false,
       status: response.status,
