@@ -82,7 +82,7 @@ export const SEARCH_FAQS = [
   {
     name: "אילו חנויות בלעדיות למועדון?",
     meta: "יש בתי עסק שההטבה בהם זמינה אך ורק לחברי הדרן קלאב",
-    href: "/benefits?tier=exclusive",
+    href: "/benefits",
     kw: "בלעדי בלעדיות רק לחברים נבחרת",
   },
 ];
@@ -137,9 +137,9 @@ export function searchAll(query: string): { kind: SearchKind; title: string; ite
     kind: "partner",
     name: p.name,
     meta: [p.trade ?? p.category, p.city].filter(Boolean).join(" · ") || "בית עסק שותף",
-    // Deep-links the directory straight to the shop, so the result lands on the
-    // row it promised rather than on an unfiltered list of everything.
-    href: `/benefits?q=${encodeURIComponent(p.name)}`,
+    // The directory has no filter state at the moment, so the result lands on
+    // the full list.
+    href: "/benefits",
     initials: partnerInitials(p.name),
     logo: p.logo,
     benefitLabel: p.tier ? BENEFIT_TIERS[p.tier].label : undefined,

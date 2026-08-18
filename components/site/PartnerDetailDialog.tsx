@@ -8,9 +8,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Alert } from "@/components/brand/Alert";
 import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Icon } from "@/components/brand/Icon";
+import { Input } from "@/components/brand/Input";
+import { CARD_NOT_FOUND_MESSAGE, fetchBalance } from "@/lib/api/client";
+import {
+  CARD_CODE_LENGTH,
+  CARD_ERROR,
+  describeCardStatus,
+  isCardInputValid,
+  maskCard,
+  onlyDigits,
+} from "@/lib/card";
 import { BENEFIT_TIERS, BENEFIT_DISCLAIMER, EXACT_BENEFIT_CTA } from "@/lib/data/benefits";
 import { branchLabel, type Partner } from "@/lib/data/partners";
 import { PartnerLogo } from "@/components/brand/PartnerLogo";
@@ -138,25 +149,7 @@ export function PartnerDetailDialog({
                 </div>
               ) : null}
 
-              <div className="flex flex-col gap-3 rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] p-4">
-                <span className="text-[length:var(--text-body-sm)] leading-[1.5] font-semibold">
-                  {EXACT_BENEFIT_CTA}
-                </span>
-                <div className="flex flex-col gap-2.5 min-[420px]:flex-row">
-                  <Button as="a" href="/balance" size="sm" className="justify-center">
-                    כניסה עם מספר כרטיס
-                  </Button>
-                  <Button
-                    as="a"
-                    href="/activate"
-                    size="sm"
-                    variant="tertiary"
-                    className="justify-center"
-                  >
-                    הפעלת כרטיס
-                  </Button>
-                </div>
-              </div>
+              <CardEntryPanel key={partner.name} />
 
               <span className="text-[length:var(--text-caption)] leading-[1.5] text-[var(--color-mute)]">
                 {BENEFIT_DISCLAIMER}
@@ -166,5 +159,120 @@ export function PartnerDetailDialog({
         ) : null}
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * The card-code entry, inside the sheet. "כניסה עם מספר כרטיס" used to navigate
+ * to /balance, which threw the member out of the shop they were looking at; now
+ * the button unfolds a field for the eight trailing digits and the card is
+ * identified in place, against the same public endpoint.
+ *
+ * All the state lives here rather than on the dialog: Radix unmounts the content
+ * on close, and the `key` on the mount point swaps the panel per partner — so a
+ * number entered for one shop never appears pre-filled under another, with no
+ * reset effect.
+ */
+function CardEntryPanel() {
+  const [entering, setEntering] = React.useState(false);
+  const [card, setCard] = React.useState("");
+  const [cardError, setCardError] = React.useState<React.ReactNode>(null);
+  const [pending, setPending] = React.useState(false);
+  const [identified, setIdentified] = React.useState<string | null>(null);
+  const [wasIdentified, setWasIdentified] = React.useState(false);
+
+  const identify = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!isCardInputValid(card)) {
+      setCardError(CARD_ERROR);
+      return;
+    }
+
+    setCardError(null);
+    setPending(true);
+    const response = await fetchBalance(card);
+    setPending(false);
+
+    if (!response.ok) {
+      setCardError(response.message);
+      return;
+    }
+    if (!response.data.exists) {
+      setCardError(CARD_NOT_FOUND_MESSAGE);
+      return;
+    }
+    setIdentified(response.data.card_status);
+    setWasIdentified(true);
+  };
+
+  const status = wasIdentified ? describeCardStatus(identified) : null;
+
+  return (
+    <div className="flex flex-col gap-3 rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] p-4">
+      {status ? (
+        <div className="flex flex-col gap-2.5" aria-live="polite">
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            <span className="tnum ltr text-[length:var(--text-body-sm)] font-semibold">
+              {maskCard(card)}
+            </span>
+            <Badge tone={status.tone} icon={status.tone === "positive" ? "check" : "info"}>
+              {status.label}
+            </Badge>
+          </div>
+          {status.note ? <Alert tone="warning">{status.note}</Alert> : null}
+          <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
+            הכרטיס זוהה. את מלוא פרטי ההטבות לכרטיס שלכם רואים באזור האישי.
+          </span>
+        </div>
+      ) : entering ? (
+        <form className="flex flex-col gap-3" onSubmit={identify} noValidate>
+          <Input
+            label={EXACT_BENEFIT_CTA}
+            placeholder="00000000"
+            icon="credit-card"
+            inputMode="numeric"
+            autoComplete="off"
+            autoFocus
+            value={card}
+            onChange={(event) => {
+              setCard(onlyDigits(event.target.value).slice(0, CARD_CODE_LENGTH));
+              setCardError(null);
+            }}
+            error={cardError}
+            hint="8 הספרות האחרונות המופיעות על הכרטיס"
+          />
+          <Button type="submit" size="sm" className="justify-center" disabled={pending}>
+            {pending ? (
+              <>
+                <Icon name="loader" size={18} className="animate-spin" />
+                מזהים את הכרטיס…
+              </>
+            ) : (
+              "הצגת ההטבה שלי"
+            )}
+          </Button>
+        </form>
+      ) : (
+        <>
+          <span className="text-[length:var(--text-body-sm)] leading-[1.5] font-semibold">
+            {EXACT_BENEFIT_CTA}
+          </span>
+          <div className="flex flex-col gap-2.5 min-[420px]:flex-row">
+            <Button size="sm" className="justify-center" onClick={() => setEntering(true)}>
+              כניסה עם מספר כרטיס
+            </Button>
+            <Button
+              as="a"
+              href="/activate"
+              size="sm"
+              variant="tertiary"
+              className="justify-center"
+            >
+              הפעלת כרטיס
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
