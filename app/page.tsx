@@ -257,7 +257,7 @@ export default function HomePage() {
                     </span>
                     {isExclusive && exclusiveCount > 0 ? (
                       <Link
-                        href="/benefits?tier=exclusive"
+                        href="/benefits"
                         className="flex items-center gap-1.5 font-bold text-[var(--color-primary)] no-underline hover:underline hover:underline-offset-[3px]"
                       >
                         {exclusiveCount === 1
@@ -305,7 +305,7 @@ export default function HomePage() {
             {SHOWCASE.map((p) => (
               <Link
                 key={p.name}
-                href={`/benefits?q=${encodeURIComponent(p.name)}`}
+                href="/benefits"
                 className="group no-underline"
               >
                 <PartnerCard partner={p} />

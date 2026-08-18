@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Band, Container } from "@/components/site/Band";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { PartnerBrowser } from "./PartnerBrowser";
 
 export const metadata: Metadata = {
@@ -11,26 +9,6 @@ export const metadata: Metadata = {
   description:
     "רשימת החנויות וההטבות שלכם — רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית. לכל שותף סוג ההטבה שלו, ויש חנויות שההטבה בהן זמינה אך ורק לחברי הדרן קלאב.",
 };
-
-/** The filter bar and the list are one interactive unit; this stands in for both
- *  while the client boundary hydrates, at roughly the height they occupy. */
-function BrowserSkeleton() {
-  return (
-    <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4 px-[clamp(16px,4vw,24px)] py-8">
-      <Skeleton className="h-12 w-full rounded-[var(--radius-md)]" />
-      <div className="flex gap-2">
-        {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-11 w-28 rounded-full" />
-        ))}
-      </div>
-      <div className="flex flex-col gap-2.5">
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} className="h-[84px] w-full rounded-[var(--radius-xl)]" />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function BenefitsPage() {
   return (
@@ -46,9 +24,7 @@ export default function BenefitsPage() {
         </Container>
       </section>
 
-      <Suspense fallback={<BrowserSkeleton />}>
-        <PartnerBrowser />
-      </Suspense>
+      <PartnerBrowser />
 
       <Band tone="sand" padded={false} className="px-[clamp(16px,4vw,24px)] py-[clamp(32px,6.2vw,56px)]">
         <Container>
