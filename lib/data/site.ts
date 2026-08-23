@@ -7,7 +7,7 @@
  * lives without a code change.
  */
 export const MEMBER_AREA_URL =
-  process.env.NEXT_PUBLIC_MEMBER_AREA_URL ?? "https://kehilotcard.co.il/my-account/auth";
+  process.env.NEXT_PUBLIC_MEMBER_AREA_URL ?? "https://kehilotcard.co.il/login";
 
 /**
  * Ordering a card is not something this site does — it happens in the שירות ותמיכה
