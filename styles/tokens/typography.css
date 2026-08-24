@@ -20,7 +20,14 @@
   --weight-bold:700; /* @kind other */
   --weight-black:800; /* @kind other */
 
-  --tracking-display:-0.01em; /* @kind other */
+  /* Tracking tightens as the type grows. One flat -0.01em across a scale that runs
+     from 24px to 104px leaves the display sizes loose and the small headings tight:
+     the optical gap between letters widens with the point size, so the correction
+     has to widen with it too. Applied by size band, not by element. */
+  --tracking-display-sm:-0.005em; /* @kind other */  /* 24–32px */
+  --tracking-display:-0.012em; /* @kind other */     /* 40–48px */
+  --tracking-display-lg:-0.022em; /* @kind other */  /* 56–68px */
+  --tracking-display-xl:-0.03em; /* @kind other */   /* 80px and up */
   --tracking-normal:0; /* @kind other */
   --tracking-wide:0.08em; /* @kind other */   /* eyebrows / mono-caps labels */
 }

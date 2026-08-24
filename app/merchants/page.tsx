@@ -72,7 +72,7 @@ export default function MerchantsPage() {
             <Badge tone="gold" icon="store">
               הצטרפות בתי עסק
             </Badge>
-            <h1 className="m-0 text-[clamp(32px,7.5vw,56px)] leading-[1.06] text-[var(--color-primary)]">
+            <h1 className="m-0 text-[clamp(32px,7.5vw,56px)] leading-[1.06] tracking-[var(--tracking-display-lg)] text-[var(--color-primary)]">
               הקהילה כבר קונה.
               <br />
               שווה שתקנה אצלכם
@@ -131,7 +131,7 @@ export default function MerchantsPage() {
             className="grid grid-cols-[repeat(auto-fit,minmax(min(270px,100%),1fr))] gap-6"
           >
             {BENEFITS.map((b) => (
-              <Card key={b.title} tone="sand" padding="clamp(18px,5vw,28px)">
+              <Card key={b.title} tone="sand" padding="sm">
                 <div className="flex flex-col gap-3">
                   <Icon name={b.icon} size={28} color="var(--color-primary-deep)" />
                   <b className="text-[clamp(17px,2.5vw,20px)]">{b.title}</b>
@@ -179,7 +179,7 @@ export default function MerchantsPage() {
           reader scrolled past whether or not they had decided anything; the fields
           now live in a dialog behind this button, and the page ends on the
           invitation and the two ways to reach the club directly. */}
-      <Band id="form" tone="white" className="scroll-mt-[90px]">
+      <Band id="form" tone="pale" className="scroll-mt-[90px]">
         <Container narrow className="flex flex-col items-center gap-[22px] text-center">
           <Eyebrow>הצטרפות למועדון</Eyebrow>
           <SectionTitle>נשמח לשמוע על העסק</SectionTitle>

@@ -208,7 +208,7 @@ export function MerchantJoinForm({ onClose }: { onClose?: () => void }) {
           {sendError ? (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-[var(--color-negative-pale)] p-3.5"
+              className="flex items-start gap-2.5 rounded-[var(--radius-lg)] bg-[var(--color-negative-pale)] p-4"
             >
               <span className="mt-0.5 flex-none">
                 <Icon name="circle-alert" size={18} color="var(--color-negative-deep)" />

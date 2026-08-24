@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Icon, type IconName } from "./Icon";
 
 /**
- * Brand shell around the shadcn/ui input — 12px radius, hairline border, ink border
+ * Brand shell around the shadcn/ui input — 16px radius, hairline border, ink border
  * on focus plus the soft gold ring, negative border and helper text on error. The
  * primitive keeps the field DOM and a11y wiring; the tokens keep the look.
  */
@@ -56,7 +56,7 @@ export function Input({
 
       <div
         className={cn(
-          "flex items-center gap-[var(--space-sm)] rounded-[var(--radius-md)]",
+          "flex items-center gap-[var(--space-sm)] rounded-[var(--radius-lg)]",
           "border bg-[var(--color-canvas)] px-4 py-3",
           "transition-[border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out)]",
           "focus-within:shadow-[var(--focus-ring)]",

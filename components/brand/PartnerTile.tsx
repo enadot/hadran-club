@@ -36,8 +36,8 @@ export function PartnerTile({
         "flex items-center gap-[var(--space-lg)] p-[var(--space-lg)]",
         "rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-canvas)]",
         "cursor-pointer font-[family-name:var(--font-ui)]",
-        "transition-[transform,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out)]",
-        "hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)]",
+        "transition-[transform,box-shadow,border-color] duration-[var(--duration-base)] ease-[var(--ease-out)]",
+        "hover:-translate-y-0.5 hover:border-[var(--color-primary-neutral)] hover:shadow-[var(--ring-gold)]",
         className,
       )}
       {...rest}

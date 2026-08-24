@@ -96,9 +96,9 @@ export default function HomePage() {
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-20 bg-[image:var(--gradient-hero)]"
         />
-        <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[clamp(32px,6vw,56px)]">
+        <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[var(--section-gap)]">
           <div className="flex flex-col items-start gap-6">
-            <h1 className="m-0 font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-[1.04] font-extrabold tracking-[-0.015em]">
+            <h1 className="m-0 font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-[1.04] font-extrabold tracking-[var(--tracking-display-lg)]">
               החיסכון שמרגישים
               <br />
               בסוף החודש
@@ -217,7 +217,7 @@ export default function HomePage() {
           entirely. It replaces a savings calculator that multiplied the basket by
           a flat 5% — a rate the club does not actually offer. */}
       <Band tone="white">
-        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
+        <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex max-w-[720px] flex-col gap-3">
             <Eyebrow>עומק וטווח ההטבות</Eyebrow>
             <SectionTitle>מהנחה שוטפת ועד עשרות אחוזים</SectionTitle>
@@ -232,7 +232,7 @@ export default function HomePage() {
                 <Card
                   key={t}
                   tone={isExclusive ? "ink" : "sand"}
-                  padding="clamp(20px,5vw,28px)"
+                  padding="sm"
                   className="h-full"
                 >
                   <div className="flex h-full flex-col gap-3.5">
@@ -275,9 +275,13 @@ export default function HomePage() {
         </Container>
       </Band>
 
-      {/* ── The shop window ──────────────────────────────────────────────── */}
-      <Band tone="sand">
-        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
+      {/* ── The shop window ──────────────────────────────────────────────────
+          The one band on this page that sits on the gold rung of the surface
+          ladder. Exclusivity is the club's own argument — the shops a family can
+          only reach through the card — so this is the section the palette should
+          be spent on, and spending it here is what keeps every other band quiet. */}
+      <Band tone="pale">
+        <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div className="flex max-w-[620px] flex-col gap-3">
               <Eyebrow>הנבחרת שלנו</Eyebrow>
@@ -317,7 +321,7 @@ export default function HomePage() {
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <Band id="how" tone="white">
-        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
+        <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>איך זה עובד</Eyebrow>
             <SectionTitle>שלושה צעדים, וזהו</SectionTitle>
@@ -370,7 +374,7 @@ export default function HomePage() {
           have. The club's members already hold a card, so the useful question is
           not who it is for but what there is to do here. */}
       <Band tone="white">
-        <Container className="flex flex-col gap-[clamp(32px,6vw,56px)]">
+        <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>הקהילה שלנו</Eyebrow>
             <SectionTitle>מה אפשר לעשות כאן</SectionTitle>
@@ -387,7 +391,7 @@ export default function HomePage() {
                   spotlightColor="var(--gold-200)"
                   className="h-full rounded-[var(--radius-xl)]"
                 >
-                  <Card tone="hairline" padding="clamp(18px,5vw,28px)" interactive className="h-full">
+                  <Card tone="hairline" padding="sm" interactive className="h-full">
                     <div className="flex h-full flex-col gap-3.5">
                       <Icon name={a.icon} size={28} color="var(--color-primary-deep)" />
                       <b className="text-[clamp(18px,2.8vw,22px)] text-[var(--color-ink)]">{a.title}</b>
@@ -421,8 +425,11 @@ export default function HomePage() {
         </Container>
       </Band>
 
-      {/* ── Testimonial ──────────────────────────────────────────────────── */}
-      <Band tone="sand">
+      {/* ── Testimonial ──────────────────────────────────────────────────────
+          Rung 1 — a tint away from the canvas either side of it, with a hairline so
+          the seam reads as a section change rather than a rendering artefact. One
+          voice, quietly set; it does not need a full sand band to be noticed. */}
+      <Band tone="warm" divided>
         <Reveal>
           <Container narrow className="flex flex-col items-center gap-5 text-center">
             <Icon name="quote" size={32} color="var(--gold-500)" />
@@ -440,10 +447,10 @@ export default function HomePage() {
       <Band tone="white">
         <Container>
           <Reveal>
-            <Card tone="ink" padding="clamp(20px,5vw,48px)">
+            <Card tone="ink" padding="lg">
               <div className="flex flex-wrap items-center justify-between gap-[clamp(20px,4vw,32px)]">
                 <div className="flex flex-col gap-3">
-                  <h3 className="m-0 font-[family-name:var(--font-display)] text-[clamp(26px,5.5vw,40px)] font-extrabold text-[var(--color-primary)]">
+                  <h3 className="m-0 font-[family-name:var(--font-display)] text-[clamp(26px,5.5vw,40px)] tracking-[var(--tracking-display)] font-extrabold text-[var(--color-primary)]">
                     קונים בהדרן, חוסכים בהידור
                   </h3>
                   <p className="m-0 max-w-[520px] text-[clamp(16px,2.3vw,18px)] leading-[1.6] text-[var(--sand-300)]">

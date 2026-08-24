@@ -26,8 +26,8 @@ export function EmptyState({
     <div
       className={cn(
         "flex flex-col items-center gap-[var(--space-md)] text-center",
-        "rounded-[var(--radius-xl)] bg-[var(--color-canvas-soft)]",
-        "px-[var(--space-xl)] py-[var(--space-3xl)] font-[family-name:var(--font-ui)]",
+        "rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-canvas-warm)]",
+        "px-[var(--card-padding)] py-[var(--space-3xl)] font-[family-name:var(--font-ui)]",
         className,
       )}
       {...rest}

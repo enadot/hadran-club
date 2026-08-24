@@ -10,6 +10,7 @@ import { Icon, type IconName } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { MemberCard } from "@/components/brand/MemberCard";
 import { Select } from "@/components/brand/Select";
+import { Eyebrow } from "@/components/site/Band";
 import { submitActivation } from "@/lib/api/client";
 import { CARD_ORDER_CHANNEL, MEMBER_AREA_URL, SUPPORT_CHANNEL } from "@/lib/data/site";
 import {
@@ -196,16 +197,14 @@ export function ActivateForm() {
         ) : (
           <>
             <div className="flex flex-col gap-3">
-              <span className="text-[13px] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
-                הדרן קארד
-              </span>
+              <Eyebrow>הדרן קארד</Eyebrow>
               <h1 className="m-0 text-[clamp(27px,6vw,44px)] leading-[1.08]">הפעלת הדרן קארד</h1>
               <p className="m-0 text-[clamp(16px,2.3vw,18px)] leading-[1.6] text-[var(--color-body)]">
                 קיבלתם כרטיס? מזינים את המספר שעליו ואת פרטי בעל הכרטיס, והכרטיס משויך אליכם.
               </p>
             </div>
 
-            <Card tone="plain" padding="clamp(18px,5vw,32px)">
+            <Card tone="plain" padding="md">
               <form className="flex flex-col gap-6" onSubmit={submit} noValidate>
                 <Input
                   label="מספר הכרטיס"

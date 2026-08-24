@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/site/PageHero";
 import { FaqBrowser } from "./FaqBrowser";
 
 export const metadata: Metadata = {
@@ -10,19 +11,16 @@ export const metadata: Metadata = {
 export default function FaqPage() {
   return (
     <>
-      {/* Hero sits in the 760px reading column, not the 1200px container. */}
-      <section className="bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(32px,6.2vw,56px)] pb-11">
-        <div className="mx-auto flex max-w-[var(--container-narrow)] flex-col gap-3.5">
-          <span className="text-[13px] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
-            מוקד המידע
-          </span>
-          <h1 className="m-0 text-[clamp(30px,7vw,52px)] leading-[1.06]">שאלות ותשובות</h1>
-          <p className="m-0 text-[clamp(16px,2.4vw,19px)] text-[var(--color-body)]">
-            כל מה שחברי המועדון שואלים על הדרן קארד — ההנחה, המימוש בקופה, הכרטיס עצמו ובתי העסק
-            השותפים.
-          </p>
-        </div>
-      </section>
+      {/* The header sits in the 760px reading column, like the answers under it.
+          `flush` because the group chips are the first thing below and they need to
+          sit close enough to read as this page's controls. */}
+      <PageHero
+        narrow
+        flush
+        eyebrow="מוקד המידע"
+        title="שאלות ותשובות"
+        lead="כל מה שחברי המועדון שואלים על הדרן קארד — ההנחה, המימוש בקופה, הכרטיס עצמו ובתי העסק השותפים."
+      />
 
       <FaqBrowser />
     </>

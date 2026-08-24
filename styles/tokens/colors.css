@@ -55,12 +55,50 @@
   --gradient-hero-bloom:
     radial-gradient(50% 50% at 50% 50%,var(--gold-300) 0%,rgba(240,217,150,0.45) 45%,rgba(240,217,150,0) 78%);
 
-  /* Surface */
-  --color-canvas:#ffffff;
-  --color-canvas-soft:var(--sand-200);
-  --color-canvas-warm:var(--sand-100);
+  /* The sub-page header wash. The home hero has the full mesh; every other page
+     header gets this quieter version of it — one warm bloom in the top-right corner,
+     fading out well before the middle of the band.
+
+     The position is physical, like every gradient in this file, and it is placed for
+     the RTL layout the site actually ships: the copy in a page header starts at the
+     right, so the bloom sits behind the title rather than in the empty half of the
+     band. Enough warmth to say "this is a header" without competing with the one
+     gradient the site leads on. */
+  --gradient-header:
+    radial-gradient(70% 120% at 92% 0%,var(--gold-100) 0%,rgba(250,241,218,0) 68%),
+    linear-gradient(180deg,var(--sand-100) 0%,var(--sand-200) 100%);
+
+  /* Surface — an explicit ladder, not a set of loose names.
+     Depth on this site is carried by tint, never by a shadow: a panel reads as
+     raised because it sits one rung away from the surface under it. Bands walk the
+     ladder (0 → 2 → 0 → 3 …) instead of alternating two tones, which is what gave
+     the page its flat two-note rhythm. Every rung is a step along the same warm
+     ramp, so nothing ever reads as a second palette.
+
+     0 canvas   white — the page ground
+     1 warm     sand-100 — the quietest tint, for long reading surfaces
+     2 soft     sand-200 — the default section tint
+     3 pale     gold-50 — the first rung with the brand in it, for accent bands
+     4 wash     gold-100 — the warmest tint, for a single panel per page
+     ink        the one dark surface a page is allowed (footer, or one promo) */
+  --surface-0:#ffffff;
+  --surface-1:var(--sand-100);
+  --surface-2:var(--sand-200);
+  --surface-3:var(--gold-50);
+  --surface-4:var(--gold-100);
+
+  --color-canvas:var(--surface-0);
+  --color-canvas-warm:var(--surface-1);
+  --color-canvas-soft:var(--surface-2);
+  --color-canvas-pale:var(--surface-3);
+  --color-canvas-wash:var(--surface-4);
   --color-canvas-ink:var(--ink-900);
+
+  /* Two weights of hairline. `border` separates a card from what is behind it;
+     `border-soft` divides rows *inside* a card, where the full-strength rule reads
+     as a stack of boxes rather than one list. */
   --color-border:var(--sand-300);
+  --color-border-soft:var(--sand-200);
   --color-border-strong:var(--ink-900);
 
   /* Text */

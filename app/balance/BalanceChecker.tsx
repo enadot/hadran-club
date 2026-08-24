@@ -82,7 +82,7 @@ export function BalanceChecker() {
   return (
     <>
       {!result ? (
-        <Card tone="plain" padding="clamp(18px,5vw,32px)">
+        <Card tone="plain" padding="md">
           <form className="flex flex-col gap-5" onSubmit={check} noValidate>
             <Input
               label="מספר הדרן קארד"
@@ -90,6 +90,8 @@ export function BalanceChecker() {
               icon="credit-card"
               inputMode="numeric"
               autoComplete="off"
+              dir="ltr"
+              className="ltr text-start tnum"
               value={card}
               onChange={(event) => {
                 setCard(event.target.value);
@@ -126,13 +128,13 @@ export function BalanceChecker() {
           className="flex flex-col gap-5 outline-none"
           aria-live="polite"
         >
-          <Card tone="plain" padding="clamp(18px,5vw,32px)">
+          <Card tone="plain" padding="md">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <span className="text-[15px] font-semibold text-[var(--color-mute)]">
                   יתרה זמינה בכרטיס
                 </span>
-                <span className="tnum ltr font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-none font-extrabold">
+                <span className="tnum ltr font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-none font-extrabold tracking-[var(--tracking-display-lg)]">
                   {result.available_balance === null
                     ? "—"
                     : formatMoney(result.available_balance, result.currency)}

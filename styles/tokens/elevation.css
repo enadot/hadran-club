@@ -1,11 +1,36 @@
-/* Surface contrast carries elevation. Shadows are a last resort:
-   overlays only (dialog, toast, dropdown). */
+/* Depth comes from tint, not from elevation.
+
+   A card on this site is a flat panel one rung up the surface ladder from the
+   thing behind it (see --surface-0…4 in colors.css). It gets a hairline where it
+   needs an edge and a ring where it needs emphasis — never a drop shadow, which on
+   a warm cream ground turns grey and reads as dirt under the box.
+
+   Shadows survive for exactly one job: an overlay that genuinely floats above the
+   document and has to be told apart from it — dialog, drawer, select panel. Those
+   are the only three places --shadow-overlay belongs. */
 :root{
   --shadow-0:none;
-  --shadow-hairline:0 0 0 1px var(--color-border);
-  --shadow-card:0 2px 8px rgba(18,16,11,.04);
-  --shadow-raised:0 8px 24px rgba(18,16,11,.08);
+
+  /* Rings — the flat system's answer to elevation. A ring is drawn *outside* the
+     border, so a panel can be emphasised without its layout shifting by a pixel. */
+  --ring-hairline:0 0 0 1px var(--color-border);
+  --ring-gold:0 0 0 1px var(--gold-300);
+  /* The brand ring: a gold hairline with a wide, very soft warm halo behind it.
+     This replaces --shadow-gold on the member card and the membership panel — same
+     lift, but the halo is gold rather than grey, so it belongs to the palette. */
+  --ring-gold-soft:0 0 0 1px var(--gold-300),0 0 0 6px var(--gold-100);
+  --ring-ink:0 0 0 1px var(--color-ink);
+
+  /* Overlays only. */
   --shadow-overlay:0 16px 48px rgba(18,16,11,.16);
-  --shadow-gold:0 8px 24px rgba(150,110,51,.22);
   --focus-ring:0 0 0 3px rgba(150,110,51,.35);
+
+  /* ── Deprecated ────────────────────────────────────────────────────────────
+     Kept so nothing that still references them renders unstyled, and flattened to
+     the ring vocabulary above. New surfaces use --ring-*; these three are on their
+     way out and should not be reached for again. */
+  --shadow-hairline:var(--ring-hairline);
+  --shadow-card:var(--ring-hairline);
+  --shadow-raised:var(--ring-hairline);
+  --shadow-gold:var(--ring-gold-soft);
 }

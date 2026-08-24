@@ -63,6 +63,8 @@
   --color-canvas: var(--color-canvas);
   --color-canvas-soft: var(--color-canvas-soft);
   --color-canvas-warm: var(--color-canvas-warm);
+  --color-canvas-pale: var(--color-canvas-pale);
+  --color-canvas-wash: var(--color-canvas-wash);
   --color-canvas-ink: var(--color-canvas-ink);
 
   --color-primary: var(--color-primary);
@@ -78,6 +80,7 @@
   --color-mute: var(--color-mute);
   --color-on-ink: var(--color-on-ink);
   --color-border: var(--color-border);
+  --color-border-soft: var(--color-border-soft);
   --color-border-strong: var(--color-border-strong);
 
   --color-positive: var(--color-positive);
@@ -103,10 +106,8 @@
   --radius-2xl: var(--radius-2xl);
   --radius-pill: var(--radius-pill);
 
-  --shadow-card: var(--shadow-card);
-  --shadow-raised: var(--shadow-raised);
+  /* Overlays only — see styles/tokens/elevation.css. Cards use the ring tokens. */
   --shadow-overlay: var(--shadow-overlay);
-  --shadow-gold: var(--shadow-gold);
 
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);

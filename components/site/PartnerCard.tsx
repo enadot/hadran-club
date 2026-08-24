@@ -44,13 +44,16 @@ export function PartnerCard({ partner: p, withMeta = true, className }: PartnerC
       className={cn(
         "flex h-full flex-col overflow-hidden rounded-[var(--radius-xl)] border bg-[var(--color-canvas)]",
         "transition-[border-color,box-shadow,transform] duration-[var(--duration-base)] ease-[var(--ease-out)]",
-        "group-hover:-translate-y-0.5 group-hover:shadow-[var(--shadow-raised)]",
+        // Flat hover: the card rises 2px and its hairline turns gold. It used to
+        // gain a drop shadow, which on a grid of twenty tiles put twenty grey
+        // smudges on a cream ground the moment a cursor crossed it.
+        "group-hover:-translate-y-0.5",
         // An exclusive shop keeps its ink hairline, so it reads as a different
         // class of thing while scrolling past rather than only once the badge
         // is read.
         p.tier === "exclusive"
-          ? "border-[var(--color-ink)]"
-          : "border-[var(--color-border)] group-hover:border-[var(--color-primary-neutral)]",
+          ? "border-[var(--color-ink)] group-hover:shadow-[var(--ring-ink)]"
+          : "border-[var(--color-border)] group-hover:border-[var(--color-primary-neutral)] group-hover:shadow-[var(--ring-gold)]",
         className,
       )}
     >

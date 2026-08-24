@@ -1,4 +1,5 @@
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
+import { Eyebrow } from "@/components/site/Band";
 import { MEMBERSHIP } from "@/lib/data/membership";
 import { cn } from "@/lib/utils";
 
@@ -37,13 +38,15 @@ export function MembershipCard({ className }: MembershipCardProps) {
       // says which of the two layouts fits.
       className={cn("@container rounded-[var(--radius-2xl)]", className)}
     >
-      {/* Gold hairline and gold shadow rather than the sand border every other
-          card on the page wears — this is the one surface asking for a decision,
-          and it should look like the card it is selling. */}
+      {/* A gold hairline inside a wide pale-gold halo, rather than the sand border
+          every other card on the page wears — this is the panel the section is
+          about, and it should look like the card it is describing. The halo is the
+          --ring-gold-soft token; it replaces a grey drop shadow that on this cream
+          ground read as smudge rather than lift. */}
       <div
         className={cn(
           "relative isolate grid gap-[clamp(24px,4cqi,44px)] overflow-hidden rounded-[var(--radius-2xl)]",
-          "border border-[var(--gold-300)] bg-[var(--color-canvas)] shadow-[var(--shadow-gold)]",
+          "border border-[var(--gold-300)] bg-[var(--color-canvas)] shadow-[var(--ring-gold-soft)]",
           "p-[clamp(24px,4.6cqi,52px)]",
           // Two columns once the panel is 820px wide: the claim and its button
           // stacked in the first column, the list spanning both rows beside them.
@@ -63,14 +66,12 @@ export function MembershipCard({ className }: MembershipCardProps) {
 
         {/* ── The claim ─────────────────────────────────────────────────── */}
         <div className="flex flex-col items-start gap-[clamp(10px,1.6cqi,14px)] @min-[820px]:col-start-1 @min-[820px]:row-start-1 @min-[820px]:self-end">
-          <span className="text-[13px] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
-            {MEMBERSHIP.eyebrow}
-          </span>
+          <Eyebrow>{MEMBERSHIP.eyebrow}</Eyebrow>
 
           <h2 className="m-0 font-[family-name:var(--font-display)] font-extrabold">
             {/* Gold at display size only. The token is never used for small text
                 on canvas; at 48px and up it clears AA with room to spare. */}
-            <span className="block text-[clamp(48px,10.5cqi,104px)] leading-[0.92] tracking-[-0.02em] text-[var(--color-primary-deep)]">
+            <span className="block text-[clamp(48px,10.5cqi,104px)] leading-[0.92] tracking-[var(--tracking-display-xl)] text-[var(--color-primary-deep)]">
               {MEMBERSHIP.headline}
             </span>
             <span className="block text-[clamp(23px,4cqi,38px)] leading-[1.15] text-[var(--color-ink)]">

@@ -53,7 +53,7 @@ export function Textarea({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
         className={cn(
-          "rounded-[var(--radius-md)] border bg-[var(--color-canvas)] px-4 py-3 shadow-none",
+          "rounded-[var(--radius-lg)] border bg-[var(--color-canvas)] px-4 py-3 shadow-none",
           "text-[length:var(--text-body-md)] md:text-[length:var(--text-body-md)] text-[var(--color-ink)]",
           "font-inherit placeholder:text-[var(--color-mute)]",
           "transition-[border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out)]",

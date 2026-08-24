@@ -15,5 +15,21 @@
   --container-narrow:760px;
   --band-padding-y:var(--space-3xl);
   --band-padding-x:var(--space-xl);
-  --card-padding:var(--space-xl);
+
+  /* Card padding, as three named steps rather than a clamp re-typed at every call
+     site. The floor is 20px on the smallest step: below that the copy runs into the
+     card's own edge and the surface stops reading as a panel at all — which is the
+     single most common way a flat, shadowless system falls apart.
+
+       sm  a tile in a dense grid
+       md  the default panel
+       lg  a full-width feature or form panel */
+  --card-padding-sm:clamp(20px,4vw,26px);
+  --card-padding:clamp(22px,5vw,32px);
+  --card-padding-lg:clamp(24px,5vw,44px);
+
+  /* The gap between a section's heading block and its content, and between the
+     stacked blocks inside one. */
+  --section-gap:clamp(32px,6vw,56px);
+  --stack-gap:clamp(24px,4vw,36px);
 }

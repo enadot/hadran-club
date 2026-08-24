@@ -5,7 +5,10 @@ import { cn } from "@/lib/utils";
  * Mirrors components/brand/MemberCard.jsx — the club's hero image.
  *
  * Credit-card aspect ratio 1.586:1, --radius-2xl (32px), the reserved brand
- * gradient as fill, and --shadow-gold beneath. The gold variant renders the logo
+ * gradient as fill, and --ring-gold-soft around it — a gold hairline inside a wide
+ * pale-gold halo. That replaces the drop shadow the artwork used to sit on: a
+ * shadow under a gold card on a cream ground is the one place in this palette where
+ * grey shows, and the halo lifts the card without leaving any. The gold variant renders the logo
  * mark in ink via brightness(0); the ink variant keeps the gold artwork as-is.
  *
  * The artwork used to print "5%" where `mark` now sits. The benefit is per-merchant,
@@ -50,7 +53,7 @@ export function MemberCard({
       className={cn(
         "relative flex flex-col justify-between overflow-hidden",
         "rounded-[var(--radius-2xl)] p-[var(--space-xl)]",
-        "font-[family-name:var(--font-ui)] shadow-[var(--shadow-gold)]",
+        "font-[family-name:var(--font-ui)] shadow-[var(--ring-gold-soft)]",
         dark
           ? "bg-[var(--color-canvas-ink)] text-[var(--color-primary)]"
           : "bg-[image:var(--gradient-brand)] text-[var(--color-ink)]",

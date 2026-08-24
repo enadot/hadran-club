@@ -10,6 +10,21 @@ export const MEMBER_AREA_URL =
   process.env.NEXT_PUBLIC_MEMBER_AREA_URL ?? "https://kehilotcard.co.il/login";
 
 /**
+ * Card activation runs on the operator's own screen, embedded here.
+ *
+ * The club's activation form is written and working — it is parked at
+ * /archive/activate — but the public card-activate endpoint it posts to is not
+ * accepting activations for the club yet. Until it does, sending a member to a form
+ * that cannot succeed is worse than sending them to the operator's, so /activate
+ * frames the operator's screen and the club's form waits in the archive.
+ *
+ * Environment-controlled, because the address is the operator's to change and
+ * because the day the endpoint is fixed this route goes back to the club's own form.
+ */
+export const CARD_ACTIVATION_URL =
+  process.env.NEXT_PUBLIC_CARD_ACTIVATION_URL ?? "https://kehilotcard.co.il/activate";
+
+/**
  * Ordering a card is not something this site does — it happens in the שירות ותמיכה
  * app that ships on every Hadran device. The site only says so, in the places a
  * member would otherwise look for a form.

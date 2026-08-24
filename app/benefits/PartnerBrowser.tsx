@@ -301,7 +301,10 @@ export function PartnerBrowser() {
 
           {/* The list is a shop window until the member can see their own number on
               it. This is the brief's "הזינו מספר כרטיס לצפייה בהטבה המדויקת שלכם". */}
-          <div className="mt-2 flex flex-col gap-4 rounded-[var(--radius-xl)] bg-[var(--color-canvas-soft)] p-[clamp(18px,4vw,28px)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
+          {/* The one ask on this page, so it takes the gold rung of the surface
+              ladder and a gold hairline — a step warmer than the sand panel it was,
+              which on a white band under a grid of white tiles disappeared. */}
+          <div className="mt-2 flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--gold-300)] bg-[var(--color-canvas-pale)] p-[var(--card-padding)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
             <div className="flex flex-col gap-1.5">
               <b className="text-[clamp(17px,2.6vw,20px)]">{EXACT_BENEFIT_CTA}</b>
               <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">

@@ -65,7 +65,7 @@ export function FaqBrowser() {
         </Accordion>
 
         <Reveal>
-          <Card tone="sand" padding="clamp(18px,5vw,32px)">
+          <Card tone="sand" padding="md">
             <div className="flex flex-wrap items-center justify-between gap-6">
               <div className="flex flex-col gap-2.5">
                 <b className="font-[family-name:var(--font-display)] text-[clamp(20px,3.6vw,26px)]">

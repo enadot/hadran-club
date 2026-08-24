@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Band, Container } from "@/components/site/Band";
+import { PageHero } from "@/components/site/PageHero";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 function BrowserSkeleton() {
   return (
     <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4 px-[clamp(16px,4vw,24px)] py-8">
-      <Skeleton className="h-12 w-full rounded-[var(--radius-md)]" />
+      <Skeleton className="h-[52px] w-full rounded-[var(--radius-lg)]" />
       <div className="flex gap-2">
         {[0, 1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-11 w-28 rounded-full" />
@@ -35,16 +36,15 @@ function BrowserSkeleton() {
 export default function BenefitsPage() {
   return (
     <>
-      <section className="bg-[var(--color-canvas-soft)] px-[clamp(16px,4vw,24px)] pt-[clamp(40px,7vw,72px)] pb-[clamp(32px,5vw,56px)]">
-        <Container className="flex flex-col gap-7">
-          <div className="flex max-w-[720px] flex-col gap-3.5">
-            <h1 className="m-0 text-[clamp(30px,7vw,52px)] leading-[1.06]">
-              רשימת החנויות וההטבות שלכם
-            </h1>
-          </div>
-
-        </Container>
-      </section>
+      {/* `flush`: the filter bar sticks directly under this header and is part of
+          the same control surface — a full band gap between them read as two
+          unrelated screens stacked on top of each other. */}
+      <PageHero
+        flush
+        eyebrow="הנבחרת שלנו"
+        title="רשימת החנויות וההטבות שלכם"
+        lead="רשתות מזון, מכולות שכונתיות, ביגוד, ספרי קודש, אופטיקה וכלי בית. לכל שותף סוג ההטבה שלו — ויש חנויות שההטבה בהן זמינה אך ורק לחברי הדרן קלאב."
+      />
 
       <Suspense fallback={<BrowserSkeleton />}>
         <PartnerBrowser />
@@ -52,7 +52,7 @@ export default function BenefitsPage() {
 
       <Band tone="sand" padded={false} className="px-[clamp(16px,4vw,24px)] py-[clamp(32px,6.2vw,56px)]">
         <Container>
-          <Card tone="plain" padding="clamp(18px,5vw,40px)">
+          <Card tone="plain" padding="lg">
             <div className="flex flex-wrap items-center justify-between gap-8">
               <div className="flex flex-col gap-2.5">
                 <h3 className="m-0 text-[clamp(23px,4.5vw,32px)]">חסר לכם בית עסק ברשימה?</h3>
