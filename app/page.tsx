@@ -8,7 +8,6 @@ import { StatBlock } from "@/components/brand/StatBlock";
 import { Figure } from "@/components/brand/Figure";
 import { SpotlightCard } from "@/components/reactbits/spotlight-card";
 import { HeroLogoWall } from "@/components/site/HeroLogoWall";
-import { MembershipCard } from "@/components/site/MembershipCard";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
 import { PartnerCard } from "@/components/site/PartnerCard";
@@ -356,24 +355,19 @@ export default function HomePage() {
         </Container>
       </Band>
 
-      {/* ── Membership ───────────────────────────────────────────────────────
-          No heading block above the panel, and no button inside it: membership
-          comes with being a Hadran customer, so there is nothing to order and
-          nobody to sign up. The panel states what the membership is and stops. */}
-      <Band tone="sand">
-        <Container>
-          <Reveal>
-            <MembershipCard />
-          </Reveal>
-        </Container>
-      </Band>
 
       {/* ── What this site does ──────────────────────────────────────────────
           This was "למי הכרטיס מתאים", three audience cards whose first was a
           family with no connection to Hadran — an audience the club does not
           have. The club's members already hold a card, so the useful question is
-          not who it is for but what there is to do here. */}
-      <Band tone="white">
+          not who it is for but what there is to do here.
+
+          On the sand rung, because the membership panel that used to sit between
+          this section and "איך זה עובד" was carrying the separation: without it
+          two canvas bands ran together into one undifferentiated white stretch,
+          and the white cards in this grid had nothing behind them to read
+          against. */}
+      <Band tone="sand">
         <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>הקהילה שלנו</Eyebrow>
