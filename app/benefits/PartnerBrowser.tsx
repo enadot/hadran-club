@@ -307,7 +307,7 @@ export function PartnerBrowser() {
           "motion-reduce:transition-none",
         ].join(" ")}
       >
-        <div className="mx-auto flex max-w-[var(--container-max)] items-center gap-2.5 min-[900px]:grid min-[900px]:grid-cols-[1.7fr_1fr_1fr_1fr] min-[900px]:gap-3">
+        <div className="mx-auto flex max-w-[var(--container-max)] items-center gap-2.5 min-[900px]:gap-3">
           <Input
             icon="search"
             placeholder="שם בית עסק, קטגוריה או עיר"
@@ -315,6 +315,18 @@ export function PartnerBrowser() {
             value={query}
             onChange={(e) => apply({ q: e.target.value })}
             wrapperClassName="min-w-0 flex-1"
+            suffix={
+              query ? (
+                <button
+                  type="button"
+                  onClick={() => apply({ q: "" })}
+                  aria-label="ניקוי החיפוש"
+                  className="-me-1 flex cursor-pointer items-center rounded-full p-1 text-[var(--color-mute)] transition-colors duration-[var(--duration-fast)] hover:bg-[var(--color-canvas-soft)] hover:text-[var(--color-ink)]"
+                >
+                  <Icon name="x" size={16} />
+                </button>
+              ) : null
+            }
           />
 
           {/* Below 900px this is the whole rest of the bar. */}
@@ -341,30 +353,50 @@ export function PartnerBrowser() {
             ) : null}
           </button>
 
-          {/* From 900px there is room to keep the pickers in the open, which is what
-              a directory on a desktop should do; the sheet is the narrow-screen
-              form of the same state, not a different one. */}
-          <Select
-            options={cityOptions}
-            value={city}
-            aria-label="סינון לפי עיר"
-            onValueChange={(v) => apply({ city: v })}
-            wrapperClassName="hidden min-[900px]:flex"
-          />
-          <Select
-            options={categoryOptions}
-            value={category}
-            aria-label="סינון לפי קטגוריה"
-            onValueChange={(v) => apply({ cat: v })}
-            wrapperClassName="hidden min-[900px]:flex"
-          />
-          <Select
-            options={SORT_OPTIONS}
-            value={sort}
-            aria-label="מיון הרשימה"
-            onValueChange={(v) => apply({ sort: v })}
-            wrapperClassName="hidden min-[900px]:flex"
-          />
+          {/* From 900px the pickers stay in the open — a directory on a desktop
+              should not hide three controls behind a button when the row has space
+              for them. They are pills, not fields: at the field's weight and height
+              the four controls read as four things of equal importance, when only
+              the search box is what a visitor came to use. Faire, Skillshare, Whop,
+              Selfridges, Base44 and Kit all draw the same line. */}
+          <div className="hidden flex-none items-center gap-2 min-[900px]:flex">
+            <Select
+              size="sm"
+              active={city !== DEFAULTS.city}
+              options={cityOptions}
+              value={city}
+              aria-label="סינון לפי עיר"
+              onValueChange={(v) => apply({ city: v })}
+            />
+            <Select
+              size="sm"
+              active={category !== DEFAULTS.cat}
+              options={categoryOptions}
+              value={category}
+              aria-label="סינון לפי קטגוריה"
+              onValueChange={(v) => apply({ cat: v })}
+            />
+            {tiers.length ? (
+              <Select
+                size="sm"
+                active={tier !== "all"}
+                options={[
+                  { value: "all", label: "כל ההטבות" },
+                  ...tiers.map((t) => ({ value: t, label: BENEFIT_TIERS[t].label })),
+                ]}
+                value={tier}
+                aria-label="סינון לפי סוג ההטבה"
+                onValueChange={(v) => apply({ tier: v as BenefitTier | "all" })}
+              />
+            ) : null}
+            <Select
+              size="sm"
+              options={SORT_OPTIONS}
+              value={sort}
+              aria-label="מיון הרשימה"
+              onValueChange={(v) => apply({ sort: v })}
+            />
+          </div>
         </div>
       </div>
 

@@ -25,6 +25,19 @@ export type SelectOption = { value: string; label: string } | string;
 export type SelectProps = {
   label?: React.ReactNode;
   hint?: React.ReactNode;
+  /**
+   * "md" is the form field — full width, 52px, matching Input beside it in a form.
+   *
+   * "sm" is the filter pill: a compact, hairline control that names the axis and
+   * carries its current value. It exists because a directory's pickers are not form
+   * fields. Given the field's own weight and height they read as four things of
+   * equal importance, when only one of them — the search box — is what a visitor
+   * came to use. Every web directory worth copying makes the same distinction
+   * (Faire, Skillshare, Whop, Selfridges, Base44, Kit): one field, then pills.
+   */
+  size?: "md" | "sm";
+  /** A pill whose value is set. Fills, so what is in force is legible at a glance. */
+  active?: boolean;
   options?: SelectOption[];
   value?: string;
   defaultValue?: string;
@@ -42,6 +55,8 @@ export type SelectProps = {
 export function Select({
   label,
   hint,
+  size = "md",
+  active = false,
   options = [],
   value,
   defaultValue,
@@ -90,13 +105,28 @@ export function Select({
             // data-[size=default] is how the shadcn trigger sets its 36px height,
             // and a bare h-auto loses to it — the picker ended up shorter than the
             // Input beside it. Overriding on the same variant matches the field.
-            "w-full rounded-[var(--radius-lg)] border px-4 py-3 shadow-none",
-            "h-auto data-[size=default]:h-auto data-[size=default]:min-h-[52px]",
-            "border-[var(--color-border)] bg-[var(--color-canvas)]",
-            "text-[length:var(--text-body-md)] text-[var(--color-ink)]",
-            "transition-[border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-out)]",
-            "focus-visible:border-[var(--color-ink)] focus-visible:ring-0 focus-visible:shadow-[var(--focus-ring)]",
-            "[&_svg:not([class*='text-'])]:text-[var(--color-mute)]",
+            "border shadow-none transition-[background-color,border-color,box-shadow]",
+            "duration-[var(--duration-base)] ease-[var(--ease-out)]",
+            "focus-visible:ring-0 focus-visible:shadow-[var(--focus-ring)]",
+            size === "sm"
+              ? [
+                  // min-h-11 keeps the 44px touch target the design system asks for
+                  // while reading as a pill rather than a field.
+                  "w-auto rounded-full px-4 py-2",
+                  "h-auto data-[size=default]:h-auto data-[size=default]:min-h-11",
+                  "text-[length:var(--text-body-sm)] font-semibold",
+                  active
+                    ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-primary)] [&_svg:not([class*='text-'])]:text-[var(--color-primary)]"
+                    : "border-[var(--color-border)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:bg-[var(--color-canvas-soft)] focus-visible:border-[var(--color-ink)] [&_svg:not([class*='text-'])]:text-[var(--color-mute)]",
+                ]
+              : [
+                  "w-full rounded-[var(--radius-lg)] px-4 py-3",
+                  "h-auto data-[size=default]:h-auto data-[size=default]:min-h-[52px]",
+                  "border-[var(--color-border)] bg-[var(--color-canvas)]",
+                  "text-[length:var(--text-body-md)] text-[var(--color-ink)]",
+                  "focus-visible:border-[var(--color-ink)]",
+                  "[&_svg:not([class*='text-'])]:text-[var(--color-mute)]",
+                ],
             className,
           )}
           {...rest}
