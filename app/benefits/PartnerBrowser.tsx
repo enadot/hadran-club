@@ -4,10 +4,11 @@ import * as React from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/brand/Button";
 import { EmptyState } from "@/components/brand/EmptyState";
+import { Icon } from "@/components/brand/Icon";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
 import { BenefitsGate } from "@/components/site/BenefitsGate";
-import { FilterChip } from "@/components/site/FilterChip";
+import { FilterSheet } from "@/components/site/FilterSheet";
 import { PartnerCard } from "@/components/site/PartnerCard";
 import { PartnerDetailDialog } from "@/components/site/PartnerDetailDialog";
 import {
@@ -68,11 +69,20 @@ const DEFAULTS: Filters = {
 };
 
 function readFilters(params: URLSearchParams): Filters {
+  // ?tier= is checked against the real tiers rather than cast to one. A URL is
+  // whatever someone types into it, and the value is now looked up in
+  // BENEFIT_TIERS to label the active-filter pill — an unchecked cast turned
+  // ?tier=foo from a filter that matched nothing into a render that threw.
+  const rawTier = params.get("tier");
+  const tier = BENEFIT_TIER_ORDER.includes(rawTier as BenefitTier)
+    ? (rawTier as BenefitTier)
+    : DEFAULTS.tier;
+
   return {
     q: params.get("q") ?? DEFAULTS.q,
     city: params.get("city") ?? DEFAULTS.city,
     cat: params.get("cat") ?? DEFAULTS.cat,
-    tier: (params.get("tier") as BenefitTier | null) ?? DEFAULTS.tier,
+    tier,
     sort: params.get("sort") ?? DEFAULTS.sort,
   };
 }
@@ -204,8 +214,8 @@ export function PartnerBrowser() {
     if (sort === "name") sorted.sort((a, b) => a.name.localeCompare(b.name, "he"));
     else if (sort === "city")
       sorted.sort((a, b) => firstCity(a).localeCompare(firstCity(b), "he"));
-    // "featured" is the club's own order: exclusive shops first, then the ones the
-    // platform itself pins, then depth, then name.
+    // "מומלצים": exclusive shops first, then the ones the platform itself pins,
+    // then depth, then name.
     else
       sorted.sort(
         (a, b) =>
@@ -218,10 +228,51 @@ export function PartnerBrowser() {
     return sorted;
   }, [source, query, city, category, tier, sort]);
 
-  // The tier axis is only worth a rail when the list actually splits on it. The
-  // static directory carries no tiers at all, and a card's list carries them only
-  // where the platform flags a partner exclusive.
-  const anyTiered = React.useMemo(() => source.some((p) => p.tier), [source]);
+  // Only the tiers the list on screen actually splits on. The static directory
+  // carries none, and a card's list carries them only where the platform flags a
+  // partner exclusive — an axis with one value is not a filter.
+  const tiers = React.useMemo(
+    () => BENEFIT_TIER_ORDER.filter((t) => source.some((p) => p.tier === t)),
+    [source],
+  );
+
+  const [sheetOpen, setSheetOpen] = React.useState(false);
+
+  /**
+   * The bar tucks itself behind the nav on a downward scroll and returns on an
+   * upward one — the pattern every directory app on a phone uses, and the direct
+   * answer to a control surface that was covering the content it controls.
+   *
+   * Deliberately not an IntersectionObserver: the thing being watched is the
+   * reader's intent, which is the sign of the delta, not whether some sentinel is on
+   * screen. The 6px gate ignores the jitter of a rubber-band scroll, and nothing
+   * tucks in the first screenful, where the bar has not yet had a chance to stick.
+   */
+  const [tucked, setTucked] = React.useState(false);
+  React.useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - last;
+      if (Math.abs(dy) < 6) return;
+      last = y;
+      setTucked(y > 280 && dy > 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /** The filters in force, each as its own removable pill. */
+  const activeChips = [
+    query ? { key: "q", label: `“${query}”`, clear: () => apply({ q: "" }) } : null,
+    city !== DEFAULTS.city ? { key: "city", label: city, clear: () => apply({ city: DEFAULTS.city }) } : null,
+    category !== DEFAULTS.cat
+      ? { key: "cat", label: category, clear: () => apply({ cat: DEFAULTS.cat }) }
+      : null,
+    tier !== "all"
+      ? { key: "tier", label: BENEFIT_TIERS[tier].label, clear: () => apply({ tier: "all" }) }
+      : null,
+  ].filter(Boolean) as { key: string; label: string; clear: () => void }[];
 
   return (
     <>
@@ -235,98 +286,124 @@ export function PartnerBrowser() {
         </div>
       </div>
 
-      <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,20px)] min-[1060px]:top-[86px]">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3">
-          <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[1.6fr_1fr_1fr_1fr]">
-            <Input
-              icon="search"
-              placeholder="שם בית עסק, קטגוריה או עיר"
-              aria-label="חיפוש בית עסק"
-              value={query}
-              onChange={(e) => apply({ q: e.target.value })}
-            />
-            <Select
-              options={cityOptions}
-              value={city}
-              aria-label="סינון לפי עיר"
-              onValueChange={(v) => apply({ city: v })}
-            />
-            <Select
-              options={categoryOptions}
-              value={category}
-              aria-label="סינון לפי קטגוריה"
-              onValueChange={(v) => apply({ cat: v })}
-            />
-            <Select
-              options={SORT_OPTIONS}
-              value={sort}
-              aria-label="מיון הרשימה"
-              onValueChange={(v) => apply({ sort: v })}
-            />
-          </div>
+      {/* One row, and it gets out of the way.
+       *
+       * The four stacked controls this replaces measured 303px of permanently sticky
+       * chrome on a phone — with the 65px nav above them, half of a 360x740 screen
+       * was filter while the other half was the grid the filter is for. Everything
+       * except the search box now lives in FilterSheet behind a single control that
+       * carries the active count, and the bar itself slides up behind the nav on a
+       * downward scroll and comes back the moment the reader scrolls up. */}
+      <div
+        data-tucked={tucked ? "" : undefined}
+        // Tabbing into a control that is sliding off screen. Capture, so it fires
+        // for the search box, the filter button and the pickers alike.
+        onFocusCapture={() => setTucked(false)}
+        className={[
+          "sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)]",
+          "px-[clamp(16px,4vw,24px)] py-[clamp(10px,2vw,16px)] min-[1060px]:top-[86px]",
+          "transition-transform duration-[var(--duration-base)] ease-[var(--ease-out)]",
+          "data-tucked:-translate-y-full min-[900px]:data-tucked:translate-y-0",
+          "motion-reduce:transition-none",
+        ].join(" ")}
+      >
+        <div className="mx-auto flex max-w-[var(--container-max)] items-center gap-2.5 min-[900px]:grid min-[900px]:grid-cols-[1.7fr_1fr_1fr_1fr] min-[900px]:gap-3">
+          <Input
+            icon="search"
+            placeholder="שם בית עסק, קטגוריה או עיר"
+            aria-label="חיפוש בית עסק"
+            value={query}
+            onChange={(e) => apply({ q: e.target.value })}
+            wrapperClassName="min-w-0 flex-1"
+          />
 
-          {/* One rail, one axis. Tier is the club's own vocabulary and the filter
-              a visitor actually browses by, so it stays visible; category and
-              city are ordinary pickers and sit in the selects above. */}
-          {anyTiered ? (
-            <div
-              className="hc-rail hc-rail-bleed flex snap-x items-center gap-2 py-0.5 min-[1060px]:flex-wrap min-[1060px]:overflow-visible"
-              role="group"
-              aria-label="סינון לפי סוג ההטבה"
-            >
-              <FilterChip
-                selected={tier === "all"}
-                onClick={() => apply({ tier: "all" })}
-                className="flex-none snap-start"
-              >
-                כל ההטבות
-              </FilterChip>
-              {BENEFIT_TIER_ORDER.map((t) => (
-                <FilterChip
-                  key={t}
-                  selected={tier === t}
-                  onClick={() => apply({ tier: t })}
-                  className="flex-none snap-start"
-                >
-                  {BENEFIT_TIERS[t].label}
-                </FilterChip>
-              ))}
-            </div>
-          ) : null}
+          {/* Below 900px this is the whole rest of the bar. */}
+          <button
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            aria-label={
+              activeCount > 0 ? `סינון ומיון, ${activeCount} פעילים` : "סינון ומיון"
+            }
+            className={[
+              "relative flex size-[52px] flex-none cursor-pointer items-center justify-center",
+              "rounded-[var(--radius-lg)] border transition-[background-color,border-color]",
+              "duration-[var(--duration-base)] ease-[var(--ease-out)] min-[900px]:hidden",
+              activeCount > 0
+                ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-primary)]"
+                : "border-[var(--color-border)] bg-[var(--color-canvas)] text-[var(--color-ink)]",
+            ].join(" ")}
+          >
+            <Icon name="sliders" size={20} />
+            {activeCount > 0 ? (
+              <span className="tnum absolute -top-1.5 -end-1.5 grid size-5 place-items-center rounded-full bg-[var(--color-primary)] text-[11px] font-bold text-[var(--color-on-primary)]">
+                {activeCount}
+              </span>
+            ) : null}
+          </button>
 
-          {/* Result count and reset. Announced, because filtering changes the list
-              below without moving focus. */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* From 900px there is room to keep the pickers in the open, which is what
+              a directory on a desktop should do; the sheet is the narrow-screen
+              form of the same state, not a different one. */}
+          <Select
+            options={cityOptions}
+            value={city}
+            aria-label="סינון לפי עיר"
+            onValueChange={(v) => apply({ city: v })}
+            wrapperClassName="hidden min-[900px]:flex"
+          />
+          <Select
+            options={categoryOptions}
+            value={category}
+            aria-label="סינון לפי קטגוריה"
+            onValueChange={(v) => apply({ cat: v })}
+            wrapperClassName="hidden min-[900px]:flex"
+          />
+          <Select
+            options={SORT_OPTIONS}
+            value={sort}
+            aria-label="מיון הרשימה"
+            onValueChange={(v) => apply({ sort: v })}
+            wrapperClassName="hidden min-[900px]:flex"
+          />
+        </div>
+      </div>
+
+      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,32px)] pb-16">
+        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-5">
+          {/* The count and what is in force, in the scroll flow rather than pinned.
+              This is the half of the old bar that was pure feedback: it has to be
+              read once after a change, not kept on screen for the length of a
+              directory. Each filter is its own pill so a reader can drop one
+              without opening the sheet to find it. */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span
               className="text-[length:var(--text-body-sm)] text-[var(--color-mute)]"
               aria-live="polite"
             >
               <b className="tnum text-[var(--color-ink)]">{shown.length}</b>
               {shown.length === 1 ? " בית עסק" : " בתי עסק"}
-              {activeCount > 0 ? (
-                <span className="text-[var(--color-mute)]">
-                  {" · "}
-                  {activeCount === 1 ? "סינון אחד פעיל" : `${activeCount} סינונים פעילים`}
-                </span>
-              ) : null}
             </span>
 
-            {activeCount > 0 ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                icon="x"
-                onClick={reset}
+            {activeChips.map((c) => (
+              <button
+                key={c.key}
+                type="button"
+                onClick={c.clear}
+                aria-label={`הסרת הסינון ${c.label}`}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-canvas)] py-1.5 pe-3 ps-2.5 text-[length:var(--text-body-sm)] font-semibold text-[var(--color-body)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out)] hover:border-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)]"
               >
-                ניקוי הסינון
+                <Icon name="x" size={14} color="var(--color-mute)" />
+                {c.label}
+              </button>
+            ))}
+
+            {activeCount > 1 ? (
+              <Button variant="ghost" size="sm" onClick={reset}>
+                ניקוי הכל
               </Button>
             ) : null}
           </div>
-        </div>
-      </div>
 
-      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,32px)] pb-16">
-        <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-5">
           {/* The logo is the card. Two columns on a phone, up to five on a wide
               screen — a directory of marks a family recognises, not a list of
               names with a stamp beside each. */}
@@ -399,6 +476,22 @@ export function PartnerBrowser() {
           </span>
         </div>
       </div>
+
+      <FilterSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        city={city}
+        category={category}
+        tier={tier}
+        sort={sort}
+        cityOptions={cityOptions}
+        categoryOptions={categoryOptions}
+        tiers={tiers}
+        resultCount={shown.length}
+        activeCount={activeCount}
+        onChange={apply}
+        onReset={reset}
+      />
 
       <PartnerDetailDialog
         partner={selected}

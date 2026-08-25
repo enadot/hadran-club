@@ -47,7 +47,7 @@ export type Partner = {
   cities?: string[];
   /** Named branches with address and opening hours, for the detail dialog. */
   branchList?: LiveBranch[];
-  /** The platform's featured flag, which the "הנבחרת שלנו" sort leads with. */
+  /** The platform's featured flag, which the "מומלצים" sort leads with. */
   featured?: boolean;
 };
 
@@ -630,7 +630,10 @@ export const PARTNERS: Partner[] = [
  * instead: citiesOf() and categoriesOf() in ./live-benefits. */
 
 export const SORT_OPTIONS = [
-  { value: "featured", label: "מיון: הנבחרת שלנו" },
+  // "הנבחרת שלנו" was the club's own name for this order and told a first-time
+  // reader nothing about what it would do to the list. A sort control has to say
+  // what it sorts by in words anyone reads the same way.
+  { value: "featured", label: "מיון: מומלצים" },
   { value: "name", label: "מיון: לפי שם" },
   { value: "city", label: "מיון: לפי עיר" },
 ];

@@ -65,7 +65,7 @@ export function PartnerCard({ partner: p, withMeta = true, className }: PartnerC
         padding="p-[clamp(14px,4vw,22px)]"
       />
 
-      <div className="flex flex-1 flex-col gap-1 border-t border-[var(--color-border)] p-[clamp(12px,3vw,16px)]">
+      <div className="flex flex-1 flex-col gap-1.5 border-t border-[var(--color-border)] p-[clamp(12px,3vw,16px)]">
         <div className="flex items-start justify-between gap-2">
           <b className="min-w-0 text-[clamp(14px,2.2vw,16px)] leading-[1.35] text-[var(--color-ink)]">
             {p.name}
@@ -80,19 +80,33 @@ export function PartnerCard({ partner: p, withMeta = true, className }: PartnerC
             </Badge>
           ) : null}
         </div>
-        {/* With a card loaded the merchant's own line is the reason the tile is
-            worth looking at, so it outranks the trade and the branch count. Two
-            lines, because these are prose the merchants wrote at whatever length
-            they liked — the whole of it is in the dialog a tap away. */}
-        {p.benefit ? (
-          <span className="line-clamp-2 text-[length:var(--text-body-sm)] leading-[1.45] font-semibold text-[var(--color-primary-deep)]">
-            {p.benefit}
-          </span>
-        ) : null}
-
         {metaLine ? (
           <span className="text-[length:var(--text-caption)] leading-[1.4] text-[var(--color-mute)]">
             {metaLine}
+          </span>
+        ) : null}
+
+        {/* A promise, not a preview.
+         *
+         * The merchants write these at whatever length they like — four words for
+         * one shop, a paragraph of prices and exclusions for the next — so a
+         * two-line clamp of the text made every tile a different ragged shape and
+         * cut most of them mid-sentence, which is the one place a discount must not
+         * be cut. The tile says there is a benefit and the dialog says what it is.
+         *
+         * A span, not a button: the whole tile is already the control, and a button
+         * inside a button is neither valid nor a second tab stop worth having. It
+         * takes its states from the tile's `group`. */}
+        {p.benefit ? (
+          <span
+            className={cn(
+              "mt-auto inline-flex items-center justify-center gap-1.5 rounded-[var(--radius-pill)] pt-[9px] pb-[9px]",
+              "border border-[var(--color-ink)] text-[length:var(--text-body-sm)] font-semibold",
+              "transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+              "text-[var(--color-ink)] group-hover:bg-[var(--color-ink)] group-hover:text-[var(--color-primary)]",
+            )}
+          >
+            הצגת ההטבה
           </span>
         ) : null}
       </div>

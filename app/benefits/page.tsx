@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Band, Container } from "@/components/site/Band";
-import { PageHero } from "@/components/site/PageHero";
 import { Button } from "@/components/brand/Button";
 import { Card } from "@/components/brand/Card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,11 +17,10 @@ export const metadata: Metadata = {
 function BrowserSkeleton() {
   return (
     <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-4 px-[clamp(16px,4vw,24px)] py-8">
-      <Skeleton className="h-[52px] w-full rounded-[var(--radius-lg)]" />
-      <div className="flex gap-2">
-        {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-11 w-28 rounded-full" />
-        ))}
+      <Skeleton className="h-[180px] w-full rounded-[var(--radius-xl)]" />
+      <div className="flex gap-2.5">
+        <Skeleton className="h-[52px] flex-1 rounded-[var(--radius-lg)]" />
+        <Skeleton className="h-[52px] w-[52px] rounded-[var(--radius-lg)] min-[900px]:hidden" />
       </div>
       <div className="flex flex-col gap-2.5">
         {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -36,15 +34,16 @@ function BrowserSkeleton() {
 export default function BenefitsPage() {
   return (
     <>
-      {/* `flush`: the filter bar sticks directly under this header and is part of
-          the same control surface — a full band gap between them read as two
-          unrelated screens stacked on top of each other. */}
-      <PageHero
-        flush
-        eyebrow="הנבחרת שלנו"
-        title="רשימת החנויות וההטבות שלכם"
-        lead="רשתות מזון, מכולות שכונתיות, ביגוד, ספרי קודש, אופטיקה וכלי בית. לכל שותף סוג ההטבה שלו — ויש חנויות שההטבה בהן זמינה אך ורק לחברי הדרן קלאב."
-      />
+      {/* No PageHero here, alone among the sub-pages.
+       *
+       * The header restated the page's own title, its lead listed the categories the
+       * filter lists anyway, and together they pushed the card gate — the one thing
+       * this page asks for — below the fold on a phone. The gate opens the page
+       * instead, and says what the page is for in the act of offering it.
+       *
+       * The h1 stays, unseen: a document needs one, /search links here by title, and
+       * the gate's own heading changes to a status line once a card is loaded. */}
+      <h1 className="sr-only">רשימת החנויות וההטבות שלכם</h1>
 
       <Suspense fallback={<BrowserSkeleton />}>
         <PartnerBrowser />

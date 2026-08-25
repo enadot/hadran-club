@@ -12,7 +12,7 @@ import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Icon } from "@/components/brand/Icon";
 import { BENEFIT_TIERS, BENEFIT_DISCLAIMER, EXACT_BENEFIT_CTA } from "@/lib/data/benefits";
-import { reachLabel } from "@/lib/data/live-benefits";
+import { benefitParagraphs, reachLabel } from "@/lib/data/live-benefits";
 import { type Partner } from "@/lib/data/partners";
 import { PartnerLogo } from "@/components/brand/PartnerLogo";
 
@@ -51,6 +51,13 @@ export function PartnerDetailDialog({
 
   const branches = partner?.branchList ?? [];
   const reach = partner ? reachLabel(partner) : null;
+
+  // The claim, then its conditions. A first sentence past ~110 characters is not a
+  // headline any more — it is the whole benefit written as one run — so it drops to
+  // the reading size with the rest rather than being set at display scale.
+  const parts = partner?.benefit ? benefitParagraphs(partner.benefit) : [];
+  const [claim, ...conditions] = parts;
+  const claimIsHeadline = !!claim && claim.length <= 110;
 
   // Which shop's branch list is expanded, rather than a boolean — the dialog is one
   // mounted component reused for every shop, and a boolean stayed open when the next
@@ -104,27 +111,46 @@ export function PartnerDetailDialog({
             </DialogHeader>
 
             <div className="flex flex-col gap-6 p-[clamp(20px,5vw,28px)]">
-              <div className="flex flex-col gap-2">
-                <span className="text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)]">
+              {/* The benefit is what the sheet is for, so it gets a panel of its
+                  own — the gold rung of the surface ladder inside a white dialog,
+                  which is the one place on the page that treatment is not already
+                  spoken for. Set on the flat white it shared with the branch list
+                  and the disclaimer, the number a member came here to read carried
+                  no more weight than the small print under it. */}
+              <div className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--gold-300)] bg-[var(--color-canvas-pale)] p-[clamp(16px,4vw,22px)]">
+                <span className="text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-primary-deep)]">
                   ההטבה
                 </span>
-                {/* The merchants wrote these themselves and none of them wrote to a
-                    length: some are four words, some are a paragraph of terms with
-                    prices in it. A headline clamp set for the short ones turns the
-                    long ones into a wall, so the size follows the text. */}
-                {partner.benefit ? (
-                  partner.benefit.length > 90 ? (
-                    <p className="m-0 text-[length:var(--text-body-md)] leading-[1.65] font-medium whitespace-pre-line text-[var(--color-ink)]">
-                      {partner.benefit}
-                    </p>
-                  ) : (
-                    <b className="text-[clamp(17px,2.6vw,20px)] leading-[1.4]">{partner.benefit}</b>
-                  )
+
+                {claim ? (
+                  <p
+                    className={
+                      claimIsHeadline
+                        ? "m-0 font-[family-name:var(--font-display)] text-[clamp(22px,4.6vw,30px)] leading-[1.25] font-extrabold tracking-[var(--tracking-display-sm)] text-[var(--color-ink)]"
+                        : "m-0 text-[clamp(17px,2.8vw,20px)] leading-[1.6] font-semibold text-[var(--color-ink)]"
+                    }
+                  >
+                    {claim}
+                  </p>
                 ) : (
-                  <b className="text-[clamp(17px,2.6vw,20px)] leading-[1.4]">
+                  <p className="m-0 text-[clamp(19px,3.4vw,24px)] leading-[1.3] font-bold text-[var(--color-ink)]">
                     ההטבה המדויקת מוצגת עם מספר הכרטיס
-                  </b>
+                  </p>
                 )}
+
+                {conditions.length ? (
+                  <div className="flex flex-col gap-2 border-t border-[var(--gold-300)] pt-3">
+                    {conditions.map((c, i) => (
+                      <p
+                        key={`${i}-${c.slice(0, 12)}`}
+                        className="m-0 text-[clamp(15px,2.4vw,17px)] leading-[1.7] text-[var(--color-body)]"
+                      >
+                        {c}
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
+
                 {tier ? (
                   <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
                     {tier.description}

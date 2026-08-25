@@ -39,7 +39,7 @@ export type LiveStore = {
   category?: string;
   /** Available only through the club. */
   exclusive: boolean;
-  /** The platform's featured flag — the club's "הנבחרת שלנו" ordering. */
+  /** The platform's featured flag — what the "מומלצים" sort leads with. */
   featured: boolean;
   /** The benefit in the merchant's own words. */
   benefit: string;
@@ -189,4 +189,26 @@ export function categoriesOf(partners: Partner[]): string[] {
   const set = new Set<string>();
   for (const p of partners) if (p.category) set.add(p.category);
   return [...set].sort((a, b) => a.localeCompare(b, "he"));
+}
+
+/**
+ * A merchant's benefit text, split into the claim and its conditions.
+ *
+ * These arrive as one unbroken run of prose — "4 אחוז הנחה בכל קניה, יש לבקש מהמוכר
+ * להעביר את הכרטיס במערכת מולטיפס, אין צורך לטעון את הכרטיס. שימו לב! אין לממש את
+ * ההטבה במקביל…" — and set as a single block they read as small print, which is
+ * exactly what the discount at the front of them is not.
+ *
+ * The split is on sentence boundaries only, so every word the merchant wrote
+ * survives in the order they wrote it; nothing is summarised or dropped. The first
+ * sentence is almost always the discount itself and the rest are the conditions,
+ * which is the shape the dialog then sets them in.
+ *
+ * A period with no space after it — "עדשות 1.56", "1.6" — is not a boundary.
+ */
+export function benefitParagraphs(text: string): string[] {
+  return text
+    .split(/(?<=[.!])\s+/)
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
 }

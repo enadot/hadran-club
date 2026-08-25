@@ -283,7 +283,12 @@ export default function HomePage() {
         <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div className="flex max-w-[620px] flex-col gap-3">
-              <Eyebrow>הנבחרת שלנו</Eyebrow>
+              {/* "הנבחרת שלנו" used to sit here. It is the club's own phrase for
+                  its leading shops and it reads as nothing at all to someone
+                  meeting the card for the first time — a metaphor where the band
+                  needs a statement. What this section actually is, is the club's
+                  one argument: these benefits exist because the card does. */}
+              <Eyebrow>בלעדי לחברי הדרן קלאב</Eyebrow>
               <SectionTitle>איפה הכרטיס עובד</SectionTitle>
               <SectionLead>מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית.</SectionLead>
             </div>
