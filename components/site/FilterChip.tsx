@@ -12,9 +12,22 @@ import { cn } from "@/lib/utils";
  */
 export type FilterChipProps = React.ComponentPropsWithoutRef<"button"> & {
   selected?: boolean;
+  /**
+   * "sm" is for a panel that stacks dozens of them — the filter sheet runs to some
+   * fifteen chips over five rows, and at the standing height that alone was most of
+   * a short phone's screen. 40px is still a comfortable target for chips packed
+   * against each other, and above Material's own 32dp filter chip.
+   */
+  size?: "md" | "sm";
 };
 
-export function FilterChip({ selected, className, children, ...rest }: FilterChipProps) {
+export function FilterChip({
+  selected,
+  size = "md",
+  className,
+  children,
+  ...rest
+}: FilterChipProps) {
   return (
     <button
       type="button"
@@ -22,8 +35,11 @@ export function FilterChip({ selected, className, children, ...rest }: FilterChi
       className={cn(
         // min-h-11 keeps the chip on the 44px touch target the design system asks
         // for; the visual height is unchanged on a pointer device.
-        "inline-flex min-h-11 cursor-pointer items-center rounded-full border px-4 py-[9px]",
-        "font-[family-name:var(--font-ui)] text-[length:var(--text-body-sm)] font-semibold",
+        "inline-flex cursor-pointer items-center rounded-full border",
+        size === "sm"
+          ? "min-h-10 px-3.5 py-1.5 text-[14px]"
+          : "min-h-11 px-4 py-[9px] text-[length:var(--text-body-sm)]",
+        "font-[family-name:var(--font-ui)] font-semibold",
         "transition-[background-color,color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
         selected
           ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-primary)]"

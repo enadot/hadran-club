@@ -84,14 +84,17 @@ export function BalanceChecker() {
       {!result ? (
         <Card tone="plain" padding="md">
           <form className="flex flex-col gap-5" onSubmit={check} noValidate>
+            {/* No placeholder. The label already says what to type, and a greyed
+                "0000 0000 0000 0000" sitting in the field reads as a value that is
+                already there — the one thing a placeholder must never look like in
+                a field whose whole job is a number. */}
             <Input
-              label="מספר הדרן קארד"
-              placeholder="0000 0000 0000 0000"
+              label="8 ספרות של כרטיס הדרן קלאב שלכם:"
               icon="credit-card"
               inputMode="numeric"
               autoComplete="off"
-              dir="ltr"
-              className="ltr text-start tnum"
+              // The hint invites the full number, which is printed in fours.
+              className="tnum numeric-field"
               value={card}
               onChange={(event) => {
                 setCard(event.target.value);
@@ -99,7 +102,7 @@ export function BalanceChecker() {
                 setError(null);
               }}
               error={cardError}
-              hint="8 הספרות האחרונות המופיעות על הכרטיס. אפשר להזין גם את המספר המלא."
+              hint="אפשר להזין גם את המספר המלא המופיע על הכרטיס."
             />
 
             {error ? <Alert>{error}</Alert> : null}

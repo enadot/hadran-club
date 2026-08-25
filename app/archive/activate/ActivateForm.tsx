@@ -212,8 +212,8 @@ export function ActivateForm() {
                   icon="credit-card"
                   inputMode="numeric"
                   autoComplete="off"
-                  dir="ltr"
-                  className="ltr text-start tnum"
+                  // formatCardNumber groups in fours; see .numeric-field.
+                  className="tnum numeric-field"
                   value={formatCardNumber(f.cardNumber)}
                   onChange={(e) => set("cardNumber")(e.target.value)}
                   error={errors.cardNumber}
@@ -233,8 +233,7 @@ export function ActivateForm() {
                     placeholder="050-0000000"
                     inputMode="tel"
                     autoComplete="tel"
-                    dir="ltr"
-                    className="ltr text-start tnum"
+                    className="tnum"
                     value={formatPhone(f.phone)}
                     onChange={(e) => set("phone")(e.target.value)}
                     error={errors.phone}
@@ -261,8 +260,7 @@ export function ActivateForm() {
                         <Input
                           label="תעודת זהות"
                           inputMode="numeric"
-                          dir="ltr"
-                          className="ltr text-start tnum"
+                          className="tnum"
                           value={f.israeliId}
                           onChange={(e) => set("israeliId")(e.target.value)}
                           error={errors.israeliId}
@@ -281,8 +279,7 @@ export function ActivateForm() {
                         <Input
                           label="תאריך לידה"
                           type="date"
-                          dir="ltr"
-                          className="ltr text-start tnum"
+                          className="tnum"
                           value={f.birthdate}
                           onChange={(e) => set("birthdate")(e.target.value)}
                           error={errors.birthdate}

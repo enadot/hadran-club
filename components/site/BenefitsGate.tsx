@@ -199,8 +199,7 @@ export function BenefitsGate({ onLoaded, loadedCount, className }: BenefitsGateP
             icon="credit-card"
             inputMode="numeric"
             autoComplete="off"
-            dir="ltr"
-            className="ltr text-start tnum"
+            className="tnum"
             wrapperClassName="min-[480px]:flex-1 min-[900px]:w-full"
             value={card}
             onChange={(event) => {

@@ -54,7 +54,7 @@ export type FilterSheetProps = {
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       <span className="text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)]">
         {title}
       </span>
@@ -82,18 +82,31 @@ export function FilterSheet({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] gap-0 overflow-hidden p-0 sm:max-w-[520px]">
-        <DialogHeader className="border-b border-[var(--color-border)] p-[clamp(20px,5vw,26px)] text-start sm:text-start">
+      {/* flex, not the primitive's grid.
+       *
+       * A grid row sizes to its content, so the scroll area grew past the dialog it
+       * was inside — measured 642px of body in a 608px dialog on a 360x640 handset —
+       * and `overflow-hidden` on the shell simply cut the remainder off. The body
+       * never scrolled, because by its own reckoning there was nothing to scroll:
+       * scrollHeight equalled clientHeight. What got cut was the bottom of the
+       * sheet, which is where the button that closes it lives.
+       *
+       * A flex column with min-h-0 on the middle child is what gives that child a
+       * height to be constrained by. min-h-0 is the whole fix: a flex item's default
+       * min-height is auto, which refuses to shrink below its content. */}
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[520px]">
+        <DialogHeader className="flex-none border-b border-[var(--color-border)] p-[clamp(18px,4.5vw,24px)] text-start sm:text-start">
           <DialogTitle className="font-[family-name:var(--font-display)] text-[clamp(19px,3.4vw,24px)] leading-[1.2] font-extrabold">
             סינון ומיון
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-7 overflow-y-auto p-[clamp(20px,5vw,26px)]">
+        <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain p-[clamp(18px,4.5vw,24px)]">
           <Group title="מיון">
             <div className="flex flex-wrap gap-2">
               {SORT_OPTIONS.map((o) => (
                 <FilterChip
+                  size="sm"
                   key={o.value}
                   selected={sort === o.value}
                   onClick={() => onChange({ sort: o.value })}
@@ -109,11 +122,12 @@ export function FilterSheet({
           {tiers.length ? (
             <Group title="סוג ההטבה">
               <div className="flex flex-wrap gap-2">
-                <FilterChip selected={tier === "all"} onClick={() => onChange({ tier: "all" })}>
+                <FilterChip size="sm" selected={tier === "all"} onClick={() => onChange({ tier: "all" })}>
                   הכל
                 </FilterChip>
                 {tiers.map((t) => (
                   <FilterChip
+                    size="sm"
                     key={t}
                     selected={tier === t}
                     onClick={() => onChange({ tier: t })}
@@ -129,6 +143,7 @@ export function FilterSheet({
             <div className="flex flex-wrap gap-2">
               {categoryOptions.map((c) => (
                 <FilterChip
+                  size="sm"
                   key={c}
                   selected={category === c}
                   onClick={() => onChange({ cat: c })}
@@ -151,7 +166,7 @@ export function FilterSheet({
           </Group>
         </div>
 
-        <div className="flex items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-canvas)] p-[clamp(16px,4vw,20px)]">
+        <div className="flex flex-none items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-canvas)] p-[clamp(14px,3.5vw,20px)]">
           {activeCount > 0 ? (
             <Button variant="ghost" icon="x" onClick={onReset} className="flex-none">
               ניקוי

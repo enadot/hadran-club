@@ -250,6 +250,24 @@ input[type="range"] {
   direction: ltr;
 }
 
+/* A field that holds a grouped number — a card number read off the plastic in
+   fours, typed or pasted with the spaces.
+   
+   The site is RTL and its fields are RTL with it, which is right for every field
+   that holds words. It is wrong for this one: the bidi algorithm resolves the
+   space between two numeric runs to the paragraph direction, so "4271 1111 2222
+   8032" is painted "8032 2222 1111 4271" — a member's own card number, shown back
+   to them backwards, in the field where they are checking they typed it correctly.
+   
+   So the value lays out latin-ordered while the field itself still sits on the
+   right, which is what "RTL field" means for a number in any language. Only for
+   fields with no Hebrew placeholder: a Hebrew string in an LTR run has its own
+   reordering, which is the same bug pointing the other way. */
+.numeric-field {
+  direction: ltr;
+  text-align: right;
+}
+
 /* ── Overlay motion ───────────────────────────────────────────────────────────
    The keyframes the prototypes define for the search modal and the mobile nav
    drawer. 200–240ms on the token easing; no bounce.
