@@ -10,6 +10,7 @@
  */
 
 import { onlyDigits, toCardCode } from "@/lib/card";
+import type { LiveBenefits } from "@/lib/data/live-benefits";
 
 export type ClientResult<T> = { ok: true; data: T } | { ok: false; status: number; message: string };
 
@@ -61,6 +62,18 @@ async function call<T>(url: string, init?: RequestInit): Promise<ClientResult<T>
 export function fetchBalance(cardInput: string) {
   const query = new URLSearchParams({ card_code: toCardCode(cardInput) });
   return call<BalanceResponse>(`/api/card/balance?${query}`);
+}
+
+/**
+ * The per-card benefit list behind /benefits.
+ *
+ * Same identification as the balance lookup — the trailing eight digits — and the
+ * same treatment of a card the platform does not know: `exists: false` rather than
+ * an error, so the gate can say "לא מצאנו כרטיס כזה" instead of "שגיאה".
+ */
+export function fetchBenefits(cardInput: string) {
+  const query = new URLSearchParams({ card_code: toCardCode(cardInput) });
+  return call<LiveBenefits>(`/api/card/benefits?${query}`);
 }
 
 /** Everything the activation form can collect. Only the first three are required. */

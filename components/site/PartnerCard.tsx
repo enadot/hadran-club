@@ -2,7 +2,8 @@ import * as React from "react";
 import { Badge } from "@/components/brand/Badge";
 import { PartnerLogo } from "@/components/brand/PartnerLogo";
 import { BENEFIT_TIERS } from "@/lib/data/benefits";
-import { branchLabel, type Partner } from "@/lib/data/partners";
+import { reachLabel } from "@/lib/data/live-benefits";
+import { type Partner } from "@/lib/data/partners";
 import { cn } from "@/lib/utils";
 
 /**
@@ -32,8 +33,7 @@ export function PartnerCard({ partner: p, withMeta = true, className }: PartnerC
         // The trade, not the filter group: "חליפות ואופנת גברים" tells a
         // visitor more than "ביגוד והנעלה", which is only there to be filtered on.
         p.trade ?? p.category,
-        p.city,
-        p.branches ? branchLabel(p.branches) : null,
+        reachLabel(p),
       ]
         .filter(Boolean)
         .join(" · ")
@@ -80,6 +80,16 @@ export function PartnerCard({ partner: p, withMeta = true, className }: PartnerC
             </Badge>
           ) : null}
         </div>
+        {/* With a card loaded the merchant's own line is the reason the tile is
+            worth looking at, so it outranks the trade and the branch count. Two
+            lines, because these are prose the merchants wrote at whatever length
+            they liked — the whole of it is in the dialog a tap away. */}
+        {p.benefit ? (
+          <span className="line-clamp-2 text-[length:var(--text-body-sm)] leading-[1.45] font-semibold text-[var(--color-primary-deep)]">
+            {p.benefit}
+          </span>
+        ) : null}
+
         {metaLine ? (
           <span className="text-[length:var(--text-caption)] leading-[1.4] text-[var(--color-mute)]">
             {metaLine}

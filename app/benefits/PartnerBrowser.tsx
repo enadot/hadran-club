@@ -6,6 +6,7 @@ import { Button } from "@/components/brand/Button";
 import { EmptyState } from "@/components/brand/EmptyState";
 import { Input } from "@/components/brand/Input";
 import { Select } from "@/components/brand/Select";
+import { BenefitsGate } from "@/components/site/BenefitsGate";
 import { FilterChip } from "@/components/site/FilterChip";
 import { PartnerCard } from "@/components/site/PartnerCard";
 import { PartnerDetailDialog } from "@/components/site/PartnerDetailDialog";
@@ -13,16 +14,16 @@ import {
   BENEFIT_DISCLAIMER,
   BENEFIT_TIERS,
   BENEFIT_TIER_ORDER,
-  EXACT_BENEFIT_CTA,
   type BenefitTier,
 } from "@/lib/data/benefits";
 import {
-  CITY_OPTIONS,
-  PARTNERS,
-  PARTNER_CATEGORIES,
-  SORT_OPTIONS,
-  type Partner,
-} from "@/lib/data/partners";
+  categoriesOf,
+  citiesOf,
+  partnerFromLiveStore,
+  servesCity,
+  type LiveStore,
+} from "@/lib/data/live-benefits";
+import { PARTNERS, SORT_OPTIONS, type Partner } from "@/lib/data/partners";
 
 const TIER_RANK: Record<BenefitTier, number> = { exclusive: 0, deep: 1, basic: 2 };
 
@@ -41,6 +42,14 @@ const TIER_RANK: Record<BenefitTier, number> = { exclusive: 0, deep: 1, basic: 2
  * 3. The state lives in the URL. A filtered directory is the thing a member sends to
  *    a neighbour; before this it was unshareable, and the search dialog had nowhere
  *    to deep-link to.
+ *
+ * Since the platform opened a per-card benefits endpoint the page has two sources.
+ * Without a card it lists the club's static directory — who the partners are, and
+ * nothing about what any one member gets. With a card, the gate at the top swaps the
+ * whole list for the platform's answer for that card: the same tiles, but each
+ * carrying the benefit its merchant actually wrote, and the exclusivity flag and
+ * branch addresses that only exist per-card. The card number never enters the URL —
+ * the filters are shareable, a card is not.
  */
 type Filters = {
   q: string;
@@ -98,6 +107,31 @@ export function PartnerBrowser() {
   const [detailOpen, setDetailOpen] = React.useState(false);
   const lastTrigger = React.useRef<HTMLButtonElement | null>(null);
 
+  /** The platform's answer for a card, or null while the page is a shop window. */
+  const [live, setLive] = React.useState<LiveStore[] | null>(null);
+
+  const source = React.useMemo<Partner[]>(
+    () => (live ? live.map(partnerFromLiveStore) : PARTNERS),
+    [live],
+  );
+
+  // The two sources do not carry the same towns or the same trades, so the pickers
+  // are built from whatever list is on screen. Declaring them once meant a filter
+  // could offer a city no visible partner was in — and, after a lookup, hide every
+  // partner in a city the static list happened not to name.
+  const cityOptions = React.useMemo(
+    () => [
+      { value: "all", label: "כל הערים" },
+      ...citiesOf(source).map((c) => ({ value: c, label: c })),
+    ],
+    [source],
+  );
+
+  const categoryOptions = React.useMemo(
+    () => [DEFAULTS.cat, ...categoriesOf(source)],
+    [source],
+  );
+
   const apply = React.useCallback(
     (patch: Partial<Filters>) => {
       setFilters((prev) => {
@@ -115,6 +149,23 @@ export function PartnerBrowser() {
     window.history.replaceState(null, "", pathname);
   }, [pathname]);
 
+  /**
+   * Swapping the source invalidates everything downstream of it: a city or category
+   * chosen against the old list may not exist in the new one, and the open dialog is
+   * showing a record that is about to be replaced by a different object for the same
+   * shop. The free-text query survives — it is the one filter that means the same
+   * thing to both lists.
+   */
+  const receive = React.useCallback(
+    (stores: LiveStore[] | null) => {
+      setLive(stores);
+      setDetailOpen(false);
+      setSelected(null);
+      apply({ city: DEFAULTS.city, cat: DEFAULTS.cat, tier: DEFAULTS.tier });
+    },
+    [apply],
+  );
+
   // Back/forward still move through whatever the URL says.
   React.useEffect(() => {
     const onPop = () =>
@@ -131,40 +182,59 @@ export function PartnerBrowser() {
 
   const shown = React.useMemo(() => {
     const q = query.trim();
-    const list = PARTNERS.filter(
+    const list = source.filter(
       (p) =>
         (category === DEFAULTS.cat || p.category === category) &&
-        (city === "all" || p.city === city) &&
+        (city === "all" || servesCity(p, city)) &&
         (tier === "all" || p.tier === tier) &&
         (!q ||
           p.name.includes(q) ||
           (p.category?.includes(q) ?? false) ||
           (p.trade?.includes(q) ?? false) ||
+          // With a card loaded the benefit is the text a member is most likely to
+          // search — "כפל מבצעים", "עדשות" — and it exists nowhere else on the page.
+          (p.benefit?.includes(q) ?? false) ||
+          (p.cities?.some((c) => c.includes(q)) ?? false) ||
           (p.city?.includes(q) ?? false)),
     );
+
+    const firstCity = (p: Partner) => p.cities?.[0] ?? p.city ?? "";
 
     const sorted = [...list];
     if (sort === "name") sorted.sort((a, b) => a.name.localeCompare(b.name, "he"));
     else if (sort === "city")
-      sorted.sort((a, b) => (a.city ?? "").localeCompare(b.city ?? "", "he"));
-    // "featured" is the club's own order: exclusive shops first, then depth, then name.
+      sorted.sort((a, b) => firstCity(a).localeCompare(firstCity(b), "he"));
+    // "featured" is the club's own order: exclusive shops first, then the ones the
+    // platform itself pins, then depth, then name.
     else
       sorted.sort(
         (a, b) =>
           // Partners without a tier sort last rather than first: an unranked
           // shop is not the club's pick, it is a shop we have no depth for yet.
           (a.tier ? TIER_RANK[a.tier] : 9) - (b.tier ? TIER_RANK[b.tier] : 9) ||
+          Number(!!b.featured) - Number(!!a.featured) ||
           a.name.localeCompare(b.name, "he"),
       );
     return sorted;
-  }, [query, city, category, tier, sort]);
+  }, [source, query, city, category, tier, sort]);
 
-  // Tier data has not landed for the directory yet; the axis hides itself until
-  // any partner carries one.
-  const anyTiered = React.useMemo(() => PARTNERS.some((p) => p.tier), []);
+  // The tier axis is only worth a rail when the list actually splits on it. The
+  // static directory carries no tiers at all, and a card's list carries them only
+  // where the platform flags a partner exclusive.
+  const anyTiered = React.useMemo(() => source.some((p) => p.tier), [source]);
 
   return (
     <>
+      {/* The page's one gold rung on the surface ladder, and the only ask it makes.
+          It sits above the filter bar rather than under the list: with a card in
+          hand the list below it is a different list, so the entry point belongs
+          before the thing it changes, not after it. */}
+      <div className="bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] pt-[clamp(16px,3vw,28px)] pb-[clamp(8px,2vw,16px)]">
+        <div className="mx-auto max-w-[var(--container-max)]">
+          <BenefitsGate onLoaded={receive} loadedCount={live ? shown.length : null} />
+        </div>
+      </div>
+
       <div className="sticky top-[65px] z-20 border-b border-[var(--color-border)] bg-[var(--color-canvas)] px-[clamp(16px,4vw,24px)] py-[clamp(12px,2.5vw,20px)] min-[1060px]:top-[86px]">
         <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-3">
           <div className="grid grid-cols-1 items-end gap-3 min-[560px]:grid-cols-2 min-[1060px]:grid-cols-[1.6fr_1fr_1fr_1fr]">
@@ -176,13 +246,13 @@ export function PartnerBrowser() {
               onChange={(e) => apply({ q: e.target.value })}
             />
             <Select
-              options={CITY_OPTIONS}
+              options={cityOptions}
               value={city}
               aria-label="סינון לפי עיר"
               onValueChange={(v) => apply({ city: v })}
             />
             <Select
-              options={PARTNER_CATEGORIES}
+              options={categoryOptions}
               value={category}
               aria-label="סינון לפי קטגוריה"
               onValueChange={(v) => apply({ cat: v })}
@@ -263,7 +333,7 @@ export function PartnerBrowser() {
           {shown.length > 0 ? (
             <ul className="m-0 grid list-none grid-cols-2 gap-3 p-0 min-[560px]:grid-cols-3 min-[900px]:grid-cols-4 min-[1200px]:grid-cols-5 min-[560px]:gap-4">
               {shown.map((p) => (
-                <li key={p.name} className="min-w-0">
+                <li key={`${p.name}-${p.trade ?? ""}`} className="min-w-0">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -284,13 +354,17 @@ export function PartnerBrowser() {
           ) : (
             <EmptyState
               icon="store"
-              title="לא נמצאו בתי עסק"
-              description="אפשר לנקות את הסינון ולהתחיל מחדש, או לספר לנו איפה אתם קונים כדי שנפנה לבית העסק."
+              title={
+                live && activeCount === 0 ? "לא נמצאו הטבות לכרטיס הזה" : "לא נמצאו בתי עסק"
+              }
+              description={
+                live && activeCount === 0
+                  ? "יכול להיות שהכרטיס עדיין לא שויך למועדון. אפשר לנסות כרטיס אחר, או לפנות אלינו דרך אפליקציית שירות ותמיכה."
+                  : "אפשר לנקות את הסינון ולהתחיל מחדש, או לספר לנו איפה אתם קונים כדי שנפנה לבית העסק."
+              }
               action={
                 <div className="flex flex-wrap justify-center gap-2.5">
-                  <Button onClick={reset}>
-                    ניקוי הסינון
-                  </Button>
+                  {activeCount > 0 ? <Button onClick={reset}>ניקוי הסינון</Button> : null}
                   <Button as="a" href="/merchants" variant="tertiary">
                     הצטרפות בתי עסק
                   </Button>
@@ -299,29 +373,26 @@ export function PartnerBrowser() {
             />
           )}
 
-          {/* The list is a shop window until the member can see their own number on
-              it. This is the brief's "הזינו מספר כרטיס לצפייה בהטבה המדויקת שלכם". */}
-          {/* The one ask on this page, so it takes the gold rung of the surface
-              ladder and a gold hairline — a step warmer than the sand panel it was,
-              which on a white band under a grid of white tiles disappeared. */}
-          <div className="mt-2 flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--gold-300)] bg-[var(--color-canvas-pale)] p-[var(--card-padding)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
+          {/* The ask itself moved to the gate at the top of the page, where it can
+              actually change the list. What is left here is the one case the gate
+              cannot serve: a card that has arrived but was never activated, which
+              the platform will not answer for. It is a hairline note, not a second
+              gold panel — the page gets one rung on the ladder and the gate has it. */}
+          {live ? null : (
+          <div className="mt-2 flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-canvas)] p-[var(--card-padding)] min-[720px]:flex-row min-[720px]:items-center min-[720px]:justify-between">
             <div className="flex flex-col gap-1.5">
-              <b className="text-[clamp(17px,2.6vw,20px)]">{EXACT_BENEFIT_CTA}</b>
+              <b className="text-[clamp(16px,2.4vw,19px)]">הכרטיס עדיין לא הופעל?</b>
               <span className="text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-body)]">
-                {anyTiered
-                  ? "הרשימה כאן מציגה את סוג ההטבה. עם מספר הכרטיס רואים את ההטבה המדויקת בכל שותף, כולל החנויות הבלעדיות למועדון."
-                  : "עם מספר הכרטיס רואים את ההטבה המדויקת בכל אחד מבתי העסק ברשימה."}
+                מפעילים אותו פעם אחת, ומשם ההטבות בכל הרשימה נפתחות.
               </span>
             </div>
             <div className="flex flex-col gap-2.5 min-[420px]:flex-row min-[720px]:flex-none">
-              <Button as="a" href="/balance" className="justify-center">
-                כניסה עם מספר כרטיס
-              </Button>
               <Button as="a" href="/activate" variant="tertiary" className="justify-center">
                 הפעלת כרטיס
               </Button>
             </div>
           </div>
+          )}
 
           <span className="text-[length:var(--text-caption)] text-[var(--color-mute)]">
             {BENEFIT_DISCLAIMER}
@@ -334,6 +405,7 @@ export function PartnerBrowser() {
         open={detailOpen}
         onOpenChange={setDetailOpen}
         restoreFocusTo={lastTrigger}
+        live={live !== null}
       />
     </>
   );

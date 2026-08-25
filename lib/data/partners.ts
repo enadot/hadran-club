@@ -1,4 +1,5 @@
 import type { BenefitTier } from "./benefits";
+import type { LiveBranch } from "./live-benefits";
 
 /**
  * The partner directory behind /benefits and the global search.
@@ -37,6 +38,17 @@ export type Partner = {
   benefit?: string;
   /** Per-merchant conditions, shown in the detail dialog. */
   terms?: string[];
+
+  /* The four below are only ever set on a partner built from a live per-card
+     lookup — see lib/data/live-benefits.ts. A partner from the static directory
+     carries none of them, and every consumer treats them as optional. */
+
+  /** Every town the partner has a branch in, where `city` names at most one. */
+  cities?: string[];
+  /** Named branches with address and opening hours, for the detail dialog. */
+  branchList?: LiveBranch[];
+  /** The platform's featured flag, which the "הנבחרת שלנו" sort leads with. */
+  featured?: boolean;
 };
 
 /** "4 סניפים" / "סניף אחד" — Hebrew has no bare "1 branch". */
@@ -612,22 +624,10 @@ export const PARTNERS: Partner[] = [
   },
 ]
 
-/** The categories actually present in the directory, for the filter. Derived, not
- *  declared: a hardcoded list offered filters that matched nothing. */
-export const PARTNER_CATEGORIES = [
-  "כל הקטגוריות",
-  ...Array.from(new Set(PARTNERS.map((p) => p.category).filter(Boolean) as string[])).sort(
-    (a, b) => a.localeCompare(b, "he"),
-  ),
-];
-
-/** Likewise the cities. */
-export const CITY_OPTIONS = [
-  { value: "all", label: "כל הערים" },
-  ...Array.from(new Set(PARTNERS.map((p) => p.city).filter(Boolean) as string[]))
-    .sort((a, b) => a.localeCompare(b, "he"))
-    .map((c) => ({ value: c, label: c })),
-];
+/* The category and city pickers used to be derived here, off this list alone. The
+ * directory now has a second source — the per-card benefit list, which carries its
+ * own towns and its own trades — so they are derived from whatever list is on screen
+ * instead: citiesOf() and categoriesOf() in ./live-benefits. */
 
 export const SORT_OPTIONS = [
   { value: "featured", label: "מיון: הנבחרת שלנו" },

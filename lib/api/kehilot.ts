@@ -18,6 +18,15 @@ const BASE_URL = (process.env.KEHILOT_API_BASE ?? "https://kehilotcard.co.il/api
 );
 
 /**
+ * Where the platform serves the files it references by relative path — merchant
+ * logos come back from the benefits lookup as `/uploads/photos/…`. It is the API
+ * host without the `/api` prefix, unless an environment says otherwise.
+ */
+export const ASSET_BASE = (
+  process.env.KEHILOT_ASSET_BASE ?? BASE_URL.replace(/\/api\/?$/, "")
+).replace(/\/+$/, "");
+
+/**
  * The balance lookup is documented as public and takes no key. The hook stays for the
  * endpoints that are not — set KEHILOT_API_KEY and the header goes out with every
  * call; leave it unset, as production does today, and nothing is sent.
@@ -198,4 +207,72 @@ export function activateCard(input: ActivateInput) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+}
+
+/* ------------------------------------------------------------------ benefits */
+
+/** One address of a partner, as the benefits lookup returns it. */
+export type PublicBenefitBranch = {
+  name?: string | null;
+  address?: string | null;
+  city?: string | null;
+  /** Returned by the platform and deliberately never forwarded — see the route
+   *  handler in app/api/card/benefits/route.ts. */
+  phone?: string | null;
+  opening_hours?: string | null;
+};
+
+/** One partner on a card's benefit list, as the platform returns it. */
+export type PublicBenefitStore = {
+  store_id?: number;
+  name?: string;
+  /** Relative to ASSET_BASE, e.g. "/uploads/photos/….png". Null where the
+   *  partner has supplied no mark. */
+  logo_url?: string | null;
+  category_id?: number | null;
+  category_name?: string | null;
+  category_ids?: number[];
+  /** The platform's own featured flag. */
+  pinned?: boolean;
+  accepts_card?: boolean;
+  /** The benefit in the merchant's own words — the whole point of this call. */
+  benefit_text?: string;
+  exclusive?: boolean;
+  branch_count?: number;
+  cities?: string[];
+  branches?: PublicBenefitBranch[];
+};
+
+/**
+ * The documented 200 body of GET /public/benefits/by-card/:card_code.
+ *
+ * `club_name`, `club_logo_url`, `benefits_slug`, `balance` and `points` are the
+ * operating club's own identity and wallet. They are typed here so the shape is
+ * honest about what arrives, and dropped at the route handler: Hadran Club is the
+ * front, and the platform's white-label plumbing has no place in a member's view.
+ */
+export type PublicBenefits = {
+  club_name?: string | null;
+  club_logo_url?: string | null;
+  benefits_slug?: string | null;
+  balance?: number;
+  points?: number;
+  stores?: PublicBenefitStore[];
+  categories?: { category_id?: number; name?: string }[];
+  cities?: string[];
+};
+
+/**
+ * GET /public/benefits/by-card/:card_code — every partner this card carries a
+ * benefit at, with the benefit text, the exclusivity flag and the branch list.
+ *
+ * Matched on the last eight digits, exactly like the balance lookup, and answers
+ * 404 with `{ error: { code: "CARD_NOT_FOUND" } }` for a card the platform does
+ * not know. No key: the number in hand is the credential.
+ */
+export function getPublicBenefits(cardCode: string) {
+  return request<PublicBenefits>(
+    `/public/benefits/by-card/${encodeURIComponent(cardCode)}`,
+    { method: "GET" },
+  );
 }

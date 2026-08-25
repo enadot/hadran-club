@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { partnerInitials } from "@/lib/data/partners";
+import { RemoteLogo } from "./RemoteLogo";
 
 /**
  * The plate a partner's logo sits on.
@@ -43,7 +44,13 @@ export function PartnerLogo({
         className,
       )}
     >
-      {src ? (
+      {!src ? (
+        partnerInitials(name)
+      ) : /^https?:\/\//i.test(src) ? (
+        // A file on the platform's host, which can move or be blocked — it needs a
+        // fallback, and a fallback needs a client boundary.
+        <RemoteLogo src={src} padding={padding} fallback={partnerInitials(name)} />
+      ) : (
         // Decorative: the shop's name is always rendered as text beside it.
         //
         // Positioned, not laid out: a percentage height against a parent sized
@@ -58,8 +65,6 @@ export function PartnerLogo({
           decoding="async"
           className={cn("absolute inset-0 size-full object-contain", padding)}
         />
-      ) : (
-        partnerInitials(name)
       )}
     </span>
   );

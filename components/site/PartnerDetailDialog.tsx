@@ -12,7 +12,8 @@ import { Badge } from "@/components/brand/Badge";
 import { Button } from "@/components/brand/Button";
 import { Icon } from "@/components/brand/Icon";
 import { BENEFIT_TIERS, BENEFIT_DISCLAIMER, EXACT_BENEFIT_CTA } from "@/lib/data/benefits";
-import { branchLabel, type Partner } from "@/lib/data/partners";
+import { reachLabel } from "@/lib/data/live-benefits";
+import { type Partner } from "@/lib/data/partners";
 import { PartnerLogo } from "@/components/brand/PartnerLogo";
 
 /**
@@ -31,18 +32,32 @@ export function PartnerDetailDialog({
   open,
   onOpenChange,
   restoreFocusTo,
+  live = false,
 }: {
   partner: Partner | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** The row that opened the dialog, refocused on close. */
   restoreFocusTo?: React.RefObject<HTMLButtonElement | null>;
+  /** True once a card is loaded: the benefit shown is that card's own, so the
+   *  panel asking for a card number has nothing left to ask for. */
+  live?: boolean;
 }) {
   // The partner is held past the close rather than cleared with it. Driving
   // `open` off `partner === null` meant the content unmounted in the same commit
   // as the close, and Radix — which restores focus to whatever was focused when
   // it opened — had nothing left to restore to, so focus fell to <body>.
   const tier = partner?.tier ? BENEFIT_TIERS[partner.tier] : null;
+
+  const branches = partner?.branchList ?? [];
+  const reach = partner ? reachLabel(partner) : null;
+
+  // Which shop's branch list is expanded, rather than a boolean — the dialog is one
+  // mounted component reused for every shop, and a boolean stayed open when the next
+  // one was opened. Naming the shop makes the collapse reset a consequence of the
+  // partner changing instead of an effect that has to chase it.
+  const [expandedFor, setExpandedFor] = React.useState<string | null>(null);
+  const showAllBranches = !!partner && expandedFor === partner.name;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -93,8 +108,18 @@ export function PartnerDetailDialog({
                 <span className="text-[length:var(--text-caption)] font-bold tracking-[var(--tracking-wide)] text-[var(--color-mute)]">
                   ההטבה
                 </span>
+                {/* The merchants wrote these themselves and none of them wrote to a
+                    length: some are four words, some are a paragraph of terms with
+                    prices in it. A headline clamp set for the short ones turns the
+                    long ones into a wall, so the size follows the text. */}
                 {partner.benefit ? (
-                  <b className="text-[clamp(17px,2.6vw,20px)] leading-[1.4]">{partner.benefit}</b>
+                  partner.benefit.length > 90 ? (
+                    <p className="m-0 text-[length:var(--text-body-md)] leading-[1.65] font-medium whitespace-pre-line text-[var(--color-ink)]">
+                      {partner.benefit}
+                    </p>
+                  ) : (
+                    <b className="text-[clamp(17px,2.6vw,20px)] leading-[1.4]">{partner.benefit}</b>
+                  )
                 ) : (
                   <b className="text-[clamp(17px,2.6vw,20px)] leading-[1.4]">
                     ההטבה המדויקת מוצגת עם מספר הכרטיס
@@ -127,17 +152,67 @@ export function PartnerDetailDialog({
               </div>
               ) : null}
 
-              {partner.city || partner.branches ? (
-                <div className="flex items-center gap-2.5 border-t border-[var(--color-border)] pt-5 text-[length:var(--text-body-sm)] text-[var(--color-body)]">
-                  <Icon name="map-pin" size={18} color="var(--color-primary-deep)" />
-                  <span>
-                    {[partner.branches ? branchLabel(partner.branches) : null, partner.city]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </span>
+              {reach || partner.branchList?.length ? (
+                <div className="flex flex-col gap-3 border-t border-[var(--color-border)] pt-5">
+                  {reach ? (
+                    <div className="flex items-center gap-2.5 text-[length:var(--text-body-sm)] text-[var(--color-body)]">
+                      <Icon name="map-pin" size={18} color="var(--color-primary-deep)" />
+                      <span>{reach}</span>
+                    </div>
+                  ) : null}
+
+                  {/* A chain can run to forty addresses. Six is enough to answer
+                      "is there one near me", and the rest are one press away
+                      rather than a scroll the dialog has to absorb. */}
+                  {branches.length ? (
+                    <>
+                      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+                        {(showAllBranches ? branches : branches.slice(0, 6)).map((b, i) => {
+                          const title = b.name || b.city || b.address || "";
+                          const detail = [b.address, b.city && b.city !== title ? b.city : null]
+                            .filter(Boolean)
+                            .join(", ");
+                          return (
+                            <li
+                              key={`${title}-${b.address ?? ""}-${i}`}
+                              className="flex flex-col gap-0.5 rounded-[var(--radius-md)] bg-[var(--color-canvas-soft)] px-3.5 py-2.5"
+                            >
+                              <b className="text-[length:var(--text-body-sm)] leading-[1.4]">{title}</b>
+                              {detail ? (
+                                <span className="text-[length:var(--text-caption)] leading-[1.45] text-[var(--color-mute)]">
+                                  {detail}
+                                </span>
+                              ) : null}
+                              {b.hours ? (
+                                <span className="text-[length:var(--text-caption)] leading-[1.45] text-[var(--color-mute)]">
+                                  {b.hours}
+                                </span>
+                              ) : null}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                      {branches.length > 6 ? (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="self-start"
+                          iconAfter={showAllBranches ? "chevron-up" : "chevron-down"}
+                          onClick={() =>
+                            setExpandedFor(showAllBranches ? null : (partner.name ?? null))
+                          }
+                        >
+                          {showAllBranches
+                            ? "הצגת פחות סניפים"
+                            : `הצגת כל ${branches.length} הסניפים`}
+                        </Button>
+                      ) : null}
+                    </>
+                  ) : null}
                 </div>
               ) : null}
 
+              {live ? null : (
               <div className="flex flex-col gap-3 rounded-[var(--radius-lg)] bg-[var(--color-canvas-soft)] p-4">
                 <span className="text-[length:var(--text-body-sm)] leading-[1.5] font-semibold">
                   {EXACT_BENEFIT_CTA}
@@ -157,6 +232,7 @@ export function PartnerDetailDialog({
                   </Button>
                 </div>
               </div>
+              )}
 
               <span className="text-[length:var(--text-caption)] leading-[1.5] text-[var(--color-mute)]">
                 {BENEFIT_DISCLAIMER}
