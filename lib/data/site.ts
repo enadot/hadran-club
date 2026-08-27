@@ -25,11 +25,12 @@ export const CARD_ACTIVATION_URL =
   process.env.NEXT_PUBLIC_CARD_ACTIVATION_URL ?? "https://kehilotcard.co.il/activate";
 
 /**
- * Ordering a card is not something this site does — it happens in the שירות ותמיכה
- * app that ships on every Hadran device. The site only says so, in the places a
- * member would otherwise look for a form.
+ * Getting a card is not something this site does, and it is not done in the app
+ * either: a member picks the card up in person at one of Hadran's authorised
+ * stores. The site only says so, in the places a member would otherwise look
+ * for a form.
  */
-export const CARD_ORDER_CHANNEL = "אפליקציית שירות ותמיכה שבמכשירי הדרן";
+export const CARD_ORDER_CHANNEL = "איסוף עצמי מהחנויות המשווקות של הדרן";
 
 export type NavLink = {
   label: string;

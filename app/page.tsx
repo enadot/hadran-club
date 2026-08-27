@@ -20,7 +20,7 @@ const STEPS = [
   {
     n: "1",
     title: "מקבלים את הכרטיס",
-    body: "לקוחות הדרן מזמינים את הכרטיס באפליקציית שירות ותמיכה שבמכשיר, ללא עלות.",
+    body: "לקוחות הדרן אוספים את הכרטיס מאחת החנויות המשווקות של הדרן, ללא עלות.",
     icon: "credit-card",
   },
   {
@@ -105,7 +105,7 @@ export default function HomePage() {
 
             <p className="m-0 max-w-[540px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
               מועדון ההטבות של לקוחות הדרן — מאות בתי עסק, חלקם בהטבה בלעדית לחברי המועדון,
-              בתנאים שלא תמצאו לבד
+              בתנאים שלא תמצאו לבד. החברות ללא עלות, לכל לקוחות הדרן.
             </p>
 
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
@@ -329,7 +329,7 @@ export default function HomePage() {
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>איך זה עובד</Eyebrow>
             <SectionTitle>שלושה צעדים, וזהו</SectionTitle>
-            <SectionLead>ההפעלה לוקחת דקה. מכאן הכרטיס פשוט עובד.</SectionLead>
+            <SectionLead>הכרטיס ללא עלות, ההפעלה לוקחת דקה, ומכאן הוא פשוט עובד.</SectionLead>
           </Reveal>
 
           {/* One row per step, separated by a hairline rather than boxed into a
