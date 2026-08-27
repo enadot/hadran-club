@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 const NOTES: { icon: IconName; text: string }[] = [
   { icon: "badge-percent", text: "ההנחה יורדת בקופה במקום — בלי צבירה ובלי קופון." },
   { icon: "credit-card", text: "מזינים את המספר המלא המודפס על הכרטיס, בלי רווחים." },
-  { icon: "package", text: `עוד לא קיבלתם כרטיס? הזמנת הכרטיס מתבצעת ב${CARD_ORDER_CHANNEL}.` },
+  { icon: "package", text: `עוד לא קיבלתם כרטיס? קבלת הכרטיס מתבצעת ב${CARD_ORDER_CHANNEL}, ללא עלות.` },
   { icon: "shield-check", text: "הפרטים נשמרים במאובטח ומשמשים לזיהוי בעל הכרטיס בלבד." },
   { icon: "help-circle", text: `צריכים עזרה? השירות והתמיכה למועדון נמצאים ב${SUPPORT_CHANNEL}.` },
 ];
