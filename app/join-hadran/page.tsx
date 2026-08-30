@@ -112,7 +112,7 @@ export default function JoinHadranPage() {
         </Container>
       </Band>
 
-      <Band id="stores" tone="sand" divided>
+      <Band id="stores" tone="sand" divided className="scroll-mt-[90px]">
         <Container className="flex flex-col gap-[var(--section-gap)]">
           <Reveal className="flex flex-col gap-3">
             <Eyebrow>החנויות המשווקות</Eyebrow>

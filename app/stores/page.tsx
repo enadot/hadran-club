@@ -46,8 +46,8 @@ export default function StoresPage() {
             <Button as="a" href="/activate" size="lg">
               כבר קיבלתי — להפעלת הכרטיס
             </Button>
-            <Button as="a" href="/benefits" size="lg" variant="tertiary">
-              לרשימת בתי העסק
+            <Button as="a" href="#directory" size="lg" variant="tertiary">
+              לרשימת החנויות
             </Button>
           </>
         }
@@ -72,7 +72,7 @@ export default function StoresPage() {
         </Container>
       </Band>
 
-      <Band tone="sand" divided>
+      <Band id="directory" tone="sand" divided className="scroll-mt-[90px]">
         <Container className="flex flex-col gap-[var(--section-gap)]">
           <StoreDirectory />
 
