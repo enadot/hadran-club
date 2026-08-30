@@ -98,23 +98,57 @@ export default function HomePage() {
         <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[var(--section-gap)]">
           <div className="flex flex-col items-start gap-6">
             <h1 className="m-0 font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-[1.04] font-extrabold tracking-[var(--tracking-display-lg)]">
-              החיסכון שמרגישים
+              לקוחות הדרן —
               <br />
-              בסוף החודש
+              הרווחתם בענק!
             </h1>
 
             <p className="m-0 max-w-[540px] text-[clamp(17px,2.5vw,20px)] leading-[1.6] text-[var(--color-body)]">
-              מועדון ההטבות של לקוחות הדרן — מאות בתי עסק, חלקם בהטבה בלעדית לחברי המועדון,
-              בתנאים שלא תמצאו לבד. החברות ללא עלות, לכל לקוחות הדרן.
+              מעבר למערכת ההגנה הבלעדית שנותנת לכם שקט דיגיטלי, חברת הדרן מפנקת אתכם בכרטיס
+              הדרן קלאב עם אלפי הנחות נדירות במאות בתי עסק! חיסכון חודשי ממוצע: 350 שקלים!
             </p>
 
+            {/* The two doors this hero opens: a Hadran customer who has not picked up a
+                card yet, and a reader who is not a Hadran customer at all. Both land on
+                the same shop directory — it is the counter that serves both — so each
+                label has to say which reader it is for.
+
+                The site's own two actions stay under them as links rather than a third
+                and fourth button: a member who came to check a balance should not have
+                to choose between four buttons of equal weight. */}
             <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
-              <Button as="a" href="/benefits" size="lg">
+              <Button
+                as="a"
+                href="/stores"
+                size="lg"
+                className="max-w-full text-center whitespace-normal"
+              >
+                אני לקוח הדרן, איך מצטרפים למועדון?
+              </Button>
+              <Button
+                as="a"
+                href="/join-hadran"
+                size="lg"
+                variant="secondary"
+                className="max-w-full text-center whitespace-normal"
+              >
+                אני רוצה להצטרף להדרן וליהנות מהמועדון!
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[length:var(--text-body-sm)]">
+              <Link
+                href="/benefits"
+                className="font-semibold text-[var(--color-primary-deep)] underline-offset-4 hover:underline"
+              >
                 לרשימת בתי העסק
-              </Button>
-              <Button as="a" href="/activate" size="lg" variant="tertiary">
+              </Link>
+              <Link
+                href="/activate"
+                className="font-semibold text-[var(--color-primary-deep)] underline-offset-4 hover:underline"
+              >
                 הפעלת כרטיס
-              </Button>
+              </Link>
             </div>
           </div>
 

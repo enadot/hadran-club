@@ -50,6 +50,7 @@ export const NAV_LINKS: NavLink[] = [
   { label: "דף הבית", href: "/", icon: "home" },
   { label: "רשימת ההטבות", href: "/benefits", icon: "store" },
   { label: "הפעלת כרטיס", href: "/activate", icon: "credit-card" },
+  { label: "איפה מקבלים כרטיס", href: "/stores", icon: "map-pin" },
   { label: "בדיקת יתרה", href: "/balance", icon: "wallet" },
   { label: "לבתי עסק", href: "/merchants", icon: "store" },
   { label: "שאלות ותשובות", href: "/faq", icon: "help-circle" },
@@ -69,6 +70,7 @@ export const FOOTER_COLUMNS: {
     links: [
       { label: "אודות הדרן קלאב", href: "/" },
       { label: "איך זה עובד", href: "/#how" },
+      { label: "הצטרפות להדרן", href: "/join-hadran" },
       { label: "שאלות ותשובות", href: "/faq" },
       { label: "תקנון המועדון", href: "/terms" },
     ],
@@ -76,6 +78,7 @@ export const FOOTER_COLUMNS: {
   {
     title: "הכרטיס",
     links: [
+      { label: "איפה מקבלים כרטיס", href: "/stores" },
       { label: "הפעלת כרטיס", href: "/activate" },
       { label: "בדיקת יתרה", href: "/balance" },
       { label: "אזור אישי", href: MEMBER_AREA_URL, external: true },
