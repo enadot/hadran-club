@@ -12,6 +12,7 @@ import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
 import { PartnerCard } from "@/components/site/PartnerCard";
 import { MEMBER_AREA_URL } from "@/lib/data/site";
+import { cn } from "@/lib/utils";
 
 /** The three how-it-works steps. Receiving the card is not one of them: it comes
  *  with being a Hadran customer, so the first thing a member does here is activate
@@ -34,6 +35,24 @@ const STEPS = [
     title: "מציגים בקופה",
     body: "מציגים לפני התשלום, וההנחה יורדת מהחשבון מיד.",
     icon: "badge-percent",
+  },
+] as const;
+
+/** The hero's two doors, in the order the club needs them read. */
+const HERO_CHOICES = [
+  {
+    href: "/stores",
+    icon: "credit-card",
+    title: "אני לקוח הדרן",
+    body: "איך מצטרפים למועדון",
+    primary: true,
+  },
+  {
+    href: "/join-hadran",
+    icon: "user-plus",
+    title: "עוד לא לקוח הדרן?",
+    body: "להצטרפות להדרן וגם למועדון",
+    primary: false,
   },
 ] as const;
 
@@ -109,31 +128,58 @@ export default function HomePage() {
             </p>
 
             {/* The two doors this hero opens: a Hadran customer who has not picked up a
-                card yet, and a reader who is not a Hadran customer at all. Both land on
-                the same shop directory — it is the counter that serves both — so each
-                label has to say which reader it is for.
+                card yet, and a reader who is not a Hadran customer at all.
 
-                The site's own two actions stay under them as links rather than a third
-                and fourth button: a member who came to check a balance should not have
-                to choose between four buttons of equal weight. */}
-            <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap">
-              <Button
-                as="a"
-                href="/stores"
-                size="lg"
-                className="max-w-full text-center whitespace-normal"
-              >
-                אני לקוח הדרן, איך מצטרפים למועדון?
-              </Button>
-              <Button
-                as="a"
-                href="/join-hadran"
-                size="lg"
-                variant="secondary"
-                className="max-w-full text-center whitespace-normal"
-              >
-                אני רוצה להצטרף להדרן וליהנות מהמועדון!
-              </Button>
+                Not two buttons. Both labels are a whole sentence — "אני לקוח הדרן, איך
+                מצטרפים למועדון?" — and a pill sized to hold a sentence is a slab: on a
+                phone the pair filled the fold and pushed the card off it. The choice-row
+                pattern splits each one in two, a short bold line that says which reader
+                it is and a quiet line that says where it goes, so the same words read at
+                a glance and take a third of the height. The gold row is the club's own
+                door; the plain one is for a reader who is not a Hadran customer yet. */}
+            <div className="flex w-full max-w-[540px] flex-col gap-3">
+              {HERO_CHOICES.map((choice) => (
+                <Link
+                  key={choice.href}
+                  href={choice.href}
+                  className={cn(
+                    "group flex items-center gap-4 rounded-[var(--radius-xl)] p-4 no-underline",
+                    "transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out)]",
+                    "border hover:-translate-y-px",
+                    choice.primary
+                      ? "border-[var(--color-primary)] bg-[var(--color-primary)] hover:bg-[var(--color-primary-active)]"
+                      : "border-[var(--color-border)] bg-[var(--color-canvas)] hover:border-[var(--color-primary)]",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "grid size-11 flex-none place-items-center rounded-full",
+                      choice.primary
+                        ? "bg-[var(--color-canvas)]/60"
+                        : "bg-[var(--color-canvas-soft)]",
+                    )}
+                  >
+                    <Icon name={choice.icon} size={21} color="var(--color-primary-deep)" />
+                  </span>
+
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <b className="text-[length:var(--text-body-lg)] leading-[1.25] text-[var(--color-ink)]">
+                      {choice.title}
+                    </b>
+                    <span className="text-[length:var(--text-body-sm)] leading-[1.4] text-[var(--color-body)]">
+                      {choice.body}
+                    </span>
+                  </span>
+
+                  {/* Points along the reading direction, so in Hebrew it points left. */}
+                  <Icon
+                    name="chevron-left"
+                    size={20}
+                    color="var(--color-primary-deep)"
+                    className="flex-none transition-transform duration-[var(--duration-fast)] group-hover:-translate-x-0.5"
+                  />
+                </Link>
+              ))}
             </div>
 
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[length:var(--text-body-sm)]">
