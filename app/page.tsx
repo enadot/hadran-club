@@ -117,7 +117,7 @@ export default function HomePage() {
         <Container className="grid grid-cols-[repeat(auto-fit,minmax(min(440px,100%),1fr))] items-center gap-[var(--section-gap)]">
           <div className="flex flex-col items-start gap-6">
             <h1 className="m-0 font-[family-name:var(--font-display)] text-[clamp(38px,9vw,68px)] leading-[1.04] font-extrabold tracking-[var(--tracking-display-lg)]">
-              לקוחות הדרן —
+              לקוחות הדרן
               <br />
               הרווחתם בענק!
             </h1>
