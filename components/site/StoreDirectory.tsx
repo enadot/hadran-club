@@ -136,23 +136,24 @@ export function StoreDirectory() {
           wrapperClassName="max-w-[420px]"
         />
 
-        {/* Scrolls rather than wraps below ~600px: five chips wrapping to three
-            rows pushed the first shop off the fold. */}
-        <div className="-mx-[clamp(16px,4vw,24px)] overflow-x-auto px-[clamp(16px,4vw,24px)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex w-max gap-2">
-            <FilterChip selected={region === ALL} onClick={() => setRegion(ALL)}>
-              כל האזורים
+        {/* Wraps; it does not scroll sideways. A full-bleed horizontal scroller
+            read as the page itself sliding — a swipe that was meant to go down
+            dragged the strip, and in RTL it starts mid-track — for five chips
+            whose labels are one or two words. Two rows cost less than that. */}
+        <div className="flex flex-wrap gap-2">
+          <FilterChip size="sm" selected={region === ALL} onClick={() => setRegion(ALL)}>
+            כל האזורים
+          </FilterChip>
+          {REGIONS.map((r) => (
+            <FilterChip
+              key={r.region}
+              size="sm"
+              selected={region === r.region}
+              onClick={() => setRegion(r.region)}
+            >
+              {r.region.replace(/^אזור /, "")}
             </FilterChip>
-            {REGIONS.map((r) => (
-              <FilterChip
-                key={r.region}
-                selected={region === r.region}
-                onClick={() => setRegion(r.region)}
-              >
-                {r.region.replace(/^אזור /, "")}
-              </FilterChip>
-            ))}
-          </div>
+          ))}
         </div>
 
         <span
