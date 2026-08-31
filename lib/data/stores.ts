@@ -21,6 +21,9 @@ export type Store = {
   address?: string;
   /** Printed in the order supplied; a shop may list more than one line. */
   phones?: string[];
+  /** A condition on the visit rather than a place — "בתיאום מראש". Shown as a
+   *  tag, since a reader who misses it drives to a closed counter. */
+  note?: string;
 };
 
 export type StoreCity = {
@@ -40,49 +43,28 @@ export const REGIONS: StoreRegion[] = [
       {
         city: "ירושלים",
         stores: [
-          {
-            name: "אשכול הסלולר",
-            address: "פארן 7, רמת אשכול",
-            phones: ["02-536-4888"],
-          },
-          { name: "מאסטר פון", address: "שמגר 23, רוממה" },
-          {
-            name: "פלא אור",
-            address: "פינס 4 (דוידקה)",
-            phones: ["02-536-4888"],
-          },
+          { name: "פלא אור", address: "פינס 4 (דוידקה)" },
+          { name: "מאסטר פון", address: "שמגר 23" },
         ],
       },
       {
         city: "בית שמש",
         stores: [
-          { name: "יהושע — סוכן הדיגיטל", phones: ["052-769-6101"] },
           {
-            name: "idphone",
-            address: "נחל קישון 19 (בחניה)",
-            phones: ["02-650-0393"],
+            name: "יהושע דייטש",
+            address: "תלמוד בבלי 58",
+            note: "בתיאום מראש",
+            phones: ["052-769-6101"],
           },
         ],
       },
       {
-        city: "ביתר עילית",
-        stores: [
-          {
-            name: "המעבדה של ביתר",
-            address: "בניין דוד 21 (מפלס עליון)",
-            phones: ["052-766-9400"],
-          },
-        ],
+        city: "ביתר",
+        stores: [{ name: "המעבדה של ביתר", address: "בניין דוד 21 (מפלס עליון)" }],
       },
       {
         city: "מודיעין עילית",
-        stores: [
-          {
-            name: "סים טק",
-            address: "נתיבות המשפט 19",
-            phones: ["055-996-5036", "0722-71-2009"],
-          },
-        ],
+        stores: [{ name: "סים טק", address: "נתיבות המשפט 19" }],
       },
     ],
   },
@@ -91,38 +73,15 @@ export const REGIONS: StoreRegion[] = [
     cities: [
       {
         city: "בני ברק",
-        stores: [
-          {
-            name: "הדרן",
-            address: "רבי עקיבא 81 (קומת כניסה)",
-            phones: ["077-993-4471"],
-          },
-          { name: "תקשורת אישית", phones: ["052-500-1010"] },
-        ],
-      },
-      {
-        city: "רחובות",
-        stores: [
-          {
-            name: "דודי פון",
-            address: "יוסף וינר 2 (קומה שנייה)",
-            phones: ["052-717-4700"],
-          },
-        ],
+        stores: [{ name: "הדרן בני ברק", address: "רבי עקיבא 81" }],
       },
       {
         city: "אלעד",
-        stores: [
-          {
-            name: "tech-K",
-            address: "רבי יהודה הנשיא 92",
-            phones: ["03-693-1010"],
-          },
-        ],
+        stores: [{ name: "K-tech", address: "רבי יהודה הנשיא 92" }],
       },
       {
-        city: "רמת גן",
-        stores: [{ name: "סים שלום", address: 'אצ"ל 42', phones: ["055-770-3770"] }],
+        city: "רחובות",
+        stores: [{ name: "דודיפון", address: "יוסף וינר 2 (קומה שנייה)" }],
       },
     ],
   },
@@ -134,29 +93,18 @@ export const REGIONS: StoreRegion[] = [
         stores: [
           {
             name: "ניסים פתרונות מחשוב וסלולר",
-            phones: ["052-769-7777", "055-709-0000"],
+            note: "בתיאום מראש",
+            phones: ["052-769-7777"],
           },
         ],
       },
       {
         city: "חדרה",
-        stores: [
-          {
-            name: "נעם שיח",
-            address: "ישראל ישעיהו 10",
-            phones: ["052-404-3644"],
-          },
-        ],
+        stores: [{ name: "נעם שיח", address: "ישראל ישעיהו 10" }],
       },
       {
         city: "חריש",
-        stores: [
-          {
-            name: "פון אבר",
-            address: "חברותא 13, מרכז מסחרי בצוותא",
-            phones: ["058-540-6343"],
-          },
-        ],
+        stores: [{ name: "פון אבר", address: "חברותא 13, מרכז מסחרי בצוותא" }],
       },
       {
         city: "חיפה",
@@ -164,17 +112,18 @@ export const REGIONS: StoreRegion[] = [
       },
       {
         city: "קרית אתא",
-        stores: [{ name: "אלקטרומיקס", phones: ["053-717-3783"] }],
+        stores: [
+          { name: "אלקטרומיקס", note: "בתיאום מראש", phones: ["053-717-3783"] },
+          { name: "שומר מסך", address: "המייסדים 4" },
+        ],
+      },
+      {
+        city: "טבריה",
+        stores: [{ name: "סים פלוס", address: "ז'בוטינסקי 1" }],
       },
       {
         city: "צפת",
-        stores: [
-          {
-            name: "קניון החשמל",
-            address: "ירושלים",
-            phones: ["04-682-245691"],
-          },
-        ],
+        stores: [{ name: "קניון החשמל", address: "ירושלים 91" }],
       },
     ],
   },
@@ -182,26 +131,15 @@ export const REGIONS: StoreRegion[] = [
     region: "אזור הדרום",
     cities: [
       {
-        city: "אשקלון",
+        city: "אשדוד",
         stores: [
-          {
-            name: "ישראטק",
-            address: "שפירא 17 (מאחורי הבניין)",
-            phones: ["052-710-5398"],
-          },
+          { name: "מרכז הסלולר", address: "יהודה הנשיא 8" },
+          { name: "Ok Tech", note: "בתיאום מראש", phones: ["08-850-5000"] },
         ],
       },
       {
-        city: "אשדוד",
-        stores: [
-          { name: "Tech Ok", address: "בתיאום מראש", phones: ["08-850-5000"] },
-          {
-            name: "נקסט פון",
-            address: "גשר עד הלום, ליד מכבי שירותי בריאות",
-            phones: ["050-415-5159"],
-          },
-          { name: "מרכז הסלולר", phones: ["055-677-7772"] },
-        ],
+        city: "אשקלון",
+        stores: [{ name: "ישראטק", address: "שפירא 17 (מאחורי הבניין)" }],
       },
     ],
   },

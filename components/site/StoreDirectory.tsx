@@ -48,7 +48,7 @@ function storeMatches(store: Store, city: string, q: string, qDigits: string) {
   if (qDigits.length >= 3 && store.phones?.some((p) => onlyDigits(p).includes(qDigits))) {
     return true;
   }
-  return [store.name, store.address, city].some((field) => normalise(field ?? "").includes(q));
+  return [store.name, store.address, store.note, city].some((field) => normalise(field ?? "").includes(q));
 }
 
 /** Narrows the tree to what matches, dropping cities and regions left empty.
@@ -100,6 +100,15 @@ function StoreRow({ store }: { store: Store }) {
       {store.address ? (
         <span className="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-body)]">
           {store.address}
+        </span>
+      ) : null}
+
+      {/* "בתיאום מראש" is the difference between a visit and a wasted drive, so
+          it is a tag rather than another grey line under the address. */}
+      {store.note ? (
+        <span className="mt-0.5 inline-flex w-fit items-center gap-1.5 rounded-full bg-[var(--color-canvas-soft)] px-2.5 py-1 text-[length:var(--text-caption)] font-semibold text-[var(--color-primary-deep)]">
+          <Icon name="clock" size={13} color="var(--color-primary-deep)" />
+          {store.note}
         </span>
       ) : null}
 
