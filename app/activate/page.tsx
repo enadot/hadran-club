@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "הפעלת הדרן קארד",
   description:
     "קיבלתם כרטיס? הזנת המספר שעל הכרטיס ופרטי בעל הכרטיס משייכת אותו אליכם ומפעילה את ההנחה בקופה.",
+  alternates: { canonical: "/activate" },
 };
 
 /**

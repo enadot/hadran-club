@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "שאלות ותשובות",
   description:
     "כל מה שחברי המועדון שואלים על הדרן קארד — ההנחה, המימוש בקופה, הכרטיס עצמו ובתי העסק השותפים.",
+  alternates: { canonical: "/faq" },
 };
 
 export default function FaqPage() {

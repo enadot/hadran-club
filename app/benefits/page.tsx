@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "רשימת ההטבות",
   description:
     "רשימת החנויות וההטבות שלכם — רשתות מזון, ביגוד, ספרי קודש, אופטיקה וכלי בית. לכל שותף סוג ההטבה שלו, ויש חנויות שההטבה בהן זמינה אך ורק לחברי הדרן קלאב.",
+  alternates: { canonical: "/benefits" },
 };
 
 /** The filter bar and the list are one interactive unit; this stands in for both

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Band, Container, Eyebrow, SectionLead, SectionTitle } from "@/components/site/Band";
 import { Reveal } from "@/components/site/Reveal";
@@ -11,7 +12,7 @@ import { HeroLogoWall } from "@/components/site/HeroLogoWall";
 import { BENEFIT_TIERS, BENEFIT_TIER_ORDER } from "@/lib/data/benefits";
 import { PARTNERS } from "@/lib/data/partners";
 import { PartnerCard } from "@/components/site/PartnerCard";
-import { MEMBER_AREA_URL } from "@/lib/data/site";
+import { MEMBER_AREA_URL, SITE_URL } from "@/lib/data/site";
 import { cn } from "@/lib/utils";
 
 /** The three how-it-works steps. Receiving the card is not one of them: it comes
@@ -94,12 +95,45 @@ const SHOWCASE = [...PARTNERS]
   .sort((a, b) => (a.tier === "exclusive" ? -1 : 0) - (b.tier === "exclusive" ? -1 : 0))
   .slice(0, 8);
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+/** Tells search engines the site's name, so a search for the club returns it under
+ *  "הדרן קלאב" rather than under the host name. */
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "הדרן קלאב",
+      alternateName: ["הדרן קארד", "Hadran Club"],
+      inLanguage: "he",
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      url: SITE_URL,
+      name: "הדרן קלאב",
+      alternateName: "Hadran Club",
+      logo: `${SITE_URL}/logo-mark.svg`,
+    },
+  ],
+};
+
 export default function HomePage() {
   const exclusiveCount = PARTNERS.filter((p) => p.tier === "exclusive").length;
   const cityCount = new Set(PARTNERS.map((p) => p.city).filter(Boolean)).size;
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+      />
       {/* ── Hero ─────────────────────────────────────────────────────────────
           Rendered without a scroll reveal: it is above the fold, so animating it
           in would only delay the LCP. */}

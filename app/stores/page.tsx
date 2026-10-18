@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "איפה מקבלים את הכרטיס",
   description:
     "כרטיס הדרן קלאב ניתן ללא עלות ללקוחות הדרן, באיסוף עצמי מהחנויות המשווקות. כאן הרשימה לפי אזור ועיר.",
+  alternates: { canonical: "/stores" },
 };
 
 /** Three lines of expectation-setting, so a member does not drive to a shop and

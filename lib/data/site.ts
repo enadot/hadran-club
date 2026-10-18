@@ -1,6 +1,14 @@
 /** Shared chrome data — the nav links and footer columns from the prototypes. */
 
 /**
+ * The site's own public address. Every canonical link, the sitemap and the
+ * structured data resolve against it, so the vercel.app alias and preview
+ * deployments are read by search engines as copies of this one rather than as
+ * sites of their own.
+ */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://hadran.kehilotcard.co.il";
+
+/**
  * The member area is not part of this site. It is operated by Kehilot Card on their
  * own platform, so every "אזור אישי" affordance here is an outbound link. The address
  * is set per environment, which lets the operator point it wherever their member login

@@ -5,6 +5,7 @@ import { TERMS_OF_USE } from "@/lib/data/legal";
 export const metadata: Metadata = {
   title: TERMS_OF_USE.title,
   description: TERMS_OF_USE.summary,
+  alternates: { canonical: "/terms-of-use" },
 };
 
 export default function TermsOfUsePage() {

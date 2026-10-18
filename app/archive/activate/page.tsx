@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   description:
     "גרסת הארכיון של טופס הפעלת הדרן קארד, שמורה לשימוש עתידי. ההפעלה הפעילה נמצאת בעמוד הפעלת כרטיס.",
   robots: { index: false, follow: false },
+  alternates: { canonical: "/archive/activate" },
 };
 
 export default function ArchivedActivatePage() {
