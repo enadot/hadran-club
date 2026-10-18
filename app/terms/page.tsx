@@ -5,6 +5,7 @@ import { CLUB_TERMS } from "@/lib/data/legal";
 export const metadata: Metadata = {
   title: CLUB_TERMS.title,
   description: CLUB_TERMS.summary,
+  alternates: { canonical: "/terms" },
 };
 
 export default function ClubTermsPage() {

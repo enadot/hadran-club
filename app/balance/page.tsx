@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "בדיקת יתרה",
   description:
     "הזנת מספר הדרן קארד מציגה את היתרה הזמינה בכרטיס ואת הסטטוס שלו, בלי התחברות ובלי מסירת פרטים אישיים.",
+  alternates: { canonical: "/balance" },
 };
 
 export default function BalancePage() {

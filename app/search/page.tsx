@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "חיפוש באתר",
   description:
     "החיפוש מאתר בתי עסק שותפים, עמודים באתר ותשובות נפוצות — מכל עמוד במועדון, בלי לעזוב את המקום.",
+  alternates: { canonical: "/search" },
+  robots: { index: false, follow: true },
 };
 
 export default function SearchPage() {

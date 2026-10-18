@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: "הצטרפות להדרן",
   description:
     "הצטרפות להדרן נעשית באחת החנויות המשווקות, או בשיחה טלפונית שאנחנו יוזמים אליכם. עם ההצטרפות מגיע גם כרטיס הדרן קלאב, ללא עלות.",
+  alternates: { canonical: "/join-hadran" },
 };
 
 /** Why a reader who is not a Hadran customer yet would keep reading. Kept to the

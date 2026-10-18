@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "הצטרפות בתי עסק",
   description:
     "חברי הדרן קלאב מחפשים איפה הכרטיס עובד לפני שהם יוצאים לקנות. הצטרפות למועדון מכניסה את העסק שלכם לרשימה — בלי עלות הקמה ובלי מערכת חדשה בקופה.",
+  alternates: { canonical: "/merchants" },
 };
 
 const HERO_STATS = [
