@@ -8,7 +8,7 @@
 import { PARTNERS, partnerInitials } from "./partners";
 import { BENEFIT_TIERS } from "./benefits";
 
-import { MEMBER_AREA_URL } from "./site";
+import { MEMBER_AREA_URL, MERCHANT_ONBOARDING_URL } from "./site";
 
 export type SearchKind = "partner" | "page" | "faq";
 
@@ -22,7 +22,7 @@ export type SearchResult = {
   logo?: string;
   /** The benefit tier label, shown on partner rows. Absent on pages and questions. */
   benefitLabel?: string;
-  /** Leaves the site — the operator's member area is the only such destination. */
+  /** Leaves the site — to the operator's member area or its merchant onboarding. */
   external?: boolean;
 };
 
@@ -59,10 +59,17 @@ export const SEARCH_PAGES = [
     external: true,
   },
   {
-    name: "הצטרפות בית עסק",
-    meta: "טופס לבעלי עסקים שרוצים להיכנס לרשימה",
+    name: "לבעלי עסקים",
+    meta: "למה להצטרף למועדון ואיך זה עובד",
     href: "/merchants",
-    kw: "עסק הצטרפות בעל עסק שותף",
+    kw: "עסק בעל עסק שותף חנות",
+  },
+  {
+    name: "הצטרפות בית עסק",
+    meta: "רישום העסק למועדון ובחירת שיעור ההנחה — במערכת קהילות קארד",
+    href: MERCHANT_ONBOARDING_URL,
+    kw: "עסק הצטרפות בעל עסק שותף רישום",
+    external: true,
   },
 ];
 
