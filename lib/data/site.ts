@@ -33,6 +33,17 @@ export const CARD_ACTIVATION_URL =
   process.env.NEXT_PUBLIC_CARD_ACTIVATION_URL ?? "https://kehilotcard.co.il/activate";
 
 /**
+ * Merchant onboarding runs on the operator's own screen. The address carries a signed
+ * invitation in its fragment that ties the new business to the club and fixes the
+ * discount range it may choose from, so it is passed through exactly as issued —
+ * never rebuilt or trimmed. Environment-controlled, because the invitation is the
+ * operator's to reissue.
+ */
+export const MERCHANT_ONBOARDING_URL =
+  process.env.NEXT_PUBLIC_MERCHANT_ONBOARDING_URL ??
+  "https://kehilotcard.co.il/merchant-onboarding#inv=eyJ2IjoxLCJwIjozLCJtIjozMiwiYyI6MTk4LCJkIjp7Im1pbmltdW1fcGVyY2VudCI6NCwibWF4aW11bV9wZXJjZW50Ijo5Ni41LCJvcHRpb25zIjpbOCwxNSwyMCwyNV19fQ.H6CdNZTPtZ-CX_geFvMMtcH4HSF-lP1r13HuK35QiHw";
+
+/**
  * Getting a card is not something this site does, and it is not done in the app
  * either: a member picks the card up in person at one of Hadran's authorised
  * stores. The site only says so, in the places a member would otherwise look
@@ -106,7 +117,7 @@ export const FOOTER_COLUMNS: {
     links: [
       { label: "רשימת בתי העסק", href: "/benefits" },
       { label: "חנויות בלעדיות", href: "/benefits?tier=exclusive" },
-      { label: "הצטרפות עסקים", href: "/merchants#form" },
+      { label: "הצטרפות עסקים", href: MERCHANT_ONBOARDING_URL, external: true },
       { label: "אזור בעלי עסקים", href: "/merchants" },
     ],
   },
