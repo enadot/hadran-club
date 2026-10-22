@@ -7,7 +7,6 @@ import { Card } from "@/components/brand/Card";
 import { Icon } from "@/components/brand/Icon";
 import { Figure } from "@/components/brand/Figure";
 import { MERCHANT_ONBOARDING_URL } from "@/lib/data/site";
-import { MerchantJoinDialog } from "./MerchantJoinDialog";
 
 export const metadata: Metadata = {
   title: "הצטרפות בתי עסק",
@@ -186,37 +185,27 @@ export default function MerchantsPage() {
 
       {/* ── The ask ──────────────────────────────────────────────────────────
           A band, not a form. Joining is self-serve on the operator's onboarding
-          screen, which opens in a new tab; the enquiry dialog stays beside it for
-          the owner who would rather talk to someone before signing up. */}
+          screen, which opens in a new tab. */}
       <Band id="form" tone="pale" className="scroll-mt-[90px]">
         <Container narrow className="flex flex-col items-center gap-[22px] text-center">
           <Eyebrow>הצטרפות למועדון</Eyebrow>
           <SectionTitle>נשמח לשמוע על העסק</SectionTitle>
           <p className="m-0 max-w-[560px] text-[clamp(16px,2.3vw,18px)] leading-[1.6] text-[var(--color-body)]">
             ההצטרפות נעשית בטופס מקוון: ממלאים את פרטי העסק ובוחרים את שיעור ההנחה לחברים. אין
-            עלות הצטרפות ואין התחייבות לתקופה. מעדיפים לדבר קודם? משאירים פרטים ונציג המועדון חוזר
-            בתוך יום עסקים אחד.
+            עלות הצטרפות ואין התחייבות לתקופה.
           </p>
 
-          <div className="flex w-full flex-col gap-3 min-[480px]:w-auto min-[480px]:flex-row min-[480px]:flex-wrap min-[480px]:justify-center">
-            <Button
-              as="a"
-              href={MERCHANT_ONBOARDING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              size="lg"
-              iconAfter="external-link"
-              className="w-full justify-center min-[480px]:w-auto"
-            >
-              לטופס ההצטרפות
-            </Button>
-            <MerchantJoinDialog
-              variant="tertiary"
-              className="w-full justify-center min-[480px]:w-auto"
-            >
-              לשיחה עם נציג
-            </MerchantJoinDialog>
-          </div>
+          <Button
+            as="a"
+            href={MERCHANT_ONBOARDING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="lg"
+            iconAfter="external-link"
+            className="w-full justify-center min-[480px]:w-auto"
+          >
+            לטופס ההצטרפות
+          </Button>
         </Container>
       </Band>
     </>
