@@ -182,32 +182,6 @@ export default function MerchantsPage() {
           </Reveal>
         </Container>
       </Band>
-
-      {/* ── The ask ──────────────────────────────────────────────────────────
-          A band, not a form. Joining is self-serve on the operator's onboarding
-          screen, which opens in a new tab. */}
-      <Band id="form" tone="pale" className="scroll-mt-[90px]">
-        <Container narrow className="flex flex-col items-center gap-[22px] text-center">
-          <Eyebrow>הצטרפות למועדון</Eyebrow>
-          <SectionTitle>נשמח לשמוע על העסק</SectionTitle>
-          <p className="m-0 max-w-[560px] text-[clamp(16px,2.3vw,18px)] leading-[1.6] text-[var(--color-body)]">
-            ההצטרפות נעשית בטופס מקוון: ממלאים את פרטי העסק ובוחרים את שיעור ההנחה לחברים. אין
-            עלות הצטרפות ואין התחייבות לתקופה.
-          </p>
-
-          <Button
-            as="a"
-            href={MERCHANT_ONBOARDING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            size="lg"
-            iconAfter="external-link"
-            className="w-full justify-center min-[480px]:w-auto"
-          >
-            לטופס ההצטרפות
-          </Button>
-        </Container>
-      </Band>
     </>
   );
 }
