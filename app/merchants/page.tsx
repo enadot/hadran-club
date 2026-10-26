@@ -74,9 +74,9 @@ export default function MerchantsPage() {
               הצטרפות בתי עסק
             </Badge>
             <h1 className="m-0 text-[clamp(32px,7.5vw,56px)] leading-[1.06] tracking-[var(--tracking-display-lg)] text-[var(--color-primary)]">
-              הקהילה כבר קונה.
+              יש לכם עסק?
               <br />
-              שווה שתקנה אצלכם
+              הקהילה שלנו כבר קונה — כדאי שתקנה גם אצלכם
             </h1>
             <p className="m-0 max-w-[520px] text-[clamp(16px,2.4vw,19px)] leading-[1.6] text-[var(--sand-300)]">
               חברי הדרן קלאב מחפשים איפה הכרטיס עובד לפני שהם יוצאים לקנות. הצטרפות למועדון מכניסה את
@@ -92,7 +92,7 @@ export default function MerchantsPage() {
                 iconAfter="external-link"
                 className="w-full justify-center min-[480px]:w-auto"
               >
-                להצטרפות העסק למועדון
+                הצטרפות לעסקים
               </Button>
               {/* A borderless ghost on the ink band reads as loose text once it is
                   stacked under the primary, so it carries a hairline here. */}
